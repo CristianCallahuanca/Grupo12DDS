@@ -1,4 +1,4 @@
-package FuenteEstatica;
+package Fuentes.FuenteEstatica;
 
 public class FuenteEstatica {
 }
