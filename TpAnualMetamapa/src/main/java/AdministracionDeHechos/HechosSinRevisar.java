@@ -1,4 +1,4 @@
 package AdministracionDeHechos;
 
-public class Hecho {
+public class HechosSinRevisar {
 }
