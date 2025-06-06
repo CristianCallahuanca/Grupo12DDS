@@ -2,6 +2,7 @@ package AdministracionDeHechos;
 import Persona.Contribuyente.Contribuyente;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 
@@ -63,4 +64,19 @@ public class Hecho {
     public Contribuyente getContribuyente() {
         return contribuyente;
     }
+
+
+    public void marcarComoNoVisible() {
+        this.visible = false;
+    }
+
+    public void editarHecho(String nuevoTitulo, String nuevaDescripcion) {
+
+    }
+
+    /*public boolean puedeSerEditado() {
+        return this.origen == Origen.DINAMICA &&
+                ChronoUnit.DAYS.between(fechaCarga, LocalDateTime.now()) <= 7;
+    }*/
+
 }

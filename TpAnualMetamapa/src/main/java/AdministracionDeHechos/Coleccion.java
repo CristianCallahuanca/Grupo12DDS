@@ -24,5 +24,10 @@ public class Coleccion {
 
         this.hechos = fuente.filtrarHechos(criterios);
     }
+
+    public List<Hecho> obtenerHechos() {
+        return hechos.stream().filter(Hecho::esVisible).toList();
+    }
+
 }
 

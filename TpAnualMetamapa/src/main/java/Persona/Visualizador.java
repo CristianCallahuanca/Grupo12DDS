@@ -1,4 +1,4 @@
 package Persona;
 
-public class Visualizador {
+public class Visualizador extends UsuarioPublico {
 }
