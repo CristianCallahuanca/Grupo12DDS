@@ -12,6 +12,12 @@ public class Administrador {
     private String apellido;
     private int edad;
 
+    public Administrador(String nombre, String apellido, int edad) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.edad = edad;
+    }
+
     public void crearColeccion(Fuente fuente, String titulo, String descripcion, List<CriterioDePertenencia> criterios, String handle) {
         Coleccion unaColeccion = new Coleccion( fuente,  titulo,  descripcion,  criterios, handle);
 

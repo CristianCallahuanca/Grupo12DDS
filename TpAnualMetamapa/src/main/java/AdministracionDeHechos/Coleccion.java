@@ -17,7 +17,12 @@ public class Coleccion {
         this.descripcion = descripcion;
         this.criterios = criterios;
         this.handle = handle;
-        //LlenarHechos(fuente)
+        this.cargarHechos(fuente,criterios);
+    }
+
+    public void cargarHechos(Fuente fuente, List<CriterioDePertenencia> criterios){
+
+        this.hechos = Fuente.filtrarHechos(criterios);
     }
 }
 
