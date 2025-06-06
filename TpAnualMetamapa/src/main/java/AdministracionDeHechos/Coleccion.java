@@ -22,7 +22,7 @@ public class Coleccion {
 
     public void cargarHechos(Fuente fuente, List<CriterioDePertenencia> criterios){
 
-        this.hechos = Fuente.filtrarHechos(criterios);
+        this.hechos = fuente.filtrarHechos(criterios);
     }
 }
 

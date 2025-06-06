@@ -7,6 +7,6 @@ public class Main {
 
         Administrador pepe = new Administrador("pepe","pepito",11);
 
-        pepe.crearColeccion();
+        //pepe.crearColeccion();
     }
 }

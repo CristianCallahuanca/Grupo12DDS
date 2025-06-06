@@ -1,7 +1,6 @@
 package AdministracionDeHechos;
 import Persona.Contribuyente.Contribuyente;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,9 +12,55 @@ public class Hecho {
     private Ubicacion ubicacion;
     private LocalDateTime fechaAcontecimiento;
     private LocalDateTime fechaCarga;
-    private boolean esVisible;
+    private boolean visible;
     private Origen origen;
     private List<String> archivosMultimedia;
-    private List<String> etiquetas;
+    private String etiqueta;
     private Contribuyente contribuyente;
+
+    // Getters
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public Ubicacion getUbicacion() {
+        return ubicacion;
+    }
+
+    public LocalDateTime getFechaAcontecimiento() {
+        return fechaAcontecimiento;
+    }
+
+    public LocalDateTime getFechaCarga() {
+        return fechaCarga;
+    }
+
+    public boolean esVisible() {
+        return visible;
+    }
+
+    public Origen getOrigen() {
+        return origen;
+    }
+
+    public List<String> getArchivosMultimedia() {
+        return archivosMultimedia;
+    }
+
+    public String getEtiqueta() {
+        return etiqueta;
+    }
+
+    public Contribuyente getContribuyente() {
+        return contribuyente;
+    }
 }
