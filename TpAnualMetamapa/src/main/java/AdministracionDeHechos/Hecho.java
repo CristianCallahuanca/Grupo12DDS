@@ -3,6 +3,7 @@ import Persona.Contribuyente.Contribuyente;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,6 +19,23 @@ public class Hecho {
     private List<String> archivosMultimedia;
     private String etiqueta;
     private Contribuyente contribuyente;
+
+    public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
+                 LocalDateTime fechaAcontecimiento, LocalDateTime fechaCarga, String etiqueta) {
+
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.categoria = categoria;
+        this.ubicacion = ubicacion;
+        this.fechaAcontecimiento = fechaAcontecimiento;
+        this.fechaCarga = fechaCarga;
+        this.archivosMultimedia = new ArrayList<>();
+        this.etiqueta = etiqueta;
+        this.origen = Origen.ESTATICA;
+        this.visible = true;
+        this.contribuyente = null;
+    }
+
 
     //GETTERS Y SETTER
     public String getTitulo() {

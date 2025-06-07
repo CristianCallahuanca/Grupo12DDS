@@ -26,7 +26,7 @@ public class Coleccion {
     }
 
     public List<Hecho> obtenerHechos() {
-        return hechos.stream().filter(Hecho::esVisible).toList();
+        return hechos.stream().filter(Hecho::isVisible).toList();
     }
 
 }

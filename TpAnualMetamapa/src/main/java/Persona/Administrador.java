@@ -4,6 +4,9 @@ import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import Fuentes.Fuente;
 import AdministracionDeHechos.Coleccion;
+import Fuentes.FuenteEstatica.FuenteEstatica;
+import SolicitudEliminar.SolicitudEliminar;
+import SolicitudEliminar.EstadoEliminar;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -60,6 +63,27 @@ public class Administrador {
             System.err.println("Error leyendo el archivo: " + e.getMessage());
         }
     }
+
+    public void revisarSolicitud(SolicitudEliminar solicitud, boolean aprobar) {
+        if (aprobar) {
+            solicitud.aceptar();
+        } else {
+            solicitud.rechazar();
+        }
+    }
+
+    /*public void revisarSolicitudesPendientes(List<SolicitudEliminar> solicitudes) {
+        for (SolicitudEliminar solicitud : solicitudes) {
+            if (solicitud.getEstadoEliminar() == EstadoEliminar.PENDIENTE) {
+
+            }
+        }
+    }*/
+
+    public void importarHechos(FuenteEstatica fuente, String rutaArchivo) {
+        fuente.importarDesdeCSV(rutaArchivo);
+    }
+
 
 }
 

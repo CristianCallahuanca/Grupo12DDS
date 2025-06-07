@@ -2,8 +2,7 @@ package Persona.Contribuyente;
 
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
-import AdministracionDeHechos.HechosSinRevisar;
-
+import HechosSinRevisar.HechosSinRevisar;
 import java.time.LocalDateTime;
 
 public class Contribuyente_Registrado extends Contribuyente {

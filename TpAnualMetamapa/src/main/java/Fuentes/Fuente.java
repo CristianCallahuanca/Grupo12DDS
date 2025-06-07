@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public abstract class Fuente {
 
-    List<Hecho> hechos;
+    protected List<Hecho> hechos;
 
     public List<Hecho> obtenerHechos(){
         return hechos;

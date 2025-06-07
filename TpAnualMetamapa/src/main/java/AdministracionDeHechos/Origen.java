@@ -1,5 +1,8 @@
 package AdministracionDeHechos;
 
 public enum Origen {
-    DINAMICA, ESTATICA, PROXY
+    DINAMICA,
+    ESTATICA,
+    PROXY
+
 }

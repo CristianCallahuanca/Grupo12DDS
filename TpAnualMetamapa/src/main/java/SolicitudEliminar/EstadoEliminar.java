@@ -1,4 +1,7 @@
 package SolicitudEliminar;
 
-public class EstadoEliminar {
+public enum EstadoEliminar {
+    PENDIENTE,
+    APROBADA,
+    RECHAZADA
 }
