@@ -35,3 +35,6 @@ public class Contribuyente_Registrado extends Contribuyente {
         }
     }
 }
+
+
+
