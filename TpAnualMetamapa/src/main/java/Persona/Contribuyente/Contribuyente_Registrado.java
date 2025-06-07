@@ -1,5 +1,9 @@
 package Persona.Contribuyente;
 
+import AdministracionDeHechos.Hecho;
+
+import java.time.LocalDateTime;
+
 public class Contribuyente_Registrado extends Contribuyente {
     private String nombre;
     private String apellido;
@@ -11,7 +15,7 @@ public class Contribuyente_Registrado extends Contribuyente {
         this.edad = edad;
     }
 
-    /*public void subirHecho(Hecho hecho, boolean esPublico) {
+    public void subirHecho(Hecho hecho, boolean esPublico) {
         hecho.setVisible(esPublico);
         hecho.setFechaCarga(LocalDateTime.now());
         hecho.setContribuyente(this);
@@ -29,5 +33,5 @@ public class Contribuyente_Registrado extends Contribuyente {
         } else {
             throw new IllegalStateException("El hecho no puede ser editado despues de una semana.");
         }
-    }*/
+    }
 }
