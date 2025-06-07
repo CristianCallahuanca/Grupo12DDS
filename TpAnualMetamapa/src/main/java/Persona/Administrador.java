@@ -27,6 +27,10 @@ public class Administrador {
         Coleccion unaColeccion = new Coleccion( fuente,  titulo,  descripcion,  criterios, handle);
 
     }
+
+
+    // No tiene sentido que administrador haga esto, en realidad lo deberia hacer el dataset, aca
+    //nosotros hacemos que el administrador inicie la accion del mismo no que haga todo
     public void leerHechos(String rutaArchivo){
 
         try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
