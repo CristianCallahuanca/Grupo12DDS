@@ -19,6 +19,7 @@ public class Hecho {
     private String etiqueta;
     private Contribuyente contribuyente;
 
+    //GETTERS Y SETTER
     public String getTitulo() {
         return titulo;
     }
@@ -107,17 +108,31 @@ public class Hecho {
         this.contribuyente = contribuyente;
     }
 
+    //METODOS DE HECHOS
     public void marcarComoNoVisible() {
         this.visible = false;
     }
 
-    public void editarHecho(String nuevoTitulo, String nuevaDescripcion) {
-
+    public void editarCon(Hecho cambios) {
+        if (this.puedeSerEditado()) {
+            this.titulo = cambios.getTitulo();
+            this.descripcion = cambios.getDescripcion();
+            this.categoria = cambios.getCategoria();
+            this.ubicacion = cambios.getUbicacion();
+            this.etiqueta = cambios.getEtiqueta();
+            this.archivosMultimedia = cambios.getArchivosMultimedia();
+            this.fechaAcontecimiento = cambios.getFechaAcontecimiento();
+            //NO cambiar contribuyente, origen ni fecha de carga
+        } else {
+            throw new IllegalStateException("El hecho ya no puede ser editado.");
+        }
     }
+
 
     public boolean puedeSerEditado() {
         return this.origen == Origen.DINAMICA &&
-                ChronoUnit.DAYS.between(fechaCarga, LocalDateTime.now()) <= 7;
+                ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
+        // Con esto basta para saber si puede ser editado?
     }
 
 }

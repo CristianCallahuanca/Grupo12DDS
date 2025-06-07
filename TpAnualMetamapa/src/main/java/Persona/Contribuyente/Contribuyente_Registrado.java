@@ -1,6 +1,8 @@
 package Persona.Contribuyente;
 
 import AdministracionDeHechos.Hecho;
+import AdministracionDeHechos.Origen;
+import AdministracionDeHechos.HechosSinRevisar;
 
 import java.time.LocalDateTime;
 
@@ -20,6 +22,8 @@ public class Contribuyente_Registrado extends Contribuyente {
         hecho.setFechaCarga(LocalDateTime.now());
         hecho.setContribuyente(this);
         listaDeHechos.add(hecho);
+        hecho.setOrigen(Origen.DINAMICA);
+        HechosSinRevisar.getInstance().agregarHecho(hecho);
     }
 
     public void eliminarHecho(Hecho hecho) {
@@ -27,13 +31,16 @@ public class Contribuyente_Registrado extends Contribuyente {
         hecho.marcarComoNoVisible();
     }
 
-    public void modificarHecho(Hecho hechoModificado) {
+    public void modificarHecho(Hecho hechoModificado, Hecho cambios) {
         if (hechoModificado.puedeSerEditado()) {
-
+            hechoModificado.editarCon(cambios);
         } else {
             throw new IllegalStateException("El hecho no puede ser editado despues de una semana.");
         }
     }
+
+
+
 }
 
 

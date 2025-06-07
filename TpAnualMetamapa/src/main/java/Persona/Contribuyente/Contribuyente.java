@@ -10,6 +10,7 @@ public abstract class Contribuyente extends UsuarioPublico {
 
     protected List<Hecho> listaDeHechos = new ArrayList<>();
 
+    // En las listas solo se puede hacer un get de la clase no es necesario un set, eso es labor interno
     public List<Hecho> getMisHechos() {
         return listaDeHechos;
     }
