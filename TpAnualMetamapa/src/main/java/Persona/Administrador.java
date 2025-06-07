@@ -29,9 +29,35 @@ public class Administrador {
     }
 
 
-    // No tiene sentido que administrador haga esto, en realidad lo deberia hacer el dataset, aca
-    //nosotros hacemos que el administrador inicie la accion del mismo no que haga todo
-    public void leerHechos(String rutaArchivo){
+
+
+    public void revisarSolicitud(SolicitudEliminar solicitud, boolean aprobar) {
+        if (aprobar) {
+            solicitud.aceptar();
+        } else {
+            solicitud.rechazar();
+        }
+    }
+
+    /*public void revisarSolicitudesPendientes(List<SolicitudEliminar> solicitudes) {
+        for (SolicitudEliminar solicitud : solicitudes) {
+            if (solicitud.getEstadoEliminar() == EstadoEliminar.PENDIENTE) {
+
+            }
+        }
+    }*/
+
+    public void importarHechos(FuenteEstatica fuente, String rutaArchivo) {
+        fuente.importarDesdeCSV(rutaArchivo);
+    }
+
+
+}
+
+
+// No tiene sentido que administrador haga esto, en realidad lo deberia hacer el dataset, aca
+//nosotros hacemos que el administrador inicie la accion del mismo no que haga todo
+    /*public void leerHechos(String rutaArchivo){
 
         try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
             String linea;
@@ -66,29 +92,4 @@ public class Administrador {
         } catch (IOException e) {
             System.err.println("Error leyendo el archivo: " + e.getMessage());
         }
-    }
-
-    public void revisarSolicitud(SolicitudEliminar solicitud, boolean aprobar) {
-        if (aprobar) {
-            solicitud.aceptar();
-        } else {
-            solicitud.rechazar();
-        }
-    }
-
-    /*public void revisarSolicitudesPendientes(List<SolicitudEliminar> solicitudes) {
-        for (SolicitudEliminar solicitud : solicitudes) {
-            if (solicitud.getEstadoEliminar() == EstadoEliminar.PENDIENTE) {
-
-            }
-        }
     }*/
-
-    public void importarHechos(FuenteEstatica fuente, String rutaArchivo) {
-        fuente.importarDesdeCSV(rutaArchivo);
-    }
-
-
-}
-
-
