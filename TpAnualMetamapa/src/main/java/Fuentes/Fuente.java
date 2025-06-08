@@ -2,12 +2,13 @@ package Fuentes;
 
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.Hecho;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 public abstract class Fuente {
 
-    protected List<Hecho> hechos;
+    protected List<Hecho> hechos = new ArrayList<>();
 
     public List<Hecho> obtenerHechos(){
         return hechos;
