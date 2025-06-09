@@ -15,3 +15,5 @@ public class Main {
         logger.error("Error simulado para ver funcionamiento del logger.");
     }
 }
+
+
