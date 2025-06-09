@@ -2,6 +2,8 @@ package Fuentes;
 
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.Hecho;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,6 +13,10 @@ public abstract class Fuente {
 
     public List<Hecho> obtenerHechos(){
         return hechos;
+    }
+
+    public Fuente() {
+        this.hechos = new ArrayList<>();
     }
 
     public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios){

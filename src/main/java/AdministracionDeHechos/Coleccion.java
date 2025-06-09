@@ -20,6 +20,22 @@ public class Coleccion {
         this.cargarHechos(fuente,criterios);
     }
 
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
     public void cargarHechos(Fuente fuente, List<CriterioDePertenencia> criterios){
 
         this.hechos = fuente.filtrarHechos(criterios);

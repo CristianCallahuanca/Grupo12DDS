@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TpAnualMetamapa/TpAnualMetamapa.iml" filepath="$PROJECT_DIR$/TpAnualMetamapa/TpAnualMetamapa.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TpAnualMetamapa.iml" filepath="$PROJECT_DIR$/TpAnualMetamapa.iml" />
     </modules>
   </component>
 </project>
