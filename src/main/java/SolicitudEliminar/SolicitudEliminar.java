@@ -1,7 +1,11 @@
 package SolicitudEliminar;
 
 import AdministracionDeHechos.Hecho;
+import lombok.Setter;
+import lombok.Getter;
 
+@Setter
+@Getter
 public class SolicitudEliminar {
     private Hecho hecho;
     private String justificacion;
@@ -27,8 +31,8 @@ public class SolicitudEliminar {
         }
     }
 
-    public EstadoEliminar getEstadoEliminar() {
+   /* public EstadoEliminar getEstadoEliminar() {
         return estadoEliminar;
-    }
+    } */
 }
 

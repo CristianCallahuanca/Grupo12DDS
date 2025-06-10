@@ -7,17 +7,8 @@ import SolicitudEliminar.SolicitudEliminar;
 
 import java.util.List;
 
-public class UsuarioPublico {
-
-    public List<Hecho> visualizarTodosLosHechos(Coleccion coleccion) {
-        return coleccion.obtenerHechos();
-    }
-
-    public List<Hecho> visualizarHechosFiltrados(Coleccion coleccion, List<CriterioDePertenencia> filtros) {
-        return coleccion.obtenerHechos().stream()
-                .filter(h -> filtros.stream().allMatch(c -> c.cumpleUno(h)))
-                .toList();
-    }
+public abstract class UsuarioPublico {
+    
 
     public SolicitudEliminar solicitarEliminarHecho(Hecho hecho, String justificacion) {
         return new SolicitudEliminar(hecho, justificacion);

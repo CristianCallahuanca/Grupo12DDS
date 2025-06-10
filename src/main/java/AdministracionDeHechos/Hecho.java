@@ -1,10 +1,11 @@
 package AdministracionDeHechos;
 import Persona.Contribuyente.Contribuyente;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.example.Main.logger;
 
 
 public class Hecho {
@@ -21,7 +22,7 @@ public class Hecho {
     private Contribuyente contribuyente;
 
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
-                 LocalDateTime fechaAcontecimiento, LocalDateTime fechaCarga, String etiqueta) {
+                 LocalDateTime fechaAcontecimiento, LocalDateTime fechaCarga,String etiqueta){
 
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -29,9 +30,9 @@ public class Hecho {
         this.ubicacion = ubicacion;
         this.fechaAcontecimiento = fechaAcontecimiento;
         this.fechaCarga = fechaCarga;
-        this.archivosMultimedia = new ArrayList<>();
         this.etiqueta = etiqueta;
-        this.origen = Origen.ESTATICA;
+        this.archivosMultimedia = new ArrayList<>();
+        this.origen = Origen.ESTATICA; /*después hay que sacarlo*/
         this.visible = true;
         this.contribuyente = null;
     }
@@ -86,7 +87,7 @@ public class Hecho {
         this.fechaCarga = fechaCarga;
     }
 
-    public boolean isVisible() {
+    public boolean getIsVisible() {
         return visible;
     }
 
@@ -146,9 +147,20 @@ public class Hecho {
         }
     }
 
+    public void imprimirHecho() {
+        logger.info("Título: {}", this.getTitulo());
+        logger.info("Descripción: {}", this.getDescripcion());
+        logger.info("Categoría: {}", this.getCategoria());
+        logger.info("Ubicación: {}", this.getUbicacion());
+        logger.info("Fecha del hecho: {}", this.getFechaAcontecimiento());
+        logger.info("Fecha de carga: {}", this.getFechaAcontecimiento());
+        logger.info("Origen: {}", this.getOrigen());
+        logger.info("-------------------------------------------");
+
+    }
 
     public boolean puedeSerEditado() {
-        return this.origen == Origen.DINAMICA &&
+        return this.origen == Origen.DINAMICA && //hay que ver que sea registrado
                 ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
         // Con esto basta para saber si puede ser editado?
     }

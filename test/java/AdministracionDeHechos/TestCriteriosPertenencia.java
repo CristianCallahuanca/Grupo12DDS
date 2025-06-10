@@ -13,6 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.Assert.assertEquals;
 
+
 public class TestCriteriosPertenencia {
     private Ubicacion ubicacion1;
     private Ubicacion ubicacion2;
@@ -27,6 +28,7 @@ public class TestCriteriosPertenencia {
     LocalDateTime fc2 = LocalDateTime.of(2025, 12, 1, 12, 10);
     LocalDateTime fc3 = LocalDateTime.of(2025, 12, 1, 12, 20);
     private FuenteDinamica fuentePrueba ;
+
 
     @BeforeEach
     public void setUp() {
@@ -60,8 +62,13 @@ public class TestCriteriosPertenencia {
         fuentePrueba.agregarHecho(hecho1);
         fuentePrueba.agregarHecho(hecho2);
         fuentePrueba.agregarHecho(hecho3);
+
+
+
     }
     //Cambiar los prints por loggers, deshardcodear el origen en los hechos
+
+
     @Test
     public void puedeFiltrarFA(){
         //Test fechas

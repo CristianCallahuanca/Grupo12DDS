@@ -5,6 +5,7 @@ import AdministracionDeHechos.Origen;
 import HechosSinRevisar.HechosSinRevisar;
 import java.time.LocalDateTime;
 
+
 public class Contribuyente_Registrado extends Contribuyente {
     private String nombre;
     private String apellido;

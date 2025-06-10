@@ -9,11 +9,13 @@ import AdministracionDeHechos.TestCriteriosPertenencia;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.Fuente;
 import Fuentes.FuenteDinamica;
+import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,6 +40,8 @@ public class TestAdministradorColeccion{
     private PorFechaCarga criterioTiempoCarga;
     private PorDescripcion criterioDescripcion;
     private List<CriterioDePertenencia> criterioPrueba;
+    private ArrayList<Coleccion> todasLasColecciones;
+
 
     @BeforeEach
     public void setUp() {
@@ -77,11 +81,21 @@ public class TestAdministradorColeccion{
         criterioPrueba = Arrays.asList(criterioTiempoCarga, criterioDescripcion);
 
         coleccionPrueba = new Coleccion(fuentePrueba, "Coleccion de prueba", "", criterioPrueba, "1");
+
+        ColeccionRepositoryEnMemoria repositorio = ColeccionRepositoryEnMemoria.getInstancia();
+        todasLasColecciones = repositorio.obtenerTodas();
     }
 
     @Test
     public void puedeCrearUnaColecciony() throws IOException {
         assertEquals("Coleccion de prueba", coleccionPrueba.getTitulo());
         assertEquals("", coleccionPrueba.getDescripcion());
+
     }
+
+    @Test // Me fijo si la coleccion se carga automaticamente al ColeccionRepository
+    public void elColeccionRepositoryFunciona() throws IOException {
+        assertEquals(1, todasLasColecciones.size());
+    }
+
 }

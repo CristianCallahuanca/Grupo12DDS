@@ -27,15 +27,10 @@ public class Administrador {
         this.edad = edad;
     }
 
-    public void crearColeccion(Fuente fuente, String titulo, String descripcion, List<CriterioDePertenencia> criterios, String handle) {
-        Coleccion unaColeccion = new Coleccion( fuente,  titulo,  descripcion,  criterios, handle);
-
-    }
 
 
 
-
-    public void revisarSolicitud(SolicitudEliminar solicitud, boolean aprobar) {
+   /* public void revisarSolicitud(SolicitudEliminar solicitud, boolean aprobar) {
         if (aprobar) {
             solicitud.aceptar();
         } else {
@@ -50,10 +45,10 @@ public class Administrador {
             }
         }
     }*/
-
-    public void importarHechos(FuenteEstatica fuente, String rutaArchivo) {
-        fuente.importarDesdeCSV(rutaArchivo);
-    }
+    /*
+    public void importarHechos(FuenteEstatica fuente) throws IOException {
+        fuente.importarDesdeCSV();
+    }*/
 
 
 }
