@@ -22,7 +22,7 @@ public class FuenteEstatica extends Fuente {
         this.dataset = dataset;
     }
 
-    public boolean tieneMasDeDiezMilFilas() throws IOException {
+    public boolean tieneMasDeDiezMilFilas(int minimoDeArchivos) throws IOException {
 
         FileReader file = new FileReader(dataset.getArchivoCSV());
         int contarLineas = 0;
@@ -37,7 +37,7 @@ public class FuenteEstatica extends Fuente {
             throw new RuntimeException(e);
         }
 
-        return contarLineas > 10000;
+        return contarLineas > minimoDeArchivos;
     }
 
     public List<Hecho> procesarHechosDesdeCSV() throws IOException {
@@ -46,7 +46,7 @@ public class FuenteEstatica extends Fuente {
         FileReader file = new FileReader(dataset.getArchivoCSV());
         Boolean primeraLinea = true;
 
-        if(tieneMasDeDiezMilFilas()){
+        if(tieneMasDeDiezMilFilas(10000)){
 
             try (CSVReader csvReader = new CSVReader(file)) {
                 String[] parts = null;
