@@ -3,15 +3,16 @@ package org.example;
 import AdministracionDeHechos.Hecho;
 import Fuentes.FuenteEstatica.Dataset;
 import Fuentes.FuenteEstatica.FuenteEstatica;
+import Handlers.GetHechosHandler;
 import Persona.Administrador;
 import io.javalin.Javalin;
+import io.javalin.http.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+import Handlers.GetHechosHandler;
 public class Main {
     public static final Logger logger = LoggerFactory.getLogger(Main.class);
 
@@ -21,12 +22,16 @@ public class Main {
 
         // Definir ruta GET "/ping"
         app.get("/ping", ctx -> {
-            ctx.result("pong");
+            ctx.result("Pong");
         });
+
+        /*app.get("/hechos",  new GetHechosHandler());*/
+
+        /*app.get("/colecciones/:identificador/hechos", new GetColeccionesHandler());
+        app.post("/solicitudes",new PostSolicitudesHandler());*/
 
     }
 }
-
 
 /*Administrador pepe = new Administrador("pepe", "pepito", 11);
 
