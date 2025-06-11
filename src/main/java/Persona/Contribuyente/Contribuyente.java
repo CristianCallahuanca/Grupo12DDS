@@ -14,4 +14,8 @@ public abstract class Contribuyente extends UsuarioPublico {
     public List<Hecho> getMisHechos() {
         return listaDeHechos;
     }
+
+    public void agregarAListaDeHechos(Hecho unHecho) {
+        listaDeHechos.add(unHecho);
+    }
 }

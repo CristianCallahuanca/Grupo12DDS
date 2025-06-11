@@ -1,5 +1,6 @@
 package AdministracionDeHechos;
 import Fuentes.FuenteDinamica;
+import Infraestructura.Repositorios.FuenteDinamicaRepositoryEnMemoria;
 import Persona.Contribuyente.Contribuyente;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -23,7 +24,8 @@ public class Hecho {
     private Contribuyente contribuyente;
 
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
-                 LocalDateTime fechaAcontecimiento, LocalDateTime fechaCarga,String etiqueta){
+                 LocalDateTime fechaAcontecimiento, LocalDateTime fechaCarga,String etiqueta,
+                 List <String> archivosMultimedia, Origen origen, Contribuyente contribuyente) {
 
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -32,10 +34,15 @@ public class Hecho {
         this.fechaAcontecimiento = fechaAcontecimiento;
         this.fechaCarga = fechaCarga;
         this.etiqueta = etiqueta;
-        this.archivosMultimedia = new ArrayList<>();
-        this.origen = Origen.ESTATICA; /*después hay que sacarlo*/
+        this.archivosMultimedia = archivosMultimedia;
+        this.origen = origen;
         this.visible = true;
-        this.contribuyente = null;
+        this.contribuyente = contribuyente;
+        if (origen == Origen.DINAMICA) {
+            FuenteDinamicaRepositoryEnMemoria.getInstancia().guardar(this);
+            contribuyente.agregarAListaDeHechos(this);
+
+        }
     }
 
 
