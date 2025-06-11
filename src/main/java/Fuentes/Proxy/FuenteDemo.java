@@ -13,6 +13,9 @@ public class FuenteDemo extends FuenteProxy {
     public FuenteDemo(AdaptadorDemo adapter) {
         this.adapter = adapter;
     }
+    public void setUltimaActualizacion(LocalDateTime ultimaActualizacion) {
+        this.ultimaActualizacion = ultimaActualizacion;
+    }
 
     @Override
     public void sincronizar() {
