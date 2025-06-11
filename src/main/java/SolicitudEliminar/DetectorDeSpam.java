@@ -1,5 +1,5 @@
 package SolicitudEliminar;
 
 public interface DetectorDeSpam{
-    boolean esSpam(String texto);
+    public boolean esSpam(String texto);
 }

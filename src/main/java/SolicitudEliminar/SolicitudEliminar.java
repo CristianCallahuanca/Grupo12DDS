@@ -10,28 +10,30 @@ import lombok.Getter;
 public class SolicitudEliminar {
     private Hecho hecho;
     private String justificacion;
-    private EstadoEliminar estadoEliminar = EstadoEliminar.PENDIENTE;
+    private EstadoEliminar estadoEliminar;
 
     public SolicitudEliminar(Hecho hecho, String justificacion) {
         this.hecho = hecho;
         this.justificacion = justificacion;
-        this.cargarSolicitud();
+        if (DetectorDeSpamSingleton.getInstance().esSpam(justificacion)) {
+            this.rechazar();
+        } else {
+            this.estadoEliminar = EstadoEliminar.PENDIENTE;
+            this.cargarSolicitud();
+        }
     }
 
     public void aceptar() {
         this.estadoEliminar = EstadoEliminar.APROBADA;
         hecho.marcarComoNoVisible();
+
     }
 
     public void rechazar() {
         this.estadoEliminar = EstadoEliminar.RECHAZADA;
+        SolicitudRepositoryEnMemoria.getInstancia().eliminarSolicitud(this.justificacion);
     }
 
-    public void verificarSpam(DetectorDeSpam detector) {
-        if (detector.esSpam(this.justificacion)) {
-            this.rechazar();
-        }
-    }
 
     public void cargarSolicitud() { SolicitudRepositoryEnMemoria.getInstancia().guardar(this); }
 

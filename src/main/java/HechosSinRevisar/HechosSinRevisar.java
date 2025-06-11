@@ -7,7 +7,7 @@ import java.util.List;
 
 public class HechosSinRevisar {
 
-    private static HechosSinRevisar instancia = new HechosSinRevisar();
+    private static final HechosSinRevisar instancia = new HechosSinRevisar();
     private List<Hecho> hechos = new ArrayList<>();
 
     private HechosSinRevisar() {}
