@@ -2,6 +2,7 @@ package Persona.Contribuyente;
 
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
+import Fuentes.FuenteDinamica;
 import HechosSinRevisar.HechosSinRevisar;
 import java.time.LocalDateTime;
 
@@ -17,13 +18,15 @@ public class Contribuyente_Registrado extends Contribuyente {
         this.edad = edad;
     }
 
-    public void subirHecho(Hecho hecho, boolean esPublico) {
+    public void subirHecho(Hecho hecho, boolean esPublico, FuenteDinamica fuente) {
         hecho.setVisible(esPublico);
         hecho.setFechaCarga(LocalDateTime.now());
         hecho.setContribuyente(this);
         listaDeHechos.add(hecho);
         hecho.setOrigen(Origen.DINAMICA);
         HechosSinRevisar.getInstance().agregarHecho(hecho);
+       // hecho.guardarEnFuenteDinamica(fuente);
+        fuente.agregarHecho(hecho);
     }
 
     public void eliminarHecho(Hecho hecho) {

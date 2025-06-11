@@ -1,4 +1,5 @@
 package AdministracionDeHechos;
+import Fuentes.FuenteDinamica;
 import Persona.Contribuyente.Contribuyente;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -164,5 +165,11 @@ public class Hecho {
                 ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
         // Con esto basta para saber si puede ser editado?
     }
+
+    public void guardarEnFuenteDinamica(FuenteDinamica fuente){
+        if (origen == Origen.DINAMICA){
+            fuente.agregarHecho(this);
+        }
+    } //COMENTAR ESTO
 
 }

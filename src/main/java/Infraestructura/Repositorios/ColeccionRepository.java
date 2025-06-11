@@ -13,3 +13,4 @@ public interface ColeccionRepository {
     public ArrayList<Coleccion> obtenerTodas();
     void eliminarPorTitulo(String titulo);
 }
+

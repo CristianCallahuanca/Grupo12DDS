@@ -1,6 +1,7 @@
 package Fuentes;
 
 import AdministracionDeHechos.Hecho;
+import Infraestructura.Repositorios.FuenteDinamicaRepositoryEnMemoria;
 
 public class FuenteDinamica extends Fuente {
 
@@ -12,8 +13,10 @@ public class FuenteDinamica extends Fuente {
         hechos.removeIf(h -> h.getTitulo().equalsIgnoreCase(hecho.getTitulo()));
 
         this.hechos.add(hecho);
+        this.cargarEnRepository(hecho);
     }
-
+// Cargar en el Repository el hecho que le llega
+    public void cargarEnRepository(Hecho hecho) { FuenteDinamicaRepositoryEnMemoria.getInstancia().guardar(hecho); }
 
 
 }

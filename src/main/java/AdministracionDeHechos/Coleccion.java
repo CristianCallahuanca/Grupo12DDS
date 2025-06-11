@@ -98,9 +98,6 @@ public class Coleccion {
     private Boolean coincidenTipos(CriterioDePertenencia unFiltro, CriterioDePertenencia otroFiltro) {
         return unFiltro.getClass() == otroFiltro.getClass();
     }
-    /*
-    public int cantidadHechosVisibles() {
-        return hechos.stream().filter(Hecho::isVisible).toList().size();
-    }*/
+
 }
 

@@ -1,18 +1,29 @@
 package org.example;
 
+import AdministracionDeHechos.Coleccion;
+import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
+import AdministracionDeHechos.CriterioPertenencia.PorDescripcion;
+import AdministracionDeHechos.CriterioPertenencia.PorFechaCarga;
 import AdministracionDeHechos.Hecho;
+import Fuentes.FuenteDinamica;
 import Fuentes.FuenteEstatica.Dataset;
 import Fuentes.FuenteEstatica.FuenteEstatica;
 import Handlers.GetHechosHandler;
+import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import Persona.Administrador;
 import io.javalin.Javalin;
 import io.javalin.http.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import Handlers.GetHechosHandler;
+import Handlers.GetColeccionesHandler;
+import Handlers.PostSolicitudesHandler;
+
 public class Main {
     public static final Logger logger = LoggerFactory.getLogger(Main.class);
 
@@ -20,15 +31,9 @@ public class Main {
 
         Javalin app = Javalin.create().start(7000);
 
-        // Definir ruta GET "/ping"
-        app.get("/ping", ctx -> {
-            ctx.result("Pong");
-        });
-
-        /*app.get("/hechos",  new GetHechosHandler());*/
-
-        /*app.get("/colecciones/:identificador/hechos", new GetColeccionesHandler());
-        app.post("/solicitudes",new PostSolicitudesHandler());*/
+        app.get("/hechos", new GetHechosHandler());
+        /*app.get("/colecciones", new GetColeccionesHandler());*/
+        app.post("/solicitudes",new PostSolicitudesHandler());
 
     }
 }
@@ -50,4 +55,19 @@ public class Main {
         System.out.println("se leyeron:");
         System.out.println(hechos.size());*/
 
+/*
+LocalDateTime fa1 = LocalDateTime.of(2025, 1, 1, 12, 0);
+        LocalDateTime fc1 = LocalDateTime.of(2025, 12, 1, 12, 15);
+
+        FuenteDinamica fuentePrueba = new FuenteDinamica();
+
+        PorFechaCarga criterioTiempoCarga = new PorFechaCarga(fa1, fc1);
+        PorDescripcion criterioDescripcion = new PorDescripcion("generando gran preocupación entre los vecinos");
+
+        List<CriterioDePertenencia> criterioPrueba = Arrays.asList(criterioTiempoCarga);
+
+        Coleccion coleccionPrueba = new Coleccion(fuentePrueba, "Coleccion de prueba", "", criterioPrueba, "1");
+
+        ColeccionRepositoryEnMemoria.getInstancia().guardar(coleccionPrueba);
+*/
 

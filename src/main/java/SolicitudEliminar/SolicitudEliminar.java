@@ -1,6 +1,7 @@
 package SolicitudEliminar;
 
 import AdministracionDeHechos.Hecho;
+import Infraestructura.Repositorios.SolicitudRepositoryEnMemoria;
 import lombok.Setter;
 import lombok.Getter;
 
@@ -14,6 +15,7 @@ public class SolicitudEliminar {
     public SolicitudEliminar(Hecho hecho, String justificacion) {
         this.hecho = hecho;
         this.justificacion = justificacion;
+        this.cargarSolicitud();
     }
 
     public void aceptar() {
@@ -31,7 +33,9 @@ public class SolicitudEliminar {
         }
     }
 
-   /* public EstadoEliminar getEstadoEliminar() {
+    public void cargarSolicitud() { SolicitudRepositoryEnMemoria.getInstancia().guardar(this); }
+
+    /* public EstadoEliminar getEstadoEliminar() {
         return estadoEliminar;
     } */
 }
