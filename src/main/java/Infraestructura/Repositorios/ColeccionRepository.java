@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface ColeccionRepository {
     void guardar(Coleccion coleccion);
     Coleccion buscarPorTitulo(String titulo);
+    public Coleccion buscarPorHandle(String handle);
     public ArrayList<Coleccion> obtenerTodas();
     void eliminarPorTitulo(String titulo);
 }

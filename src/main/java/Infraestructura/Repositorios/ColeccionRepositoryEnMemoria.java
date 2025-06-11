@@ -33,6 +33,16 @@ public class ColeccionRepositoryEnMemoria implements ColeccionRepository{
     }
 
     @Override
+    public Coleccion buscarPorHandle(String handle) {
+        for (Coleccion c : colecciones) {
+            if (c.getHandle().equals(handle)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public ArrayList<Coleccion> obtenerTodas() {
         return new ArrayList<>(this.colecciones);
     }

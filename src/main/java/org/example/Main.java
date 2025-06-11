@@ -32,6 +32,7 @@ public class Main {
         Javalin app = Javalin.create().start(7000);
 
         app.get("/hechos", new GetHechosHandler());
+        app.get("/colecciones/<identificador>/hechos", new GetHechosHandler());
         /*app.get("/colecciones", new GetColeccionesHandler());*/
         app.post("/solicitudes",new PostSolicitudesHandler());
 
