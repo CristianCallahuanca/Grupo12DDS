@@ -32,7 +32,6 @@ public class Coleccion {
         ColeccionRepositoryEnMemoria.getInstancia().guardar(this);
     }
 
-
     public String getTitulo() {
         return titulo;
     }

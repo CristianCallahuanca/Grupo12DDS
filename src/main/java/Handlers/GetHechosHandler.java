@@ -37,35 +37,33 @@ public class GetHechosHandler implements Handler {
                 : null;
 
         // Parsear fechas si están presentes
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-hh-mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm");
 
         LocalDateTime fechaReporteDesde = fechaReporteDesdeStr != null ? LocalDateTime.parse(fechaReporteDesdeStr, formatter) : null;
         LocalDateTime fechaReporteHasta = fechaReporteHastaStr != null ? LocalDateTime.parse(fechaReporteHastaStr, formatter) : null;
         LocalDateTime fechaAcontecimientoDesde = fechaAcontecimientoDesdeStr != null ? LocalDateTime.parse(fechaAcontecimientoDesdeStr, formatter) : null;
         LocalDateTime fechaAcontecimientoHasta = fechaAcontecimientoHastaStr != null ? LocalDateTime.parse(fechaAcontecimientoHastaStr, formatter) : null;
 
+        LocalDateTime fechaHardcodeadaHasta = LocalDateTime.of(4025, 12, 31, 23, 59);
+        LocalDateTime fechaHardcodeadaDesde = LocalDateTime.of(2000, 1, 1, 1, 0);
+
         // Obtener y filtrar colecciones
         List<Coleccion> colecciones = ColeccionRepositoryEnMemoria.getInstancia().obtenerTodas();
-
-        List<Hecho> hechos;
 
         //Falta hacer BIEN fechaReporteDesde en adelante
         List<Coleccion> filtradas = colecciones.stream()
                 .filter(c -> categoria == null || !c.filtrarHechos(List.of(new PorCategoria(categoria))).isEmpty())
                 .filter(c -> (latitudParam == null && longitudParam == null) || !c.filtrarHechos(List.of(new PorUbicacion(ubicacionFinal))).isEmpty())
-                .filter(c -> (fechaReporteDesde == null && fechaReporteHasta == null) ||
-                        !c.filtrarHechos(List.of(new PorFechaCarga(fechaReporteDesde, fechaReporteHasta))).isEmpty())
-                .filter(c -> (fechaAcontecimientoDesde == null && fechaAcontecimientoHasta == null) ||
-                        !c.filtrarHechos(List.of(new PorFechaAcontecimiento(fechaAcontecimientoDesde, fechaAcontecimientoHasta))).isEmpty())
+                .filter(c -> fechaReporteDesde == null ||
+                        !c.filtrarHechos(List.of(new PorFechaCarga(fechaReporteDesde, fechaHardcodeadaHasta))).isEmpty())
+                .filter(c -> fechaReporteHasta == null ||
+                        !c.filtrarHechos(List.of(new PorFechaCarga(fechaHardcodeadaDesde, fechaReporteHasta))).isEmpty())
+                .filter(c -> fechaAcontecimientoDesde == null ||
+                        !c.filtrarHechos(List.of(new PorFechaAcontecimiento(fechaAcontecimientoDesde, fechaHardcodeadaHasta))).isEmpty())
+                .filter(c -> fechaAcontecimientoHasta == null ||
+                        !c.filtrarHechos(List.of(new PorFechaAcontecimiento(fechaHardcodeadaDesde, fechaAcontecimientoHasta))).isEmpty())
                 .toList();
 
-        ctx.json(colecciones);
+        ctx.json(filtradas);
     }
 }
-
-//FuenteEstatica fuentePrueba = new FuenteEstatica(new Dataset("/home/utnso/IdeaProjects/Grupo12DDS/datos/desastres_naturales_argentina.csv"));
-
-//List<Hecho> prueba = fuentePrueba.procesarHechosDesdeCSV();
-
-/*
-* */
