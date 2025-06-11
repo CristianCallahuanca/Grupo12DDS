@@ -4,11 +4,19 @@ public class BodyMessage {
     private String titulo;
     private String justificacion;
 
-    public String GetTituloHecho(){
-        return this.titulo;
+    public String getTitulo() {
+        return titulo;
     }
 
-    public String GetJustificacion(){
-        return this.justificacion;
+    public void setTituloHecho(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getJustificacion() {
+        return justificacion;
+    }
+
+    public void setJustificacion(String justificacion) {
+        this.justificacion = justificacion;
     }
 }

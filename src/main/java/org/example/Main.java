@@ -35,8 +35,6 @@ public class Main {
         /*app.get("/colecciones", new GetColeccionesHandler());*/
         app.post("/solicitudes",new PostSolicitudesHandler());
 
-
-
     }
 }
 
