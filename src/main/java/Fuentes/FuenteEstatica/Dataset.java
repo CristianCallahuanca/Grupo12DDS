@@ -22,6 +22,7 @@ public class Dataset {
 
     public Dataset(String archivoCSV) {
         this.archivoCSV = archivoCSV;
+        FuenteEstatica.getInstancia().guardar(this);
     }
 
     public String getArchivoCSV() {

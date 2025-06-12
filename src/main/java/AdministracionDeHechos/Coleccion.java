@@ -4,6 +4,7 @@ import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import lombok.Getter;
 import lombok.Setter;
+import AdministracionDeHechos.Hecho;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.List;
@@ -54,7 +55,7 @@ public class Coleccion {
     }
 
     public List<Hecho> obtenerHechos() {
-        return hechos.stream().filter(hecho->hecho.getIsVisible()).toList();
+        return hechos.stream().filter(hecho->hecho.getVisible()).toList();
     }
 
     // Navegacion de Hechos
@@ -72,12 +73,17 @@ public class Coleccion {
     }
 
     // Filtrar hechos
-    public List<Hecho> filtrarHechos(List<CriterioDePertenencia> filtros){
+   /* public List<Hecho> filtrarHechos(List<CriterioDePertenencia> filtros){
         return this.obtenerHechos().stream().filter(unHecho -> this.filtarHecho(unHecho, filtros))
+                .toList();
+    }*/
+
+    public List<Hecho> filtrarHechos(List<CriterioDePertenencia> filtros) {
+        return this.obtenerHechos().stream().filter(unHecho -> unHecho.filtarHecho(filtros))
                 .toList();
     }
 
-    private boolean filtarHecho(Hecho unHecho,List<CriterioDePertenencia> filtros) {
+      /*  private boolean filtarHecho(Hecho unHecho,List<CriterioDePertenencia> filtros) {
         List<Boolean> CumplioCondiciones = filtros.stream()
                 .map(unFiltro ->  cumpleElTipoDeFiltro(unHecho, unFiltro, filtros))
                 .toList();
@@ -97,6 +103,6 @@ public class Coleccion {
     private Boolean coincidenTipos(CriterioDePertenencia unFiltro, CriterioDePertenencia otroFiltro) {
         return unFiltro.getClass() == otroFiltro.getClass();
     }
-
+*/
 }
 

@@ -2,6 +2,7 @@ package Fuentes.Proxy;
 
 import AdministracionDeHechos.Hecho;
 import SolicitudEliminar.SolicitudEliminar;
+import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +14,10 @@ public class FuenteMetaMapa extends FuenteProxy {
         this.adapter = adapter;
     }
 
+
     public void actualizarHechosDesdeAPI() {
-        List<Hecho> hechos = adapter.obtenerHechosExternos(new HashMap<>());
+        List<Hecho> nuevosHechos = adapter.obtenerHechosExternos(new HashMap<>());
+        nuevosHechos.forEach(unHecho -> HechoRepositoryEnMemoria.getInstancia().guardar(unHecho));
         this.hechos.addAll(hechos); // o con logica para evitar duplicados
     }
 

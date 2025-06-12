@@ -3,6 +3,7 @@ package Fuentes;
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.Hecho;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,13 +20,13 @@ public abstract class Fuente {
         this.hechos = new ArrayList<>();
     }
 
-    public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios){
-        return hechos.stream().filter(unHecho -> this.filtarHecho(unHecho, criterios))
+    public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios)throws IOException {
+        return hechos.stream().filter(unHecho -> unHecho.filtarHecho(criterios))
                 .toList();
 
     }
 
-    private boolean filtarHecho(Hecho unHecho,List<CriterioDePertenencia> criterios) {
+    /*public boolean filtarHecho(Hecho unHecho,List<CriterioDePertenencia> criterios) {
         List<Boolean> CumplioCondiciones = criterios.stream()
                 .map(unCriterio ->  cumpleElTipoDeCriterio(unHecho, unCriterio, criterios))
                 .toList();
@@ -44,7 +45,7 @@ public abstract class Fuente {
 
     private Boolean coincidenTipos(CriterioDePertenencia unCriterio, CriterioDePertenencia otroCriterio) {
         return unCriterio.getClass() == otroCriterio.getClass();
-    }
+    }*/
 }
 
 

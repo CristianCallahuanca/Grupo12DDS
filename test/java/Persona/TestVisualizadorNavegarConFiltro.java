@@ -42,6 +42,7 @@ public class TestVisualizadorNavegarConFiltro {
     public void setUp() {
         ubicacion1 = new Ubicacion(100, 200);
         ubicacion2 = new Ubicacion(250, 480);
+        fuentePrueba = new FuenteDinamica();
 
         hecho1 = new Hecho("Incendio en veterinaria",
                 "Se produjo un incendio que afectó varias viviendas en la zona, generando gran preocupación entre los vecinos.",
@@ -49,7 +50,11 @@ public class TestVisualizadorNavegarConFiltro {
                 ubicacion1,
                 fa1,
                 fc1,
-                "PRUEBA");
+                "PRUEBA",
+      /*        "",
+               fuentePrueba,*/
+
+                );
         hecho2 = new Hecho("Corte de luz",
                 "Un corte de luz afectó varias viviendas en la zona," +
                         "generando gran preocupación entre los vecinos.",
@@ -66,7 +71,7 @@ public class TestVisualizadorNavegarConFiltro {
                 fc3,
                 "trabajo");
 
-        fuentePrueba = new FuenteDinamica();
+
         fuentePrueba.agregarHecho(hecho1);
         fuentePrueba.agregarHecho(hecho2);
         fuentePrueba.agregarHecho(hecho3);

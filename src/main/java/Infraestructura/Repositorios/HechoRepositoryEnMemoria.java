@@ -1,19 +1,18 @@
 package Infraestructura.Repositorios;
 
 import AdministracionDeHechos.Hecho;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class FuenteDinamicaRepositoryEnMemoria implements FuenteDinamicaRepository{
+public class HechoRepositoryEnMemoria implements HechoRepository{
 
-    private static final FuenteDinamicaRepositoryEnMemoria instance = new FuenteDinamicaRepositoryEnMemoria();
+    private static final HechoRepositoryEnMemoria instance = new HechoRepositoryEnMemoria();
     private List<Hecho> hechos = new ArrayList<>();
 
-    private FuenteDinamicaRepositoryEnMemoria() {
+    private HechoRepositoryEnMemoria() {
     }
 
-    public static FuenteDinamicaRepositoryEnMemoria getInstancia() {
+    public static HechoRepositoryEnMemoria getInstancia() {
         return instance;
     }
 
@@ -21,7 +20,6 @@ public class FuenteDinamicaRepositoryEnMemoria implements FuenteDinamicaReposito
     public void guardar(Hecho hecho) {
         hechos.add(hecho);
     }
-
     @Override
     public Hecho buscarPorTitulo(String titulo) {
         for (Hecho h : hechos) {

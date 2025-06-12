@@ -1,6 +1,8 @@
 package Fuentes.Proxy;
 
+import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.Hecho;
+import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -22,10 +24,12 @@ public class FuenteDemo extends FuenteProxy {
 
         if (Duration.between(ultimaActualizacion, LocalDateTime.now()).toMinutes() >= 60) {
             List<Hecho> nuevosHechos = adapter.obtenerHechos();
+            nuevosHechos.forEach(unHecho -> HechoRepositoryEnMemoria.getInstancia().guardar(unHecho));
             this.hechos.addAll(nuevosHechos);
             this.ultimaActualizacion = LocalDateTime.now();
         }
     } // Esto lo aplicamos asi de esta forma pero en realidad luego tenemos que evaluar con los CRON JOBS
     //ya que este mecanismo no tiene que ser propio de esta clase
+
 }
 

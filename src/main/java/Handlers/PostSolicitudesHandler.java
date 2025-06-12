@@ -3,7 +3,8 @@ package Handlers;
 
 import AdministracionDeHechos.Hecho;
 
-import Infraestructura.Repositorios.FuenteDinamicaRepositoryEnMemoria;
+import Fuentes.FuenteEstatica.FuenteEstatica;
+import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 
 import SolicitudEliminar.SolicitudEliminar;
 import io.javalin.http.Context;
@@ -33,7 +34,8 @@ public class PostSolicitudesHandler implements Handler {
 
         Hecho hecho = null;
 
-        hecho = FuenteDinamicaRepositoryEnMemoria.getInstancia().buscarPorTitulo(titulo);
+        hecho = HechoRepositoryEnMemoria.getInstancia().buscarPorTitulo(titulo);
+
 
         if(hecho == null){
             ctx.status(400).result("no se encontro el hecho");

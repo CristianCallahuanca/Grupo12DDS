@@ -1,15 +1,21 @@
 package AdministracionDeHechos;
+import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import Fuentes.FuenteDinamica;
-import Infraestructura.Repositorios.FuenteDinamicaRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import Persona.Contribuyente.Contribuyente;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.example.Main.logger;
 
-
+@Getter
+@Setter
 public class Hecho {
     private String titulo;
     private String descripcion;
@@ -38,15 +44,19 @@ public class Hecho {
         this.origen = origen;
         this.visible = true;
         this.contribuyente = contribuyente;
-        if (origen == Origen.DINAMICA) {
-            FuenteDinamicaRepositoryEnMemoria.getInstancia().guardar(this);
-            contribuyente.agregarAListaDeHechos(this);
+        if (origen == Origen.DINAMICA || origen == Origen.PROXY ) {
+            HechoRepositoryEnMemoria.getInstancia().guardar(this);
+            if(this.contribuyente != null){contribuyente.agregarAListaDeHechos(this);}
 
         }
     }
 
 
-    //GETTERS Y SETTER
+    public boolean getIsVisible() {
+        return visible;
+    }
+
+    /*GETTERS Y SETTER
     public String getTitulo() {
         return titulo;
     }
@@ -95,10 +105,6 @@ public class Hecho {
         this.fechaCarga = fechaCarga;
     }
 
-    public boolean getIsVisible() {
-        return visible;
-    }
-
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
@@ -133,7 +139,7 @@ public class Hecho {
 
     public void setContribuyente(Contribuyente contribuyente) {
         this.contribuyente = contribuyente;
-    }
+    }*/
 
     //METODOS DE HECHOS
     public void marcarComoNoVisible() {
@@ -173,10 +179,28 @@ public class Hecho {
         // Con esto basta para saber si puede ser editado?
     }
 
-    public void guardarEnFuenteDinamica(FuenteDinamica fuente){
-        if (origen == Origen.DINAMICA){
-            fuente.agregarHecho(this);
-        }
-    } //COMENTAR ESTO
+    public boolean filtarHecho(List<CriterioDePertenencia> filtros) {
+        List<Boolean> CumplioCondiciones = filtros.stream()
+                .map(unFiltro ->  cumpleElTipoDeFiltro(unFiltro, filtros))
+                .toList();
+        //Dado un hecho y las condiciones, mapea cada condición, si la cumple queda true y sino false. Ej: CumplioCondiciones = [T,T,F,T]
 
+        boolean todosTrue = CumplioCondiciones.stream().allMatch(Boolean::booleanValue); //Checkea que la lista este llena de true
+        return todosTrue;
+    }
+
+    public boolean cumpleElTipoDeFiltro(CriterioDePertenencia unFiltro, List<CriterioDePertenencia> filtros) {
+        return filtros.stream()
+                .filter( otroFiltro -> this.coincidenTipos(otroFiltro, unFiltro)) //esto nos deja los criterios que tenga el mismo tipo que un criterio
+                .anyMatch(criterioFiltrado -> criterioFiltrado.cumpleUno(this));
+        // En la lista de criterios del mismo tipo, evalúo cada uno con unHecho, si uno solo cumple -> Devuelve true.
+    }
+
+    public Boolean coincidenTipos(CriterioDePertenencia unFiltro, CriterioDePertenencia otroFiltro) {
+        return unFiltro.getClass() == otroFiltro.getClass();
+    }
+
+    public boolean getVisible() {
+        return visible;
+    }
 }

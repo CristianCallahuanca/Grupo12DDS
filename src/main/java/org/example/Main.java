@@ -33,7 +33,6 @@ public class Main {
 
         app.get("/hechos", new GetHechosHandler());
         app.get("/colecciones/<identificador>/hechos", new GetHechosHandler());
-        /*app.get("/colecciones", new GetColeccionesHandler());*/
         app.post("/solicitudes",new PostSolicitudesHandler());
 
     }
