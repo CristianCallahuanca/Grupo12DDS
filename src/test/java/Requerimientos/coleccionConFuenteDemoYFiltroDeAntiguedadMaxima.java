@@ -21,7 +21,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 public class coleccionConFuenteDemoYFiltroDeAntiguedadMaxima {
-/*
+
     @Test
     public void coleccionConFuenteDemoYFiltroDeAntiguedadMaxima() throws MalformedURLException, IOException {
         // Arrange
@@ -33,8 +33,8 @@ public class coleccionConFuenteDemoYFiltroDeAntiguedadMaxima {
 
         Coleccion coleccion = new Coleccion(fuenteDemo, "Hechos recientes demo",
                 "Coleccion con hechos de fuente demo con antigüedad máxima 1 hora",
-                List.of(criterioAntiguedad),
-                datos.getHandle());
+                List.of(criterioAntiguedad)
+        );
 
 
         List<Hecho> hechosFiltrados = coleccion.obtenerHechos();
@@ -49,7 +49,7 @@ public class coleccionConFuenteDemoYFiltroDeAntiguedadMaxima {
         FuenteDemo fuenteCon2Horas = mockFuenteDemo(LocalDateTime.now().minusHours(2), true);
         fuenteCon2Horas.sincronizar();
 
-        Coleccion coleccionConHechos = new Coleccion(fuenteCon2Horas, "DemoConHechos", "Debería tener hechos", List.of(), datos.getHandle());
+        Coleccion coleccionConHechos = new Coleccion(fuenteCon2Horas, "DemoConHechos", "Debería tener hechos", List.of());
         List<Hecho> hechosCasoA = coleccionConHechos.obtenerHechos();
 
         Assertions.assertFalse(hechosCasoA.isEmpty(), "Deberia haber sincronizado hechos (paso mas de 1 hora)");
@@ -59,7 +59,7 @@ public class coleccionConFuenteDemoYFiltroDeAntiguedadMaxima {
         FuenteDemo fuenteCon30Min = mockFuenteDemo(LocalDateTime.now().minusMinutes(30), true);
         fuenteCon30Min.sincronizar();
 
-        Coleccion coleccionSinHechos = new Coleccion(fuenteCon30Min, "DemoSinHechos", "No debería tener hechos", List.of(), datos.getHandle());
+        Coleccion coleccionSinHechos = new Coleccion(fuenteCon30Min, "DemoSinHechos", "No debería tener hechos", List.of());
         List<Hecho> hechosCasoB = coleccionSinHechos.obtenerHechos();
 
         Assertions.assertTrue(hechosCasoB.isEmpty(), "No debería sincronizar (no paso 1 hora)");
@@ -108,5 +108,5 @@ public class coleccionConFuenteDemoYFiltroDeAntiguedadMaxima {
             setUltimaActualizacion(ultimaActualizacion);
         }};
     }
-*/
+
 }

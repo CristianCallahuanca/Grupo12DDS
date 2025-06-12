@@ -1,9 +1,8 @@
 package AdministracionDeHechos;
-import Fuentes.Fuente;
-import Infraestructura.Repositorios.HechoRepositorio;
+import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
+import Fuentes.FuenteDinamica;
+import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import Persona.Contribuyente.Contribuyente;
-import Servicios.ServicioDeIdentificacion;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,36 +10,30 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.example.Main.logger;
 
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true) // Es necesario para los algoritmos de concenso
 public class Hecho {
-    @EqualsAndHashCode.Include
     private String titulo;
-    @EqualsAndHashCode.Include
     private String descripcion;
-    @EqualsAndHashCode.Include
     private String categoria;
-    @EqualsAndHashCode.Include
     private Ubicacion ubicacion;
-    @EqualsAndHashCode.Include
-    private List<String> archivosMultimedia;
-    @EqualsAndHashCode.Include
-    private String etiqueta;
-    @EqualsAndHashCode.Include
     private LocalDateTime fechaAcontecimiento;
     private LocalDateTime fechaCarga;
-    private Contribuyente contribuyente;
-    private Origen origen;
-    private Fuente fuente;
-    private int id_hecho;
-    private EstadoHecho estadoHecho;
-    private EstadoEdicionHecho estadoEdicionHecho;
+    private boolean visible;
 
-    
+    public boolean getVisible() {
+        return visible;
+    }
+
+    private Origen origen;
+    private List<String> archivosMultimedia;
+    private String etiqueta;
+    private Contribuyente contribuyente;
+
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
                  LocalDateTime fechaAcontecimiento,String etiqueta) {
 
@@ -50,22 +43,19 @@ public class Hecho {
         this.ubicacion = ubicacion;
         this.fechaAcontecimiento = fechaAcontecimiento;
         this.etiqueta = etiqueta;
-        this.estadoHecho = EstadoHecho.EN_REVISION;
-        this.estadoEdicionHecho = EstadoEdicionHecho.NO_EDITADO;
+        this.visible = true;
         this.fechaCarga = LocalDateTime.now();
-        this.id_hecho = ServicioDeIdentificacion.getInstancia().generarIDHecho();
     }
 
     public void setOrigen(Origen unOrigen) {
         this.origen = unOrigen;
-        if (unOrigen != Origen.ESTATICA) {HechoRepositorio.getInstancia().guardar(this);}
+        if (unOrigen != Origen.ESTATICA) {HechoRepositoryEnMemoria.getInstancia().guardar(this);}
     }
 
     //METODOS DE HECHOS
     public void marcarComoNoVisible() {
-        this.estadoHecho = EstadoHecho.NO_VISIBLE;
+        this.visible = false;
     }
-
 
     public void editarCon(Hecho cambios) {
         if (this.puedeSerEditado()) {
@@ -76,7 +66,6 @@ public class Hecho {
             this.etiqueta = cambios.getEtiqueta();
             this.archivosMultimedia = new ArrayList<>(cambios.getArchivosMultimedia());
             this.fechaAcontecimiento = cambios.getFechaAcontecimiento();
-            this.estadoEdicionHecho = EstadoEdicionHecho.EDITADO;
             //NO cambiar contribuyente, origen ni fecha de carga
         } else {
             throw new IllegalStateException("El hecho ya no puede ser editado.");
@@ -99,6 +88,28 @@ public class Hecho {
         return this.origen == Origen.DINAMICA && //hay que ver que sea registrado
                 ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
         // Con esto basta para saber si puede ser editado?
+    }
+
+    //Se fija si un hecho cumple una lista de criterios y retorna BOOL. NO FILTRA
+    public boolean filtrarHecho(List<CriterioDePertenencia> filtros) {
+        // Para cada tipo de filtro, verificamos si el hecho cumple al menos uno de ese tipo.
+        return filtros.stream()
+                .collect(Collectors.groupingBy(CriterioDePertenencia::getClass))
+                .values()
+                .stream()
+                .allMatch(grupo -> grupo.stream().anyMatch(f -> f.cumpleUno(this)));
+    }
+
+
+    private boolean cumpleElTipoDeFiltro(CriterioDePertenencia unFiltro, List<CriterioDePertenencia> filtros) {
+        return filtros.stream()
+                .filter( otroFiltro -> this.coincidenTipos(otroFiltro, unFiltro)) //esto nos deja los criterios que tenga el mismo tipo que un criterio
+                .anyMatch(criterioFiltrado -> criterioFiltrado.cumpleUno(this));
+        // En la lista de criterios del mismo tipo, evalúo cada uno con unHecho, si uno solo cumple -> Devuelve true.
+    }
+
+    private Boolean coincidenTipos(CriterioDePertenencia unFiltro, CriterioDePertenencia otroFiltro) {
+        return unFiltro.getClass() == otroFiltro.getClass();
     }
 
 

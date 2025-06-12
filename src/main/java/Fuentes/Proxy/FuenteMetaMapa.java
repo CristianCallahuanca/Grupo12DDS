@@ -1,135 +1,40 @@
 package Fuentes.Proxy;
 
 import AdministracionDeHechos.Hecho;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import lombok.Getter;
-import lombok.Setter;
+import AdministracionDeHechos.Origen;
+import SolicitudEliminar.SolicitudEliminar;
+import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-@Setter
-@Getter
 public class FuenteMetaMapa extends FuenteProxy {
+    private AdaptadorMetaMapa adapter;
 
-    //List<Hecho> hechos  = new ArrayList<>();
-    private String urlBase;
-    //SINGLETON
-    private static final FuenteMetaMapa instance = new FuenteMetaMapa();
-    public FuenteMetaMapa(){}
-    public static FuenteMetaMapa getInstancia() {return instance;}
-    //SINGLETON
-
-    //Ejemplos de como se realizaría una busqueda en distintas instancias
-    //http://MetaMapa.Argentina.com/hechos
-    //http://MetaMapa.Chile.com/hechos
-    //http://localhost:7000/hechos
-
-    //urlbase http://MetaMapa  -> ARGENTINA /coleccionHechos
-    /*resultados: categoria, fecha_reporte_desde,
-     fecha_reporte_hasta,
-     fecha_acontecimiento_desde,
-    fecha_acontecimiento_hasta, ubicacion.
-    */
-    /*
-    Map<String, String> filtros = new HashMap<>();
-    filtros.put("categoria", "tecnologia");
-    filtros.put("fecha_acontecimiento_hasta", "2025-12-01-11-12-01");
-    */
-
-    // GET /hechos
-    public List<Hecho> obtenerHechosDeOtraInstancia(Map<String, String> filtros, String IdURL) {
-        String endpoint = urlBase + IdURL + "/hechos";
-
-        // Agregar filtros como queryParams
-        if (!filtros.isEmpty()) {
-            String queryString = filtros.entrySet().stream()
-                    .map(entry -> entry.getKey() + "=" + entry.getValue())// convierte cada par clave-valor en un string tipo "clave=valor"
-                    .collect(Collectors.joining("&"));                             // une todos los pares con '&'
-            endpoint += "?" + queryString;
-        }
-
-        // Realizar GET a endpoint
-        return obtenerHechosDesdeEndpoint(endpoint);
-    }
-
-    // GET /colecciones/:id/hechos
-    public List<Hecho> obtenerHechosDeColeccionDeOtraInstancia(Map<String, String> filtros, String IDColeccion, String IdURL) {
-        String endpoint = urlBase + IdURL + "/colecciones/" + IDColeccion + "/hechos";
-
-        // Agregar filtros como queryParams
-        if (!filtros.isEmpty()) {
-            String queryString = filtros.entrySet().stream()
-                    .map(entry -> entry.getKey() + "=" + entry.getValue())// convierte cada par clave-valor en un string tipo "clave=valor"
-                    .collect(Collectors.joining("&"));                             // une todos los pares con '&'
-            endpoint += "?" + queryString;
-        }
-
-        return obtenerHechosDesdeEndpoint(endpoint);
-    }
-
-    // POST /solicitudes
-    public void enviarSolicitudDeEliminacion(String IDHechoAEliminar, String IdURL) {
-        String endpoint = urlBase + IdURL + "/solicitudes";
-
-        String cuerpoJson = serializarSolicitud(IDHechoAEliminar);
-
-        hacerPost(endpoint, cuerpoJson);
-    }
-
-    private List<Hecho> obtenerHechosDesdeEndpoint(String endpoint) {
-        HttpClient client = HttpClient.newHttpClient(); // Crea una instancia del cliente HTTP
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(endpoint))              // Usa la URL del parametro
-                .GET()                                  // Especifica que la petición es GET
-                .build();
-
-        try {
-            //Envía la solicitud y espera una respuesta como String.
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() == 200) {
-                Gson gson = new Gson();                 // Usa Gson para convertir el JSON recibido a una lista de objetos Hecho
-                Type listType = new TypeToken<List<Hecho>>() {}.getType();
-                return gson.fromJson(response.body(), listType);
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return new ArrayList<>();
-    }
-
-    private String serializarSolicitud(String solicitud) {
-        Gson gson = new Gson();
-        return gson.toJson(solicitud);
+    public FuenteMetaMapa(AdaptadorMetaMapa adapter) {
+        this.adapter = adapter;
     }
 
 
-    private void hacerPost(String endpoint, String jsonBody) {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(endpoint))                              // ← a qué URL se envía
-                .header("Content-Type", "application/json")       // ← indica que estás enviando JSON
-                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))    // ← cuerpo del POST en formato JSON
-                .build();
-        try {
-            //Envía la solicitud y espera la respuesta como String.
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Respuesta POST: " + response.statusCode());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void actualizarHechosDesdeAPI() {
+        List<Hecho> nuevosHechos = adapter.obtenerHechosExternos(new HashMap<>());
+        nuevosHechos.forEach(unHecho -> unHecho.setOrigen(Origen.PROXY));
+        this.hechos.addAll(nuevosHechos); // o con logica para evitar duplicados
     }
 
+    public void actualizarHechosDeColeccion(String identificadorColeccion) {
+        List<Hecho> nuevosHechos = adapter.obtenerHechosDeColeccion(identificadorColeccion);
+        this.hechos.addAll(nuevosHechos); // o con logica para evitar duplicados
+    }
+
+    public void enviarSolicitud(SolicitudEliminar solicitud) {
+        adapter.enviarSolicitudDeEliminacion(solicitud);
+    }
+
+
+    @Override
+    public void sincronizar() {
+        this.actualizarHechosDesdeAPI();
+    }
 }
 

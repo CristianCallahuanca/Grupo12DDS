@@ -1,9 +1,21 @@
 package Requerimientos;
 
+import AdministracionDeHechos.Hecho;
+import AdministracionDeHechos.Ubicacion;
+import Fuentes.Proxy.AdaptadorMetaMapa;
+import Fuentes.Proxy.FuenteMetaMapa;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class FuenteMetaMapaSincronizaEnTiempoReal {
-/*
+
     @Test
-    public void testSincronizaFuenteMetaMapaYObtieneHechos() throws IOException {
+    public void testSincronizaFuenteMetaMapaYObtieneHechos() {
         FuenteMetaMapa fuenteMetaMapa = new FuenteMetaMapa(mockAdaptadorMetaMapa());
 
         fuenteMetaMapa.sincronizar();
@@ -13,8 +25,8 @@ public class FuenteMetaMapaSincronizaEnTiempoReal {
         Assertions.assertEquals(2, hechos.size(), "Debe haber traído los hechos actuales en tiempo real");
     }
 
-    private MetaMapaAdaptada mockAdaptadorMetaMapa() {
-        return new MetaMapaAdaptada("http://localhost:7000") {
+    private AdaptadorMetaMapa mockAdaptadorMetaMapa() {
+        return new AdaptadorMetaMapa("http://localhost:7000") {
             @Override
             public List<Hecho> obtenerHechosExternos(Map<String, String> filtros) {
                 List<Hecho> hechos = new ArrayList<>();
@@ -41,7 +53,7 @@ public class FuenteMetaMapaSincronizaEnTiempoReal {
         };
     }
 
-*/
+
 }
 
 /*Probar SERVIDOR - CLIENTE para una prueba integral correcta*/

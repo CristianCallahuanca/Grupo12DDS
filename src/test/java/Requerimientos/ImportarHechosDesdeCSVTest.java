@@ -30,7 +30,7 @@ public class ImportarHechosDesdeCSVTest {
         Dataset dataset = new Dataset(pathCSV);
 
 
-        List<Hecho> hechos = fuente.obtenerHechos();
+        List<Hecho> hechos = fuente.procesarHechosDesdeCSV();
 
         assertNotNull(hechos);
         assertFalse(hechos.isEmpty(), "No se importaron hechos desde el CSV");
@@ -48,7 +48,7 @@ public class ImportarHechosDesdeCSVTest {
     }
 }
 
-/*Verificar si los hechos tambien se guardan automaticamente en HechoRepositorio
+/*Verificar si los hechos tambien se guardan automaticamente en HechoRepositoryEnMemoria
 
 Probar que pasa con un archivo que no llega a 10.000 lineas
 

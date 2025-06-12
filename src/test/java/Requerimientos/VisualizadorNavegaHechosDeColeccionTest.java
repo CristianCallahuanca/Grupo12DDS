@@ -6,7 +6,7 @@ import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.Fuente;
-import Infraestructura.Repositorios.HechoRepositorio;
+import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -20,8 +20,8 @@ public class VisualizadorNavegaHechosDeColeccionTest {
     @Test
     public void visualizarHechosDesdeFuenteDinamica() throws IOException {
 
-        HechoRepositorio.getInstancia().limpiar();//TEST
-        System.out.println("Hechos al iniciar test: " + HechoRepositorio.getInstancia().obtenerTodas().size());
+        HechoRepositoryEnMemoria.getInstancia().limpiar();//TEST
+        System.out.println("Hechos al iniciar test: " + HechoRepositoryEnMemoria.getInstancia().obtenerTodas().size());
 
 
         Hecho h1 = new Hecho("Inundacion", "Descripcion 1", "Clima",
@@ -33,36 +33,33 @@ public class VisualizadorNavegaHechosDeColeccionTest {
         h2.setOrigen(Origen.DINAMICA);
 
 
-        System.out.println("Hechos despues de guardar: " + HechoRepositorio.getInstancia().obtenerTodas().size());
+        System.out.println("Hechos despues de guardar: " + HechoRepositoryEnMemoria.getInstancia().obtenerTodas().size());
 
         Fuente fuenteDinamica = new Fuente() {
             @Override
             public List<Hecho> obtenerHechos() {
-                return HechoRepositorio.getInstancia().obtenerTodas();
+                return HechoRepositoryEnMemoria.getInstancia().obtenerTodas();
             }
 
-            /* No se porque esto estaba overrideado, imagino que el test quedó viejo.
-            Si querés filtrar para hacer andar el test (que no entiendo), usa el servicio
             @Override
             public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios) {
-                return HechoRepositorio.getInstancia().obtenerTodas().stream()
+                return HechoRepositoryEnMemoria.getInstancia().obtenerTodas().stream()
                         .filter(h -> h.filtrarHecho(criterios))
                         .toList();
             }
-            */
         };
 
-/*
+
         Coleccion coleccion = new Coleccion(fuenteDinamica, "Eventos Dinamicos",
-                "Ejemplo test fuente dinamica", List.of(), datos.getHandle());
+                "Ejemplo test fuente dinamica", List.of());
         System.out.println("Hechos después de crear colección: " + coleccion.obtenerHechos().size());
 
         List<Hecho> hechosDeLaColeccion = coleccion.obtenerHechos();
 
         assertEquals(2, hechosDeLaColeccion.size());
-        assertTrue(hechosDeLaColeccion.stream().anyMatch(h -> h.getTitulo().equals("Inundacion")));
+        assertTrue(hechosDeLaColeccion.stream().anyMatch(h -> h.getTitulo().equals("Inundación")));
         assertTrue(hechosDeLaColeccion.stream().anyMatch(h -> h.getTitulo().equals("Incendio")));
+
         hechosDeLaColeccion.forEach(h -> System.out.println("Hecho: " + h.getTitulo()));
-*/
     }
 }

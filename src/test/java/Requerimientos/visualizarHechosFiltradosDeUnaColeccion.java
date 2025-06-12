@@ -7,8 +7,7 @@ import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.Fuente;
-import Infraestructura.Repositorios.HechoRepositorio;
-import Servicios.ServicioFiltradorDeHechos;
+import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import org.junit.jupiter.api.Test;
 
 
@@ -23,7 +22,7 @@ public class visualizarHechosFiltradosDeUnaColeccion  {
     @Test
     public void testVisualizacion() throws IOException {
         // Limpiar estado TEST
-        HechoRepositorio.getInstancia().limpiar();
+        HechoRepositoryEnMemoria.getInstancia().limpiar();
 
         // Crear hechos
         Hecho h1 = new Hecho("Inundación", "Desc", "Clima",
@@ -42,32 +41,27 @@ public class visualizarHechosFiltradosDeUnaColeccion  {
         Fuente fuente = new Fuente() {
             @Override
             public List<Hecho> obtenerHechos() {
-                return HechoRepositorio.getInstancia().obtenerTodas();
+                return HechoRepositoryEnMemoria.getInstancia().obtenerTodas();
             }
 
-            /*
-            No se porque esto estaba overrideado, imagino que el test quedó viejo.
-            Si querés filtrar para hacer andar el test (que no entiendo), usa el servicio
             @Override
             public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios) {
                 return obtenerHechos().stream()
                         .filter(h -> h.filtrarHecho(criterios))
                         .toList();
             }
-            */
         };
 
-    /*    Coleccion coleccion = new Coleccion(fuente, "Eventos Naturales", "Hechos varios", List.of());
+        Coleccion coleccion = new Coleccion(fuente, "Eventos Naturales", "Hechos varios", List.of());
 
         CriterioDePertenencia criterioClima = new PorCategoria("Clima");
 
-        List<Hecho> filtrados = ServicioFiltradorDeHechos.filtrarHechos(coleccion.obtenerHechos(), List.of(criterioClima));
-
+        List<Hecho> filtrados = coleccion.filtrarHechos(List.of(criterioClima));
 
         assertEquals(2, filtrados.size());
         assertTrue(filtrados.stream().allMatch(h -> h.getCategoria().equals("Clima")));
         assertFalse(filtrados.stream().anyMatch(h -> h.getCategoria().equals("Fuego")));
 
-        filtrados.forEach(h -> System.out.println("Hecho filtrado: " + h.getTitulo()));*/
+        filtrados.forEach(h -> System.out.println("Hecho filtrado: " + h.getTitulo()));
     }
 }

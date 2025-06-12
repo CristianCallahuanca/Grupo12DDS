@@ -2,7 +2,7 @@ package Requerimientos;
 
 import AdministracionDeHechos.Coleccion;
 import Fuentes.FuenteEstatica.FuenteEstatica;
-import Infraestructura.Repositorios.ColeccionRepositorio;
+import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import AdministracionDeHechos.CriterioPertenencia.PorDescripcion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,14 +13,14 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CrearColeccionTest {
-/*
-    private ColeccionRepositorio repo;
+
+    private ColeccionRepositoryEnMemoria repo;
     private FuenteEstatica fuente;
     private Coleccion coleccion;
 
     @BeforeEach
     public void setUp() {
-        repo = ColeccionRepositorio.getInstancia();
+        repo = ColeccionRepositoryEnMemoria.getInstancia();
         fuente = FuenteEstatica.getInstancia();
         repo.obtenerTodas().clear(); // Limpiamos por si había datos previos
     }
@@ -31,7 +31,7 @@ public class CrearColeccionTest {
         String titulo = "Colección de Noticias";
         PorDescripcion criterio = new PorDescripcion("crimen");
 
-        coleccion = new Coleccion(fuente, titulo, "colección sobre crímenes", List.of(criterio), datos.getHandle());
+        coleccion = new Coleccion(fuente, titulo, "colección sobre crímenes", List.of(criterio));
 
         repo.guardar(coleccion);
 
@@ -43,7 +43,7 @@ public class CrearColeccionTest {
 
         assertEquals(1, encontrada.getCriterios().size());
         assertEquals(fuente, encontrada.getFuente());
-    }*/
+    }
 }
 /*- no se pueda crear una coleccion con null en los criterios (manejo de errores).
 

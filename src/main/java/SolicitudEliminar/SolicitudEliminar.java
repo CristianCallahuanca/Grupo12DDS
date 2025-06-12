@@ -1,27 +1,20 @@
 package SolicitudEliminar;
 
 import AdministracionDeHechos.Hecho;
-import Infraestructura.Repositorios.SolicitudRepositorio;
-import Servicios.ServicioDeIdentificacion;
-import Servicios.ServicioIdentificadorDeObjetos;
+import Infraestructura.Repositorios.SolicitudRepositoryEnMemoria;
 import lombok.Setter;
 import lombok.Getter;
-
-import java.io.IOException;
 
 @Setter
 @Getter
 public class SolicitudEliminar {
-    private int id_solicitud;
-    private int id_hecho;
+    private Hecho hecho;
     private String justificacion;
     private EstadoEliminar estadoEliminar;
 
     public SolicitudEliminar(Hecho hecho, String justificacion) {
-        this.id_solicitud = ServicioDeIdentificacion.getInstancia().generarIDSolicitudEliminacion(); // asignación automática de ID
-        this.id_hecho = hecho.getId_hecho(); //creo
+        this.hecho = hecho;
         this.justificacion = justificacion;
-
         if (DetectorDeSpamSingleton.getInstance().esSpam(justificacion)) {
             this.rechazar();
         } else {
@@ -30,21 +23,22 @@ public class SolicitudEliminar {
         }
     }
 
-    public void aceptar() throws IOException {
+    public void aceptar() {
         this.estadoEliminar = EstadoEliminar.APROBADA;
-        ServicioIdentificadorDeObjetos.getInstancia().obtenerHechoPorID(id_hecho).marcarComoNoVisible();
+        hecho.marcarComoNoVisible();
+
     }
 
     public void rechazar() {
         if (this.estadoEliminar != EstadoEliminar.RECHAZADA) {
             this.estadoEliminar = EstadoEliminar.RECHAZADA;
-            SolicitudRepositorio.getInstancia().eliminarSolicitud(this);
+            SolicitudRepositoryEnMemoria.getInstancia().eliminarSolicitud(this);
         }
     }
 
 
 
-    public void cargarSolicitud() { SolicitudRepositorio.getInstancia().guardar(this); }
+    public void cargarSolicitud() { SolicitudRepositoryEnMemoria.getInstancia().guardar(this); }
 
     /* public EstadoEliminar getEstadoEliminar() {
         return estadoEliminar;

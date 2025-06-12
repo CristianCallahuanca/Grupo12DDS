@@ -5,7 +5,7 @@ import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.Fuente;
-import Infraestructura.Repositorios.HechoRepositorio;
+import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.Getter;
@@ -27,13 +27,16 @@ public class FuenteEstatica extends Fuente {
     List<Dataset> ListaDeDatasets = new ArrayList<>();
 
     //Singleton
+    public FuenteEstatica(){
+    }
+
     public static FuenteEstatica getInstancia() {
         return instance;
     }
 
     //
 
-    public boolean tieneMasDeNFilas(int minimoDeArchivos, Dataset unDataset) throws IOException {
+    public boolean tieneMasDeDiezMilFilas(int minimoDeArchivos, Dataset unDataset) throws IOException {
 
         FileReader file = new FileReader(unDataset.getArchivoCSV());
         int contarLineas = 0;
@@ -58,10 +61,7 @@ public class FuenteEstatica extends Fuente {
     }
 
 
-
-    
-    @Override
-    public List<Hecho> obtenerHechos() throws IOException {
+    public List<Hecho> procesarHechosDesdeCSV() throws IOException {
         int indice=0;
         List<Hecho> hechos = new ArrayList<Hecho>();
         while ( indice < ListaDeDatasets.size() ){
@@ -71,7 +71,7 @@ public class FuenteEstatica extends Fuente {
             //Esto es valido para el.CSV de prueba, pero dudo que sea valido para los demas
             Boolean primeraLinea = true;
 
-            if (tieneMasDeNFilas(10000, ListaDeDatasets.get(indice))) {
+            if (tieneMasDeDiezMilFilas(10000, ListaDeDatasets.get(indice))) {
 
                 try (CSVReader csvReader = new CSVReader(file)) {
                     String[] parts = null;
@@ -114,6 +114,24 @@ public class FuenteEstatica extends Fuente {
         return hechos;
     }
 
+    public List<Hecho> filtrarHechosCSV(List<CriterioDePertenencia> criterios) throws IOException{
+        List<Hecho> losHechos = this.procesarHechosDesdeCSV();
+        return losHechos.stream().filter(unHecho -> unHecho.filtrarHecho(criterios))
+                    .toList();
+    }
+
+    public Hecho buscarPorTitulo(String titulo) throws IOException {
+
+        List<Hecho> hechos = this.procesarHechosDesdeCSV();
+
+        for (Hecho h : hechos) {
+            if (h.getTitulo().equals(titulo)) {
+                return h;
+            }
+        }
+        return null;
+
+    }
 }
 
 
