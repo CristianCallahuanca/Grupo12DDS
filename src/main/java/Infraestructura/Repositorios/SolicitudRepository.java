@@ -12,4 +12,7 @@ public interface SolicitudRepository {
     SolicitudEliminar buscarPorHecho(Hecho hecho);
     public ArrayList<SolicitudEliminar> obtenerTodas();
     void eliminarPorHecho(Hecho hecho);
+    public void eliminarSolicitud(SolicitudEliminar solicitud);
+
+
 }

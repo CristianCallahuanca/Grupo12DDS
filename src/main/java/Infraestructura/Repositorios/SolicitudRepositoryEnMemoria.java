@@ -41,8 +41,9 @@ public class SolicitudRepositoryEnMemoria implements SolicitudRepository{
     public void eliminarPorHecho(Hecho hecho) {
         solicitudes.removeIf(s -> s.getHecho().equals(hecho));
     }
-
-    public void eliminarSolicitud(String unaJustificacion) {
-        solicitudes.removeIf(s -> s.getJustificacion().equals(unaJustificacion));
+    @Override
+    public void eliminarSolicitud(SolicitudEliminar solicitud) {
+        solicitudes.remove(solicitud);
     }
+
 }

@@ -30,6 +30,10 @@ public class PostSolicitudesHandler implements Handler {
 
         /*IMPORTANTE HAY QUE BUSCAR EN LAS DEMAS FUENTES CUANDO ESTEN CREADAS, NECESITO QUE TODAS LAS FUENTES
         TENGAN BUSCAR POR TITULO
+        // FuenteEstatica.getInstancia().buscarPorTitulo(titulo); //
+        // FuenteDinamica.getInstancia().buscarPorTitulo(titulo); //
+        // TODO: Buscar tambirn en otras fuentes cuando estrn implementadas
+
          */
 
         if (titulo == null || justificacion == null) {

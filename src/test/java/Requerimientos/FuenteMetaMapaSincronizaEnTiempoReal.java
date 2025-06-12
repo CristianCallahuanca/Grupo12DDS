@@ -1,4 +1,4 @@
-package Entrega2;
+package Requerimientos;
 
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Ubicacion;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TestReq3Entrega2 {
+public class FuenteMetaMapaSincronizaEnTiempoReal {
 
     @Test
     public void testSincronizaFuenteMetaMapaYObtieneHechos() {
@@ -32,7 +32,7 @@ public class TestReq3Entrega2 {
                 List<Hecho> hechos = new ArrayList<>();
                 hechos.add(new Hecho(
                         "Robo en San Telmo",
-                        "Arrebato en vía pública",
+                        "Arrebato en vía publica",
                         "Robo",
                         new Ubicacion(-34.62, -58.37),
                         LocalDateTime.now().minusHours(1),
@@ -41,7 +41,7 @@ public class TestReq3Entrega2 {
 
                 hechos.add(new Hecho(
                         "Corte de luz en Recoleta",
-                        "Falla en el sistema eléctrico",
+                        "Falla en el sistema electrico",
                         "Corte",
                         new Ubicacion(-34.59, -58.39),
                         LocalDateTime.now().minusHours(2),
@@ -55,3 +55,5 @@ public class TestReq3Entrega2 {
 
 
 }
+
+/*Probar SERVIDOR - CLIENTE para una prueba integral correcta*/

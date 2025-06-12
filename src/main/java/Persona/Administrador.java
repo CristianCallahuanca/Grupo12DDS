@@ -30,7 +30,7 @@ public class Administrador {
 
 
 
-   /* public void revisarSolicitud(SolicitudEliminar solicitud, boolean aprobar) {
+    public void revisarSolicitud(SolicitudEliminar solicitud, boolean aprobar) {
         if (aprobar) {
             solicitud.aceptar();
         } else {
@@ -38,13 +38,13 @@ public class Administrador {
         }
     }
 
-    /*public void revisarSolicitudesPendientes(List<SolicitudEliminar> solicitudes) {
+    public void revisarSolicitudesPendientes(List<SolicitudEliminar> solicitudes) {
         for (SolicitudEliminar solicitud : solicitudes) {
             if (solicitud.getEstadoEliminar() == EstadoEliminar.PENDIENTE) {
-
+                revisarSolicitud(solicitud, true);
             }
         }
-    }*/
+    }
     /*
     public void importarHechos(FuenteEstatica fuente) throws IOException {
         fuente.importarDesdeCSV();
