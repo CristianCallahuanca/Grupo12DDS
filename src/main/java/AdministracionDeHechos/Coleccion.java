@@ -4,9 +4,7 @@ import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import lombok.Getter;
 import lombok.Setter;
-import AdministracionDeHechos.Hecho;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
 import java.util.List;
 
 @Getter
@@ -19,12 +17,12 @@ public class Coleccion {
     private List<Hecho> hechos;
     private String handle;
 
-    public Coleccion(Fuente fuente, String titulo, String descripcion, List<CriterioDePertenencia> criterios, String handle) {
+    //Si List<CriterioDePertenencia> criterios es null puede romper
+    public Coleccion(Fuente fuente, String titulo, String descripcion, List<CriterioDePertenencia> criterios) throws IOException {
         this.fuente = fuente;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.criterios = criterios;
-        this.handle = handle;
         this.cargarHechos(fuente,criterios);
         this.cargarColeccion();
     }
@@ -33,24 +31,7 @@ public class Coleccion {
         ColeccionRepositoryEnMemoria.getInstancia().guardar(this);
     }
 
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public void cargarHechos(Fuente fuente, List<CriterioDePertenencia> criterios){
-
+    public void cargarHechos(Fuente fuente, List<CriterioDePertenencia> criterios) throws IOException {
         this.hechos = fuente.filtrarHechos(criterios);
     }
 

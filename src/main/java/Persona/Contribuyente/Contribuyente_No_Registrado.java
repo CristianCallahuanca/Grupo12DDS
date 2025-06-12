@@ -12,7 +12,7 @@ public class Contribuyente_No_Registrado extends Contribuyente {
             hecho.setContribuyente(null);
             hecho.setFechaCarga(LocalDateTime.now());
             hecho.setOrigen(Origen.DINAMICA);
-    } //creo que esto vuela todo?
+    }
 
 }
 

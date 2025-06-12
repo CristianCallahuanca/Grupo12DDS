@@ -1,6 +1,9 @@
 package Infraestructura.Repositorios;
 
+import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.Hecho;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,13 @@ public class HechoRepositoryEnMemoria implements HechoRepository{
     public void guardar(Hecho hecho) {
         hechos.add(hecho);
     }
+
+    @Override
+    public List<Hecho> filtrarHechosDelSistema(List<CriterioDePertenencia> criterios) throws IOException {
+        return hechos.stream().filter(unHecho -> unHecho.filtarHecho(criterios))
+                     .toList();
+    }
+
     @Override
     public Hecho buscarPorTitulo(String titulo) {
         for (Hecho h : hechos) {

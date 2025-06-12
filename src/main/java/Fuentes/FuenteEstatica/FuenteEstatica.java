@@ -86,7 +86,10 @@ public class FuenteEstatica extends Fuente {
 
                             Origen origen = Origen.ESTATICA;
 
-                            Hecho hecho = new Hecho(parts[0], parts[1], parts[2], ubi, fechaHora, LocalDateTime.now(), "", null, origen, null);
+                            Hecho hecho = new Hecho(parts[0], parts[1], parts[2], ubi, fechaHora, "Viene de Estatica");
+
+                            hecho.setFechaCarga(LocalDateTime.now());
+                            hecho.setOrigen(origen);
 
                             hechos.add(hecho);
                         }

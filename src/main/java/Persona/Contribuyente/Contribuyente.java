@@ -1,8 +1,10 @@
 package Persona.Contribuyente;
 
 import AdministracionDeHechos.Hecho;
+import AdministracionDeHechos.Origen;
 import Persona.UsuarioPublico;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

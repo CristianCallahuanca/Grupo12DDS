@@ -19,14 +19,10 @@ public class Contribuyente_Registrado extends Contribuyente {
     }
 
     public void subirHecho(Hecho hecho) {
-       /* hecho.setVisible(esPublico);
         hecho.setFechaCarga(LocalDateTime.now());
         hecho.setContribuyente(this);
-        listaDeHechos.add(hecho);
         hecho.setOrigen(Origen.DINAMICA);
-        HechosSinRevisar.getInstance().agregarHecho(hecho); DÓNDE METEMOS ESTO??
-       // hecho.guardarEnFuenteDinamica(fuente);
-        fuente.agregarHecho(hecho);*/
+        HechosSinRevisar.getInstance().agregarHecho(hecho);
         listaDeHechos.add(hecho);
     }
 

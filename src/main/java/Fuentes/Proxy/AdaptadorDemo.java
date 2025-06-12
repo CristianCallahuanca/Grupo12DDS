@@ -37,7 +37,7 @@ public class AdaptadorDemo {
         return hechos;
     }
 
-
+//Faltan atributos del hecho? Por ejemplo fecha de acontecimiento
     private Hecho mapearAHecho(Map<String, Object> data) {
         String titulo = (String) data.get("titulo");
         String descripcion = (String) data.get("descripcion");
@@ -48,15 +48,16 @@ public class AdaptadorDemo {
 
         Ubicacion ubicacion = new Ubicacion(latitud, longitud);
 
-        return new Hecho(
+        Hecho unHecho = new Hecho(
                 titulo,
                 descripcion,
                 categoria,
                 ubicacion,
                 LocalDateTime.now(),
-                LocalDateTime.now(),
                 "demo"
         );
+        unHecho.setFechaCarga(LocalDateTime.now());
+        return unHecho;
     }
 
 }

@@ -30,116 +30,21 @@ public class Hecho {
     private Contribuyente contribuyente;
 
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
-                 LocalDateTime fechaAcontecimiento, LocalDateTime fechaCarga,String etiqueta,
-                 List <String> archivosMultimedia, Origen origen, Contribuyente contribuyente) {
+                 LocalDateTime fechaAcontecimiento,String etiqueta) {
 
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.categoria = categoria;
         this.ubicacion = ubicacion;
         this.fechaAcontecimiento = fechaAcontecimiento;
-        this.fechaCarga = fechaCarga;
         this.etiqueta = etiqueta;
-        this.archivosMultimedia = archivosMultimedia;
-        this.origen = origen;
         this.visible = true;
-        this.contribuyente = contribuyente;
-        if (origen == Origen.DINAMICA || origen == Origen.PROXY ) {
-            HechoRepositoryEnMemoria.getInstancia().guardar(this);
-            if(this.contribuyente != null){contribuyente.agregarAListaDeHechos(this);}
-
-        }
     }
 
-
-    public boolean getIsVisible() {
-        return visible;
+    public void setOrigen(Origen unOrigen) {
+        this.origen = unOrigen;
+        if (unOrigen != Origen.ESTATICA) {HechoRepositoryEnMemoria.getInstancia().guardar(this);}
     }
-
-    /*GETTERS Y SETTER
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
-    public Ubicacion getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(Ubicacion ubicacion) {
-        this.ubicacion = ubicacion;
-    }
-
-    public LocalDateTime getFechaAcontecimiento() {
-        return fechaAcontecimiento;
-    }
-
-    public void setFechaAcontecimiento(LocalDateTime fechaAcontecimiento) {
-        this.fechaAcontecimiento = fechaAcontecimiento;
-    }
-
-    public LocalDateTime getFechaCarga() {
-        return fechaCarga;
-    }
-
-    public void setFechaCarga(LocalDateTime fechaCarga) {
-        this.fechaCarga = fechaCarga;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    public Origen getOrigen() {
-        return origen;
-    }
-
-    public void setOrigen(Origen origen) {
-        this.origen = origen;
-    }
-
-    public List<String> getArchivosMultimedia() {
-        return archivosMultimedia;
-    }
-
-    public void setArchivosMultimedia(List<String> archivosMultimedia) {
-        this.archivosMultimedia = archivosMultimedia;
-    }
-
-    public String getEtiqueta() {
-        return etiqueta;
-    }
-
-    public void setEtiqueta(String etiqueta) {
-        this.etiqueta = etiqueta;
-    }
-
-    public Contribuyente getContribuyente() {
-        return contribuyente;
-    }
-
-    public void setContribuyente(Contribuyente contribuyente) {
-        this.contribuyente = contribuyente;
-    }*/
 
     //METODOS DE HECHOS
     public void marcarComoNoVisible() {
@@ -179,6 +84,7 @@ public class Hecho {
         // Con esto basta para saber si puede ser editado?
     }
 
+    //Se fija si un hecho cumple una lista de criterios y retorna BOOL. NO FILTRA
     public boolean filtarHecho(List<CriterioDePertenencia> filtros) {
         List<Boolean> CumplioCondiciones = filtros.stream()
                 .map(unFiltro ->  cumpleElTipoDeFiltro(unFiltro, filtros))
@@ -189,14 +95,14 @@ public class Hecho {
         return todosTrue;
     }
 
-    public boolean cumpleElTipoDeFiltro(CriterioDePertenencia unFiltro, List<CriterioDePertenencia> filtros) {
+    private boolean cumpleElTipoDeFiltro(CriterioDePertenencia unFiltro, List<CriterioDePertenencia> filtros) {
         return filtros.stream()
                 .filter( otroFiltro -> this.coincidenTipos(otroFiltro, unFiltro)) //esto nos deja los criterios que tenga el mismo tipo que un criterio
                 .anyMatch(criterioFiltrado -> criterioFiltrado.cumpleUno(this));
         // En la lista de criterios del mismo tipo, evalúo cada uno con unHecho, si uno solo cumple -> Devuelve true.
     }
 
-    public Boolean coincidenTipos(CriterioDePertenencia unFiltro, CriterioDePertenencia otroFiltro) {
+    private Boolean coincidenTipos(CriterioDePertenencia unFiltro, CriterioDePertenencia otroFiltro) {
         return unFiltro.getClass() == otroFiltro.getClass();
     }
 

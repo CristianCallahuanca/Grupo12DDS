@@ -2,6 +2,7 @@ package Fuentes.Proxy;
 
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.Hecho;
+import AdministracionDeHechos.Origen;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 
 import java.time.Duration;
@@ -24,7 +25,7 @@ public class FuenteDemo extends FuenteProxy {
 
         if (Duration.between(ultimaActualizacion, LocalDateTime.now()).toMinutes() >= 60) {
             List<Hecho> nuevosHechos = adapter.obtenerHechos();
-            nuevosHechos.forEach(unHecho -> HechoRepositoryEnMemoria.getInstancia().guardar(unHecho));
+            nuevosHechos.forEach(unHecho -> unHecho.setOrigen(Origen.PROXY));
             this.hechos.addAll(nuevosHechos);
             this.ultimaActualizacion = LocalDateTime.now();
         }

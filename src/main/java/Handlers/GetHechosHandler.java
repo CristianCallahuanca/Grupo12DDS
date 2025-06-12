@@ -8,6 +8,8 @@ import Fuentes.FuenteEstatica.FuenteEstatica;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ import static Handlers.GetColeccionesHandler.crearYAgregarSiNoNulo;
 public class GetHechosHandler implements Handler {
 
     @Override
-    public void handle(Context ctx) {
+    public void handle(Context ctx) throws IOException {
 
         // Leer query params
         String fechaReporteDesdeStr = ctx.queryParam("fecha_reporte_desde");
@@ -52,6 +54,7 @@ public class GetHechosHandler implements Handler {
         LocalDateTime fechaHardcodeadaHasta = LocalDateTime.of(4025, 12, 31, 23, 59);
         LocalDateTime fechaHardcodeadaDesde = LocalDateTime.of(2000, 1, 1, 1, 0);
 
+        //Agregar criterios de filtraje si existen a la lista
         List<CriterioDePertenencia> criterios = new ArrayList<>();
 
         crearYAgregarSiNoNulo(categoria, PorCategoria::new, criterios);
@@ -61,24 +64,10 @@ public class GetHechosHandler implements Handler {
         crearYAgregarSiNoNulo(fechaAcontecimientoDesde, fechaHardcodeadaHasta, PorFechaCarga::new, criterios);
         crearYAgregarSiNoNulo(fechaHardcodeadaDesde, fechaAcontecimientoHasta, PorFechaCarga::new, criterios);
 
-        // Obtener y filtrar colecciones
-        //List<Hecho>  hechosFiltradosDeFuentes = filtrarHechos(criterios);
-        List<Coleccion> colecciones = ColeccionRepositoryEnMemoria.getInstancia().obtenerTodas();
+        // Obtener y filtrar hechos del sistema
+        List<Hecho>  hechosFiltradosDelSistema = Infraestructura.Repositorios.HechoRepositoryEnMemoria.getInstancia().filtrarHechosDelSistema(criterios);
 
-        //Falta hacer BIEN fechaReporteDesde en adelante
-        List<Coleccion> filtradas = colecciones.stream()
-                .filter(c -> categoria == null || !c.filtrarHechos(List.of(new PorCategoria(categoria))).isEmpty())
-                .filter(c -> (latitudParam == null && longitudParam == null) || !c.filtrarHechos(List.of(new PorUbicacion(ubicacionFinal))).isEmpty())
-                .filter(c -> fechaReporteDesde == null ||
-                        !c.filtrarHechos(List.of(new PorFechaCarga(fechaReporteDesde, fechaHardcodeadaHasta))).isEmpty())
-                .filter(c -> fechaReporteHasta == null ||
-                        !c.filtrarHechos(List.of(new PorFechaCarga(fechaHardcodeadaDesde, fechaReporteHasta))).isEmpty())
-                .filter(c -> fechaAcontecimientoDesde == null ||
-                        !c.filtrarHechos(List.of(new PorFechaAcontecimiento(fechaAcontecimientoDesde, fechaHardcodeadaHasta))).isEmpty())
-                .filter(c -> fechaAcontecimientoHasta == null ||
-                        !c.filtrarHechos(List.of(new PorFechaAcontecimiento(fechaHardcodeadaDesde, fechaAcontecimientoHasta))).isEmpty())
-                .toList();
 
-        ctx.json(filtradas);
+        ctx.json(hechosFiltradosDelSistema);
     }
 }
