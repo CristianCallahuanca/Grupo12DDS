@@ -3,7 +3,7 @@ package SolicitudEliminar;
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Ubicacion;
 import Handlers.PostSolicitudesHandler;
-import Infraestructura.Repositorios.FuenteDinamicaRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import Infraestructura.Repositorios.SolicitudRepositoryEnMemoria;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.BeforeAll;
@@ -43,15 +43,16 @@ public class TestPostearSolicitud {
         }
     """;
 
+        ubicacion1 = new Ubicacion(100, 200);
+
         hecho1 = new Hecho("incendio",
                 "Se produjo un incendio que afectó varias viviendas en la zona, generando gran preocupación entre los vecinos.",
                 "Incendios",
                 ubicacion1,
                 fa1,
-                fc1,
                 "PRUEBA");
 
-        FuenteDinamicaRepositoryEnMemoria.getInstancia().guardar(hecho1);
+        HechoRepositoryEnMemoria.getInstancia().guardar(hecho1);
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()

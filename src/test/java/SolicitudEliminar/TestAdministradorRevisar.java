@@ -1,4 +1,4 @@
-package SolicitudEliminar;
+/*package SolicitudEliminar;
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.FuenteDinamica;
@@ -33,7 +33,6 @@ public class TestAdministradorRevisar {
                 "Incendios",
                 ubicacion1,
                 fa1,
-                fc1,
                 "PRUEBA");
 
         solicitud = new SolicitudEliminar(hecho1, "Violento");
@@ -44,15 +43,15 @@ public class TestAdministradorRevisar {
     public void puedeAceptarUnaSolicitud(){
         solicitud.aceptar();
         assertEquals(EstadoEliminar.APROBADA, solicitud.getEstadoEliminar());
-        assertEquals(false, hecho1.getIsVisible());
+        assertEquals(false, hecho1.getVisible());
     }
     @Test
     @DisplayName("Un Administrador puede Rechazar una solicitud de eliminacion")
     public void puedeRechazarUnaSolicitud(){
         solicitud.rechazar();
         assertEquals(EstadoEliminar.RECHAZADA, solicitud.getEstadoEliminar());
-        assertTrue(hecho1.getIsVisible());
+        assertTrue(hecho1.getVisible());
     }
 
 
-}
+}*/

@@ -1,9 +1,15 @@
 package Persona;
+
 import AdministracionDeHechos.Coleccion;
-import AdministracionDeHechos.CriterioPertenencia.*;
+import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
+import AdministracionDeHechos.CriterioPertenencia.PorDescripcion;
+import AdministracionDeHechos.CriterioPertenencia.PorFechaCarga;
 import AdministracionDeHechos.Hecho;
+import AdministracionDeHechos.TestCriteriosPertenencia;
 import AdministracionDeHechos.Ubicacion;
+import Fuentes.Fuente;
 import Fuentes.FuenteDinamica;
+import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class TestVisualizadorNavegarConFiltro {
+public class TestAdministradorColeccion{
     private Ubicacion ubicacion1;
     private Ubicacion ubicacion2;
     private Hecho hecho1;
@@ -35,32 +41,24 @@ public class TestVisualizadorNavegarConFiltro {
     private PorDescripcion criterioDescripcion;
     private List<CriterioDePertenencia> criterioPrueba;
     private ArrayList<Coleccion> todasLasColecciones;
-    private PorCategoria filtroCategoria;
-    private List<CriterioDePertenencia> filtrosPrueba;
+
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws IOException {
         ubicacion1 = new Ubicacion(100, 200);
         ubicacion2 = new Ubicacion(250, 480);
-        fuentePrueba = new FuenteDinamica();
 
         hecho1 = new Hecho("Incendio en veterinaria",
                 "Se produjo un incendio que afectó varias viviendas en la zona, generando gran preocupación entre los vecinos.",
                 "Incendios",
                 ubicacion1,
                 fa1,
-                fc1,
-                "PRUEBA",
-      /*        "",
-               fuentePrueba,*/
-
-                );
+                "PRUEBA");
         hecho2 = new Hecho("Corte de luz",
                 "Un corte de luz afectó varias viviendas en la zona," +
                         "generando gran preocupación entre los vecinos.",
                 "Cortes",
                 ubicacion2,
-                fa2,
                 fc2,
                 "PRUEBA");
         hecho3 = new Hecho("Choque de autos en Plaza Central",
@@ -68,31 +66,31 @@ public class TestVisualizadorNavegarConFiltro {
                 "Incendios",
                 ubicacion1,
                 fa3,
-                fc3,
                 "trabajo");
 
+        fuentePrueba = new FuenteDinamica();
 
-        fuentePrueba.agregarHecho(hecho1);
-        fuentePrueba.agregarHecho(hecho2);
-        fuentePrueba.agregarHecho(hecho3);
 
         criterioTiempoCarga = new PorFechaCarga(fa1, fc1);
         criterioDescripcion = new PorDescripcion("generando gran preocupación entre los vecinos");
         criterioPrueba = Arrays.asList(criterioTiempoCarga, criterioDescripcion);
 
-        coleccionPrueba = new Coleccion(fuentePrueba, "Coleccion de prueba", "", criterioPrueba, "1");
+        coleccionPrueba = new Coleccion(fuentePrueba, "Coleccion de prueba", "", criterioPrueba);
 
-        filtroCategoria = new PorCategoria("Incendios");
-        filtrosPrueba = List.of(filtroCategoria);
+        ColeccionRepositoryEnMemoria repositorio = ColeccionRepositoryEnMemoria.getInstancia();
+        todasLasColecciones = repositorio.obtenerTodas();
     }
-
 
     @Test
-    public void puedeNavegarColeccionFiltrada() throws IOException {
-        coleccionPrueba.navegarHechosFiltrandoPor(filtrosPrueba);
+    public void puedeCrearUnaColecciony() throws IOException {
+        assertEquals("Coleccion de prueba", coleccionPrueba.getTitulo());
+        assertEquals("", coleccionPrueba.getDescripcion());
 
-        List<Hecho> filtrados = coleccionPrueba.filtrarHechos(filtrosPrueba);
-        assertEquals(1, filtrados.size());
-        assertTrue(filtrados.contains(hecho1));
     }
+
+    @Test // Me fijo si la coleccion se carga automaticamente al ColeccionRepository
+    public void elColeccionRepositoryFunciona() throws IOException {
+        assertEquals(1, todasLasColecciones.size());
+    }
+
 }

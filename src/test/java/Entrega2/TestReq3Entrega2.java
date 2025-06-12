@@ -36,7 +36,6 @@ public class TestReq3Entrega2 {
                         "Robo",
                         new Ubicacion(-34.62, -58.37),
                         LocalDateTime.now().minusHours(1),
-                        LocalDateTime.now(),
                         "MetaMapa"
                 ));
 
@@ -46,7 +45,6 @@ public class TestReq3Entrega2 {
                         "Corte",
                         new Ubicacion(-34.59, -58.39),
                         LocalDateTime.now().minusHours(2),
-                        LocalDateTime.now(),
                         "MetaMapa"
                 ));
                 return hechos;

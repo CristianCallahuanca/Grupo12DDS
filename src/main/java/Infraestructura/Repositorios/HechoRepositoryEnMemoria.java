@@ -6,6 +6,7 @@ import AdministracionDeHechos.Hecho;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import Fuentes.FuenteEstatica.FuenteEstatica;
 
 public class HechoRepositoryEnMemoria implements HechoRepository{
 
@@ -26,8 +27,11 @@ public class HechoRepositoryEnMemoria implements HechoRepository{
 
     @Override
     public List<Hecho> filtrarHechosDelSistema(List<CriterioDePertenencia> criterios) throws IOException {
-        return hechos.stream().filter(unHecho -> unHecho.filtarHecho(criterios))
-                     .toList();
+        List<Hecho> hechosDelSistema = new ArrayList<>(hechos.stream().filter(unHecho -> unHecho.filtarHecho(criterios))
+                .toList());
+        hechosDelSistema.addAll(FuenteEstatica.getInstancia().filtrarHechosCSV(criterios));
+
+        return hechosDelSistema;
     }
 
     @Override

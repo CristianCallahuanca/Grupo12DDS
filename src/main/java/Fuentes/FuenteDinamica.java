@@ -24,6 +24,12 @@ public class FuenteDinamica extends Fuente {
                 .toList();
 
     }
+
+    @Override
+    public List<Hecho> obtenerHechos(){
+        this.cargarHechos();
+        return hechos;
+    }
     /*public void agregarHecho(Hecho hecho) {
         if (hecho == null || hecho.getTitulo() == null) return;
 

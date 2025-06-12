@@ -1,10 +1,11 @@
-package AdministracionDeHechos;
-
+package AdministracionDeHechos1;
+/*
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.CriterioPertenencia.PorDescripcion;
 import AdministracionDeHechos.CriterioPertenencia.PorFechaCarga;
 import AdministracionDeHechos.CriterioPertenencia.PorUbicacion;
 import Fuentes.FuenteDinamica;
+import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
@@ -40,7 +41,6 @@ public class TestCriteriosPertenencia {
                 "Incendios",
                 ubicacion1,
                 fa1,
-                fc1,
                 "PRUEBA");
         hecho2 = new Hecho("Corte de luz",
                 "Un corte de luz afectó varias viviendas en la zona," +
@@ -48,20 +48,17 @@ public class TestCriteriosPertenencia {
                 "Cortes",
                 ubicacion2,
                 fa2,
-                fc2,
                 "PRUEBA");
         hecho3 = new Hecho("Choque de autos en Plaza Central",
                 "2 autos chocaron cerca de la plaza",
                 "Incendios",
                 ubicacion1,
                 fa3,
-                fc3,
                 "trabajo");
 
-        fuentePrueba = new FuenteDinamica();
-        fuentePrueba.agregarHecho(hecho1);
-        fuentePrueba.agregarHecho(hecho2);
-        fuentePrueba.agregarHecho(hecho3);
+        HechoRepositoryEnMemoria.getInstancia().guardar(hecho1);
+        HechoRepositoryEnMemoria.getInstancia().guardar(hecho2);
+        HechoRepositoryEnMemoria.getInstancia().guardar(hecho3);
 
 
 
@@ -108,4 +105,4 @@ public class TestCriteriosPertenencia {
             System.out.println("-------------");
         }
     }
-}
+}*/

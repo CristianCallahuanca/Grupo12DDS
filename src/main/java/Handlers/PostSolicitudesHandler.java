@@ -1,6 +1,8 @@
 package Handlers;
 
 
+import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
+import AdministracionDeHechos.CriterioPertenencia.PorTitulo;
 import AdministracionDeHechos.Hecho;
 
 import Fuentes.FuenteEstatica.FuenteEstatica;
@@ -10,6 +12,9 @@ import SolicitudEliminar.SolicitudEliminar;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PostSolicitudesHandler implements Handler {
 
@@ -32,17 +37,20 @@ public class PostSolicitudesHandler implements Handler {
             return;
         }
 
-        Hecho hecho = null;
 
-        hecho = HechoRepositoryEnMemoria.getInstancia().buscarPorTitulo(titulo);
+        List<CriterioDePertenencia> listTitulo = new ArrayList<>();
+        PorTitulo criterioTitulo = new PorTitulo(titulo);
+        listTitulo.add(criterioTitulo);
+
+        List<Hecho> hecho = HechoRepositoryEnMemoria.getInstancia().filtrarHechosDelSistema(listTitulo);
 
 
-        if(hecho == null){
+        if (hecho.isEmpty()){
             ctx.status(400).result("no se encontro el hecho");
             return;
         }
 
-        SolicitudEliminar solicitud = new SolicitudEliminar(hecho,justificacion);
+        SolicitudEliminar solicitud = new SolicitudEliminar(hecho.get(0),justificacion);
 
         ctx.status(200).result("llego con exito");
 

@@ -34,7 +34,6 @@ public class TestContribuyenteSolicitud {
                 "Incendios",
                 ubicacion1,
                 fa1,
-                fc1,
                 "PRUEBA");
 
         contriNoRegistrado = new Contribuyente_No_Registrado();

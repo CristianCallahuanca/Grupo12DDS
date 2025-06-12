@@ -107,8 +107,7 @@ public class FuenteEstatica extends Fuente {
         return hechos;
     }
 
-    @Override
-    public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios) throws IOException{
+    public List<Hecho> filtrarHechosCSV(List<CriterioDePertenencia> criterios) throws IOException{
         List<Hecho> losHechos = this.procesarHechosDesdeCSV();
         return losHechos.stream().filter(unHecho -> unHecho.filtarHecho(criterios))
                     .toList();
