@@ -57,7 +57,7 @@ public class VisualizadorNavegaHechosDeColeccionTest {
         List<Hecho> hechosDeLaColeccion = coleccion.obtenerHechos();
 
         assertEquals(2, hechosDeLaColeccion.size());
-        assertTrue(hechosDeLaColeccion.stream().anyMatch(h -> h.getTitulo().equals("Inundación")));
+        assertTrue(hechosDeLaColeccion.stream().anyMatch(h -> h.getTitulo().equals("Inundacion")));
         assertTrue(hechosDeLaColeccion.stream().anyMatch(h -> h.getTitulo().equals("Incendio")));
 
         hechosDeLaColeccion.forEach(h -> System.out.println("Hecho: " + h.getTitulo()));
