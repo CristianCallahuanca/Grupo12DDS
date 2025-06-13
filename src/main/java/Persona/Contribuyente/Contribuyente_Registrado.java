@@ -34,6 +34,15 @@ public class Contribuyente_Registrado extends Contribuyente {
     public void modificarHecho(Hecho hechoModificado, Hecho cambios) {
         if (hechoModificado.puedeSerEditado()) {
             hechoModificado.editarCon(cambios);
+            // esto se puede pasar a Hechos sin revisar
+            if(!HechosSinRevisar.getInstance().contiene(cambios)){
+                HechosSinRevisar.getInstance().agregarHecho(cambios);
+            } else {
+                HechosSinRevisar.getInstance().sacarHecho(hechoModificado);
+                HechosSinRevisar.getInstance().agregarHecho(cambios);
+            }
+
+
         } else {
             throw new IllegalStateException("El hecho no puede ser editado despues de una semana.");
         }
