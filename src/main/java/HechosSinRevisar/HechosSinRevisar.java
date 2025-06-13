@@ -27,4 +27,9 @@ public class HechosSinRevisar {
     public List<Hecho> obtenerHechosSinRevisar() {
         return hechos;
     }
+
+    public boolean contiene(Hecho hecho) {
+        return hechos.contains(hecho);
+    }
+
 }

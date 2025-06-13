@@ -19,6 +19,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.example.Main.logger;
+
 @Getter
 public class FuenteEstatica extends Fuente {
     private static final FuenteEstatica instance = new FuenteEstatica();
@@ -34,7 +36,7 @@ public class FuenteEstatica extends Fuente {
 
     //
 
-    public boolean tieneMasDeDiezMilFilas(int minimoDeArchivos, Dataset unDataset) throws IOException {
+    public boolean tieneMasDeNFilas(int minimoDeArchivos, Dataset unDataset) throws IOException {
 
         FileReader file = new FileReader(unDataset.getArchivoCSV());
         int contarLineas = 0;
@@ -53,8 +55,11 @@ public class FuenteEstatica extends Fuente {
     }
 
     public void guardar(Dataset unDataset) {
-        ListaDeDatasets.add(unDataset);
+        if (!ListaDeDatasets.contains(unDataset)) {
+            ListaDeDatasets.add(unDataset);
+        }
     }
+
 
     public List<Hecho> procesarHechosDesdeCSV() throws IOException {
         int indice=0;
@@ -66,7 +71,7 @@ public class FuenteEstatica extends Fuente {
             //Esto es valido para el.CSV de prueba, pero dudo que sea valido para los demas
             Boolean primeraLinea = true;
 
-            if (tieneMasDeDiezMilFilas(10000, ListaDeDatasets.get(indice))) {
+            if (tieneMasDeNFilas(10000, ListaDeDatasets.get(indice))) {
 
                 try (CSVReader csvReader = new CSVReader(file)) {
                     String[] parts = null;
@@ -101,15 +106,17 @@ public class FuenteEstatica extends Fuente {
                     throw new RuntimeException(e);
                 }
             } else {
-                System.out.println("El archivo tiene que tener mas de 10000 filas");
+                logger.warn("El archivo tiene que tener más de 10.000 filas");
+
             }
+            indice++;
         }
         return hechos;
     }
 
-    public List<Hecho> filtrarHechosCSV(List<CriterioDePertenencia> criterios) throws IOException{
+    public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios) throws IOException{
         List<Hecho> losHechos = this.procesarHechosDesdeCSV();
-        return losHechos.stream().filter(unHecho -> unHecho.filtarHecho(criterios))
+        return losHechos.stream().filter(unHecho -> unHecho.filtrarHecho(criterios))
                     .toList();
     }
 

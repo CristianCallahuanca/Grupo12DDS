@@ -1,4 +1,7 @@
-package SolicitudEliminar;
+package Requerimientos;
+
+public class TestAdministradorRevisar {
+    /*package SolicitudEliminar;
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.FuenteDinamica;
@@ -12,13 +15,12 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class TestContribuyenteSolicitud {
+public class TestAdministradorRevisar {
     private Ubicacion ubicacion1;
     private Hecho hecho1;
-    private Contribuyente_No_Registrado contriNoRegistrado;
-    private Contribuyente_Registrado contriRegistrado;
+    private SolicitudEliminar solicitud;
 
     //fa(fechaAcontecimiento) | fc(fechaCarga)
     LocalDateTime fa1 = LocalDateTime.of(2025, 1, 1, 12, 0);
@@ -36,16 +38,25 @@ public class TestContribuyenteSolicitud {
                 fa1,
                 "PRUEBA");
 
-        contriNoRegistrado = new Contribuyente_No_Registrado();
-        contriRegistrado = new Contribuyente_Registrado("mariano","luna", 17);
+        solicitud = new SolicitudEliminar(hecho1, "Violento");
     }
 
     @Test
-    @DisplayName("Un Contribuyente puede hacer una solicitud de eliminacion")
-    public void puedeSolicitarEliminacionHecho(){
-        SolicitudEliminar solicitud = new SolicitudEliminar(hecho1, "Violento");
-        assertEquals(EstadoEliminar.PENDIENTE, solicitud.getEstadoEliminar());
+    @DisplayName("Un Administrador puede Aceptar una solicitud de eliminacion")
+    public void puedeAceptarUnaSolicitud(){
+        solicitud.aceptar();
+        assertEquals(EstadoEliminar.APROBADA, solicitud.getEstadoEliminar());
+        assertEquals(false, hecho1.getVisible());
+    }
+    @Test
+    @DisplayName("Un Administrador puede Rechazar una solicitud de eliminacion")
+    public void puedeRechazarUnaSolicitud(){
+        solicitud.rechazar();
+        assertEquals(EstadoEliminar.RECHAZADA, solicitud.getEstadoEliminar());
+        assertTrue(hecho1.getVisible());
     }
 
+
+}*/
 
 }

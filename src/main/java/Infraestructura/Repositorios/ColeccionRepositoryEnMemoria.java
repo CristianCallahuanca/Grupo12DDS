@@ -19,8 +19,10 @@ public class ColeccionRepositoryEnMemoria implements ColeccionRepository{
 
     @Override
     public void guardar(Coleccion coleccion) {
+        colecciones.removeIf(c -> c.getHandle().equals(coleccion.getHandle()));
         colecciones.add(coleccion);
     }
+
 
     @Override
     public Coleccion buscarPorTitulo(String titulo) {

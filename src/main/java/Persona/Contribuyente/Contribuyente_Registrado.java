@@ -28,7 +28,7 @@ public class Contribuyente_Registrado extends Contribuyente {
 
     public void eliminarHecho(Hecho hecho) {
         listaDeHechos.remove(hecho);
-        hecho.marcarComoNoVisible(); //puede hacer esto? no es con solicitud de elim
+        //hecho.marcarComoNoVisible(); //puede hacer esto? no es con solicitud de elim
     }
 
     public void modificarHecho(Hecho hechoModificado, Hecho cambios) {

@@ -5,6 +5,7 @@ import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import lombok.Getter;
 import lombok.Setter;
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.List;
 
 @Getter
@@ -23,9 +24,23 @@ public class Coleccion {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.criterios = criterios;
+        this.handle = generarHandle(titulo);
         this.cargarHechos(fuente,criterios);
-        this.cargarColeccion();
+        //this.cargarColeccion();
     }
+
+
+    private String generarHandle(String titulo) {
+        // Quita acentos
+        String normalizado = Normalizer.normalize(titulo, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        // Elimina caracteres no alfanuméricos excepto espacios, y reemplaza espacios por guiones
+        return normalizado.toLowerCase()
+                .replaceAll("[^a-z0-9 ]", "")
+                .replaceAll("\\s+", "-");
+    }
+
+
 
     public void cargarColeccion() {
         ColeccionRepositoryEnMemoria.getInstancia().guardar(this);
@@ -60,7 +75,7 @@ public class Coleccion {
     }*/
 
     public List<Hecho> filtrarHechos(List<CriterioDePertenencia> filtros) {
-        return this.obtenerHechos().stream().filter(unHecho -> unHecho.filtarHecho(filtros))
+        return this.obtenerHechos().stream().filter(unHecho -> unHecho.filtrarHecho(filtros))
                 .toList();
     }
 
