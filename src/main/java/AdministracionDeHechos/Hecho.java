@@ -24,11 +24,6 @@ public class Hecho {
     private LocalDateTime fechaAcontecimiento;
     private LocalDateTime fechaCarga;
     private boolean visible;
-
-    public boolean getVisible() {
-        return visible;
-    }
-
     private Origen origen;
     private List<String> archivosMultimedia;
     private String etiqueta;
@@ -44,7 +39,6 @@ public class Hecho {
         this.fechaAcontecimiento = fechaAcontecimiento;
         this.etiqueta = etiqueta;
         this.visible = true;
-        this.fechaCarga = LocalDateTime.now();
     }
 
     public void setOrigen(Origen unOrigen) {
@@ -64,7 +58,7 @@ public class Hecho {
             this.categoria = cambios.getCategoria();
             this.ubicacion = cambios.getUbicacion();
             this.etiqueta = cambios.getEtiqueta();
-            this.archivosMultimedia = new ArrayList<>(cambios.getArchivosMultimedia());
+            this.archivosMultimedia = cambios.getArchivosMultimedia();
             this.fechaAcontecimiento = cambios.getFechaAcontecimiento();
             //NO cambiar contribuyente, origen ni fecha de carga
         } else {
@@ -91,15 +85,15 @@ public class Hecho {
     }
 
     //Se fija si un hecho cumple una lista de criterios y retorna BOOL. NO FILTRA
-    public boolean filtrarHecho(List<CriterioDePertenencia> filtros) {
-        // Para cada tipo de filtro, verificamos si el hecho cumple al menos uno de ese tipo.
-        return filtros.stream()
-                .collect(Collectors.groupingBy(CriterioDePertenencia::getClass))
-                .values()
-                .stream()
-                .allMatch(grupo -> grupo.stream().anyMatch(f -> f.cumpleUno(this)));
-    }
+    public boolean filtarHecho(List<CriterioDePertenencia> filtros) {
+        List<Boolean> CumplioCondiciones = filtros.stream()
+                .map(unFiltro ->  cumpleElTipoDeFiltro(unFiltro, filtros))
+                .toList();
+        //Dado un hecho y las condiciones, mapea cada condición, si la cumple queda true y sino false. Ej: CumplioCondiciones = [T,T,F,T]
 
+        boolean todosTrue = CumplioCondiciones.stream().allMatch(Boolean::booleanValue); //Checkea que la lista este llena de true
+        return todosTrue;
+    }
 
     private boolean cumpleElTipoDeFiltro(CriterioDePertenencia unFiltro, List<CriterioDePertenencia> filtros) {
         return filtros.stream()
@@ -112,5 +106,7 @@ public class Hecho {
         return unFiltro.getClass() == otroFiltro.getClass();
     }
 
-
+    public boolean getVisible() {
+        return visible;
+    }
 }

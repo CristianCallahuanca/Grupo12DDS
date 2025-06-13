@@ -21,7 +21,7 @@ public abstract class Fuente {
     }
 
     public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios)throws IOException {
-        return hechos.stream().filter(unHecho -> unHecho.filtrarHecho(criterios))
+        return hechos.stream().filter(unHecho -> unHecho.filtarHecho(criterios))
                 .toList();
 
     }

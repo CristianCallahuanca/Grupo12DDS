@@ -12,8 +12,7 @@ public class PorUbicacion implements CriterioDePertenencia {
 
     @Override
     public boolean cumpleUno(Hecho unHecho) {
-        return unHecho.getUbicacion().equals(ubicacionBuscada);
-
+        return unHecho.getUbicacion() == ubicacionBuscada;
     }
 
     //return unHecho.getUbicacion().equals(ubicacionBuscada);

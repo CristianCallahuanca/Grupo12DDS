@@ -10,15 +10,11 @@ public class DetectorDeSpamSingleton implements DetectorDeSpam {
 
     private DetectorDeSpamSingleton() {}
 
-
     public static DetectorDeSpamSingleton getInstance() {
         return instancia;
     }
 
     @Override
-    public boolean esSpam(String texto) {
-        return texto.toLowerCase().contains("dinero") || texto.contains("$$$");
-    }
-
+    public boolean esSpam(String texto){return false;}
 
 }

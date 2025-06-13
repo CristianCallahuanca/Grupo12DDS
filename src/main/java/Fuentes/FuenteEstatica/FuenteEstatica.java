@@ -19,8 +19,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.example.Main.logger;
-
 @Getter
 public class FuenteEstatica extends Fuente {
     private static final FuenteEstatica instance = new FuenteEstatica();
@@ -55,11 +53,8 @@ public class FuenteEstatica extends Fuente {
     }
 
     public void guardar(Dataset unDataset) {
-        if (!ListaDeDatasets.contains(unDataset)) {
-            ListaDeDatasets.add(unDataset);
-        }
+        ListaDeDatasets.add(unDataset);
     }
-
 
     public List<Hecho> procesarHechosDesdeCSV() throws IOException {
         int indice=0;
@@ -106,17 +101,15 @@ public class FuenteEstatica extends Fuente {
                     throw new RuntimeException(e);
                 }
             } else {
-                logger.warn("El archivo tiene que tener más de 10.000 filas");
-
+                System.out.println("El archivo tiene que tener mas de 10000 filas");
             }
-            indice++;
         }
         return hechos;
     }
 
     public List<Hecho> filtrarHechosCSV(List<CriterioDePertenencia> criterios) throws IOException{
         List<Hecho> losHechos = this.procesarHechosDesdeCSV();
-        return losHechos.stream().filter(unHecho -> unHecho.filtrarHecho(criterios))
+        return losHechos.stream().filter(unHecho -> unHecho.filtarHecho(criterios))
                     .toList();
     }
 

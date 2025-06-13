@@ -30,12 +30,9 @@ public class SolicitudEliminar {
     }
 
     public void rechazar() {
-        if (this.estadoEliminar != EstadoEliminar.RECHAZADA) {
-            this.estadoEliminar = EstadoEliminar.RECHAZADA;
-            SolicitudRepositoryEnMemoria.getInstancia().eliminarSolicitud(this);
-        }
+        this.estadoEliminar = EstadoEliminar.RECHAZADA;
+        SolicitudRepositoryEnMemoria.getInstancia().eliminarSolicitud(this.justificacion);
     }
-
 
 
     public void cargarSolicitud() { SolicitudRepositoryEnMemoria.getInstancia().guardar(this); }

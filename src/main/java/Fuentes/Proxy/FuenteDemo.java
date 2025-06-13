@@ -15,7 +15,6 @@ public class FuenteDemo extends FuenteProxy {
 
     public FuenteDemo(AdaptadorDemo adapter) {
         this.adapter = adapter;
-        this.ultimaActualizacion = LocalDateTime.now();
     }
     public void setUltimaActualizacion(LocalDateTime ultimaActualizacion) {
         this.ultimaActualizacion = ultimaActualizacion;

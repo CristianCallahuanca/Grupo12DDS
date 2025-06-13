@@ -10,16 +10,13 @@ import Fuentes.FuenteEstatica.FuenteEstatica;
 
 public class HechoRepositoryEnMemoria implements HechoRepository{
 
-    private static HechoRepositoryEnMemoria instance = null;
+    private static final HechoRepositoryEnMemoria instance = new HechoRepositoryEnMemoria();
     private List<Hecho> hechos = new ArrayList<>();
 
-    public HechoRepositoryEnMemoria() {
+    private HechoRepositoryEnMemoria() {
     }
 
     public static HechoRepositoryEnMemoria getInstancia() {
-        if (instance == null) {
-            instance = new HechoRepositoryEnMemoria();
-        }
         return instance;
     }
 
@@ -30,7 +27,7 @@ public class HechoRepositoryEnMemoria implements HechoRepository{
 
     @Override
     public List<Hecho> filtrarHechosDelSistema(List<CriterioDePertenencia> criterios) throws IOException {
-        List<Hecho> hechosDelSistema = new ArrayList<>(hechos.stream().filter(unHecho -> unHecho.filtrarHecho(criterios))
+        List<Hecho> hechosDelSistema = new ArrayList<>(hechos.stream().filter(unHecho -> unHecho.filtarHecho(criterios))
                 .toList());
         hechosDelSistema.addAll(FuenteEstatica.getInstancia().filtrarHechosCSV(criterios));
 
@@ -56,9 +53,7 @@ public class HechoRepositoryEnMemoria implements HechoRepository{
     public void eliminarPorTitulo(String titulo) {
         hechos.removeIf(h -> h.getTitulo().equals(titulo));
     }
-    public void limpiar() {
-        this.hechos.clear();
-    }
+
 }
 
 

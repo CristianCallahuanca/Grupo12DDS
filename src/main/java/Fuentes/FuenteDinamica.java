@@ -13,14 +13,14 @@ public class FuenteDinamica extends Fuente {
 
     public void cargarHechos() {
          this.hechos = HechoRepositoryEnMemoria.getInstancia().obtenerTodas()
-                 .stream().filter(unHecho -> unHecho.filtrarHecho(List.of(new PorOrigen(DINAMICA)))).toList();
+                 .stream().filter(unHecho -> unHecho.filtarHecho(List.of(new PorOrigen(DINAMICA)))).toList();
 
     }
 
     @Override
     public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios){
         this.cargarHechos();
-        return hechos.stream().filter(unHecho -> unHecho.filtrarHecho(criterios))
+        return hechos.stream().filter(unHecho -> unHecho.filtarHecho(criterios))
                 .toList();
 
     }
