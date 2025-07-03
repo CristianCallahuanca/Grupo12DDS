@@ -26,7 +26,7 @@ public class Coleccion {
         this.criterios = criterios;
         this.handle = generarHandle(titulo);
         this.cargarHechos(fuente,criterios);
-        //this.cargarColeccion();
+        this.cargarColeccion();
     }
 
 

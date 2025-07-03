@@ -2,6 +2,8 @@ package Fuentes;
 
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.Hecho;
+import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Servicios.ServicioDeAgregacion;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,12 +14,13 @@ public abstract class Fuente {
 
     protected List<Hecho> hechos;
 
+    /*public Fuente(List<Hecho> hechos){
+        this.hechos = hechos;
+        ServicioDeAgregacion.getInstancia().guardar(this);
+    }*/
+
     public List<Hecho> obtenerHechos(){
         return hechos;
-    }
-
-    public Fuente() {
-        this.hechos = new ArrayList<>();
     }
 
     public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios)throws IOException {
@@ -25,6 +28,8 @@ public abstract class Fuente {
                 .toList();
 
     }
+
+
 
     /*public boolean filtarHecho(Hecho unHecho,List<CriterioDePertenencia> criterios) {
         List<Boolean> CumplioCondiciones = criterios.stream()

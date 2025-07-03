@@ -8,7 +8,7 @@ import AdministracionDeHechos.Hecho;
 import Fuentes.FuenteDinamica;
 import Fuentes.FuenteEstatica.Dataset;
 import Fuentes.FuenteEstatica.FuenteEstatica;
-import Handlers.GetHechosHandler;
+import Handlers.*;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import Persona.Administrador;
 import io.javalin.Javalin;
@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import Handlers.GetHechosHandler;
-import Handlers.GetColeccionesHandler;
-import Handlers.PostSolicitudesHandler;
 
 public class Main {
     public static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -34,6 +32,16 @@ public class Main {
         app.get("/hechos", new GetHechosHandler());
         app.get("/colecciones/<identificador>/hechos", new GetHechosHandler());
         app.post("/solicitudes",new PostSolicitudesHandler());
+
+
+        /*API DE LA ENTREGA 3
+
+        app.post("/colecciones", new PostColeccionesHandler());
+
+        app.get("/colecciones",new getColeccionesHandler());
+        app.delete("/colecciones/:id",new deleteColeccionesHandler());*/
+
+
 
     }
 }
