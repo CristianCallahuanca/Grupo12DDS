@@ -3,6 +3,7 @@ import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import Fuentes.FuenteDinamica;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import Persona.Contribuyente.Contribuyente;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,24 +17,30 @@ import static org.example.Main.logger;
 
 @Getter
 @Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true) // Es necesario para los algoritmos de concenso
 public class Hecho {
+    @EqualsAndHashCode.Include
     private String titulo;
+    @EqualsAndHashCode.Include
     private String descripcion;
+    @EqualsAndHashCode.Include
     private String categoria;
+    @EqualsAndHashCode.Include
     private Ubicacion ubicacion;
+    @EqualsAndHashCode.Include
+    private List<String> archivosMultimedia;
+    @EqualsAndHashCode.Include
+    private String etiqueta;
+    @EqualsAndHashCode.Include
     private LocalDateTime fechaAcontecimiento;
     private LocalDateTime fechaCarga;
+    private Contribuyente contribuyente;
+    private Origen origen;
     private boolean visible;
 
     public boolean getVisible() {
         return visible;
     }
-
-    private Origen origen;
-    private List<String> archivosMultimedia;
-    private String etiqueta;
-    private Contribuyente contribuyente;
-
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
                  LocalDateTime fechaAcontecimiento,String etiqueta) {
 
@@ -111,6 +118,5 @@ public class Hecho {
     private Boolean coincidenTipos(CriterioDePertenencia unFiltro, CriterioDePertenencia otroFiltro) {
         return unFiltro.getClass() == otroFiltro.getClass();
     }
-
 
 }
