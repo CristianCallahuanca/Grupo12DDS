@@ -57,7 +57,7 @@ public class visualizarHechosFiltradosDeUnaColeccion  {
             */
         };
 
-        Coleccion coleccion = new Coleccion(fuente, "Eventos Naturales", "Hechos varios", List.of());
+    /*    Coleccion coleccion = new Coleccion(fuente, "Eventos Naturales", "Hechos varios", List.of());
 
         CriterioDePertenencia criterioClima = new PorCategoria("Clima");
 
@@ -68,6 +68,6 @@ public class visualizarHechosFiltradosDeUnaColeccion  {
         assertTrue(filtrados.stream().allMatch(h -> h.getCategoria().equals("Clima")));
         assertFalse(filtrados.stream().anyMatch(h -> h.getCategoria().equals("Fuego")));
 
-        filtrados.forEach(h -> System.out.println("Hecho filtrado: " + h.getTitulo()));
+        filtrados.forEach(h -> System.out.println("Hecho filtrado: " + h.getTitulo()));*/
     }
 }

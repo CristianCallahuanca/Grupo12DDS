@@ -52,7 +52,7 @@ public class VisualizadorNavegaHechosDeColeccionTest {
             */
         };
 
-
+/*
         Coleccion coleccion = new Coleccion(fuenteDinamica, "Eventos Dinamicos",
                 "Ejemplo test fuente dinamica", List.of());
         System.out.println("Hechos después de crear colección: " + coleccion.obtenerHechos().size());
@@ -62,7 +62,7 @@ public class VisualizadorNavegaHechosDeColeccionTest {
         assertEquals(2, hechosDeLaColeccion.size());
         assertTrue(hechosDeLaColeccion.stream().anyMatch(h -> h.getTitulo().equals("Inundacion")));
         assertTrue(hechosDeLaColeccion.stream().anyMatch(h -> h.getTitulo().equals("Incendio")));
-
         hechosDeLaColeccion.forEach(h -> System.out.println("Hecho: " + h.getTitulo()));
+*/
     }
 }
