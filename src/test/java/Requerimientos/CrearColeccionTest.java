@@ -31,7 +31,7 @@ public class CrearColeccionTest {
         String titulo = "Colección de Noticias";
         PorDescripcion criterio = new PorDescripcion("crimen");
 
-        coleccion = new Coleccion(fuente, titulo, "colección sobre crímenes", List.of(criterio));
+        coleccion = new Coleccion(fuente, titulo, "colección sobre crímenes", List.of(criterio), datos.getHandle());
 
         repo.guardar(coleccion);
 

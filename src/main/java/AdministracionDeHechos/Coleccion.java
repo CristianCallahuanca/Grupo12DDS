@@ -19,7 +19,7 @@ public class Coleccion {
     private String handle;
 
     //Si List<CriterioDePertenencia> criterios es null puede romper
-    public Coleccion(Fuente fuente, String titulo, String descripcion, List<CriterioDePertenencia> criterios) throws IOException {
+    public Coleccion(Fuente fuente, String titulo, String descripcion, List<CriterioDePertenencia> criterios, String handle) throws IOException {
         this.fuente = fuente;
         this.titulo = titulo;
         this.descripcion = descripcion;

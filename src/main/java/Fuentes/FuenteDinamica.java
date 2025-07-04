@@ -12,6 +12,8 @@ import static AdministracionDeHechos.Origen.DINAMICA;
 
 public class FuenteDinamica extends Fuente {
 
+
+
     public void cargarHechos() {
          this.hechos = HechoRepositoryEnMemoria.getInstancia().obtenerTodas()
                  .stream().filter(unHecho -> unHecho.filtrarHecho(List.of(new PorOrigen(DINAMICA)))).toList();

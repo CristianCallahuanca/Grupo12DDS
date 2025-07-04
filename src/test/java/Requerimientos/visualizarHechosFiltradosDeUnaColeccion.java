@@ -52,7 +52,7 @@ public class visualizarHechosFiltradosDeUnaColeccion  {
             }
         };
 
-        Coleccion coleccion = new Coleccion(fuente, "Eventos Naturales", "Hechos varios", List.of());
+        Coleccion coleccion = new Coleccion(fuente, "Eventos Naturales", "Hechos varios", List.of(), datos.getHandle());
 
         CriterioDePertenencia criterioClima = new PorCategoria("Clima");
 

@@ -50,8 +50,8 @@ public class ColeccionRepositoryEnMemoria implements ColeccionRepository{
     }
 
     @Override
-    public void eliminarPorTitulo(String titulo) {
-        colecciones.removeIf(c -> c.getTitulo().equals(titulo));
+    public void eliminarPorHandle(String handle) {
+        colecciones.removeIf(c-> c.getHandle().equals(handle));
     }
 
 }

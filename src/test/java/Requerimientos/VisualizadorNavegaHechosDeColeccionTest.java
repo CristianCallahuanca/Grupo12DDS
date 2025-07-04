@@ -51,7 +51,7 @@ public class VisualizadorNavegaHechosDeColeccionTest {
 
 
         Coleccion coleccion = new Coleccion(fuenteDinamica, "Eventos Dinamicos",
-                "Ejemplo test fuente dinamica", List.of());
+                "Ejemplo test fuente dinamica", List.of(), datos.getHandle());
         System.out.println("Hechos después de crear colección: " + coleccion.obtenerHechos().size());
 
         List<Hecho> hechosDeLaColeccion = coleccion.obtenerHechos();
