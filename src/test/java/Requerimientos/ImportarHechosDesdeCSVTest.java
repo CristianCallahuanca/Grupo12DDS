@@ -30,7 +30,7 @@ public class ImportarHechosDesdeCSVTest {
         Dataset dataset = new Dataset(pathCSV);
 
 
-        List<Hecho> hechos = fuente.procesarHechosDesdeCSV();
+        List<Hecho> hechos = fuente.obtenerHechos();
 
         assertNotNull(hechos);
         assertFalse(hechos.isEmpty(), "No se importaron hechos desde el CSV");

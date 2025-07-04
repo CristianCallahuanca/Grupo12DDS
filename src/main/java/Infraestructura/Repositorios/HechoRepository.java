@@ -12,5 +12,4 @@ public interface HechoRepository {
     Hecho buscarPorTitulo(String titulo);
     ArrayList<Hecho> obtenerTodas();
     void eliminarPorTitulo(String titulo);
-    public List<Hecho> filtrarHechosDelSistema(List<CriterioDePertenencia> criterios) throws IOException;
 }

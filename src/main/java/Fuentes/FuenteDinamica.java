@@ -5,6 +5,7 @@ import AdministracionDeHechos.CriterioPertenencia.PorOrigen;
 import AdministracionDeHechos.Hecho;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import Servicios.ServicioDeAgregacion;
+import Servicios.ServicioFiltradorDeHechos;
 
 import java.util.List;
 
@@ -12,25 +13,14 @@ import static AdministracionDeHechos.Origen.DINAMICA;
 
 public class FuenteDinamica extends Fuente {
 
-    public void cargarHechos() {
-         this.hechos = HechoRepositoryEnMemoria.getInstancia().obtenerTodas()
-                 .stream().filter(unHecho -> unHecho.filtrarHecho(List.of(new PorOrigen(DINAMICA)))).toList();
-    }
-
-    @Override
-    public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios){
-        this.cargarHechos();
-        return hechos.stream().filter(unHecho -> unHecho.filtrarHecho(criterios))
-                .toList();
-
-    }
 
     @Override
     public List<Hecho> obtenerHechos(){
-        this.cargarHechos();
-        return hechos;
+        return
+        ServicioFiltradorDeHechos.filtrarHechos(HechoRepositoryEnMemoria.getInstancia().obtenerTodas(),List.of(new PorOrigen(DINAMICA)));
     }
-    /*public void agregarHecho(Hecho hecho) {
+    /*
+    public void agregarHecho(Hecho hecho) {
         if (hecho == null || hecho.getTitulo() == null) return;
 
         // Verificar si ya existe un hecho con el mismo titulo
@@ -39,8 +29,6 @@ public class FuenteDinamica extends Fuente {
         this.hechos.add(hecho);
         this.cargarEnRepository(hecho); */
 
-// Obtener del Repository
-    //public void obtenerHecho
 
 
 }

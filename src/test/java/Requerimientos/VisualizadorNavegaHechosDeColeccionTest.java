@@ -41,12 +41,15 @@ public class VisualizadorNavegaHechosDeColeccionTest {
                 return HechoRepositoryEnMemoria.getInstancia().obtenerTodas();
             }
 
+            /* No se porque esto estaba overrideado, imagino que el test quedó viejo.
+            Si querés filtrar para hacer andar el test (que no entiendo), usa el servicio
             @Override
             public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios) {
                 return HechoRepositoryEnMemoria.getInstancia().obtenerTodas().stream()
                         .filter(h -> h.filtrarHecho(criterios))
                         .toList();
             }
+            */
         };
 
 

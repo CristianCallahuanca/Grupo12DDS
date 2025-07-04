@@ -58,7 +58,7 @@ public class Main {
 
         List<Hecho> hechos = new ArrayList<Hecho>();
 
-        hechos = fuenteXD.procesarHechosDesdeCSV();
+        hechos = fuenteXD.obtenerHechos();
 
         System.out.println("se leyeron:");
         System.out.println(hechos.size());*/

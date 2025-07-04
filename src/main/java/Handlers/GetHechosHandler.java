@@ -6,6 +6,7 @@ import AdministracionDeHechos.Ubicacion;
 import AdministracionDeHechos.Hecho;
 import Fuentes.FuenteEstatica.FuenteEstatica;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Servicios.ServicioFiltradorDeHechos;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 
@@ -65,7 +66,9 @@ public class GetHechosHandler implements Handler {
         crearYAgregarSiNoNulo(fechaHardcodeadaDesde, fechaAcontecimientoHasta, PorFechaCarga::new, criterios);
 
         // Obtener y filtrar hechos del sistema
-        List<Hecho>  hechosFiltradosDelSistema = Infraestructura.Repositorios.HechoRepositoryEnMemoria.getInstancia().filtrarHechosDelSistema(criterios);
+
+        List<Hecho> hechosFiltradosDelSistema = ServicioFiltradorDeHechos.filtrarHechos(Infraestructura.Repositorios.HechoRepositoryEnMemoria.getInstancia().obtenerTodosLosHechosDelSistema(), criterios);
+
 
 
         ctx.json(hechosFiltradosDelSistema);

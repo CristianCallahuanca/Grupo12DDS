@@ -5,9 +5,9 @@ import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.CriterioPertenencia.PorTitulo;
 import AdministracionDeHechos.Hecho;
 
-import Fuentes.FuenteEstatica.FuenteEstatica;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 
+import Servicios.ServicioFiltradorDeHechos;
 import SolicitudEliminar.SolicitudEliminar;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
@@ -46,7 +46,7 @@ public class PostSolicitudesHandler implements Handler {
         PorTitulo criterioTitulo = new PorTitulo(titulo);
         listTitulo.add(criterioTitulo);
 
-        List<Hecho> hecho = HechoRepositoryEnMemoria.getInstancia().filtrarHechosDelSistema(listTitulo);
+        List<Hecho> hecho = ServicioFiltradorDeHechos.filtrarHechos(HechoRepositoryEnMemoria.getInstancia().obtenerTodosLosHechosDelSistema(), listTitulo);
 
 
         if (hecho.isEmpty()){

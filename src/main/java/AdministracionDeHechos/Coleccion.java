@@ -1,17 +1,20 @@
 package AdministracionDeHechos;
 import Fuentes.Fuente;
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
+import Fuentes.FuenteDinamica;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Servicios.ServicioFiltradorDeHechos;
 import lombok.Getter;
 import lombok.Setter;
 import java.io.IOException;
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 public class Coleccion {
-    private Fuente fuente;
+    private List<Fuente> fuentes;
     private String titulo;
     private String descripcion;
     private List<CriterioDePertenencia> criterios;
@@ -19,13 +22,13 @@ public class Coleccion {
     private String handle;
 
     //Si List<CriterioDePertenencia> criterios es null puede romper
-    public Coleccion(Fuente fuente, String titulo, String descripcion, List<CriterioDePertenencia> criterios) throws IOException {
-        this.fuente = fuente;
+    public Coleccion(List<Fuente> fuentes, String titulo, String descripcion, List<CriterioDePertenencia> criterios) throws IOException {
+        this.fuentes = fuentes;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.criterios = criterios;
         this.handle = generarHandle(titulo);
-        this.cargarHechos(fuente,criterios);
+        this.cargarHechos(fuentes,criterios);
         this.cargarColeccion();
     }
 
@@ -42,63 +45,35 @@ public class Coleccion {
 
 
 
-    public void cargarColeccion() {
+    private void cargarColeccion() {
         ColeccionRepositoryEnMemoria.getInstancia().guardar(this);
     }
 
-    public void cargarHechos(Fuente fuente, List<CriterioDePertenencia> criterios) throws IOException {
-        this.hechos = fuente.filtrarHechos(criterios);
+    public void cargarHechos(List<Fuente> fuentes, List<CriterioDePertenencia> criterios) throws IOException {
+        fuentes.forEach(unaFuente -> {
+            try {
+                this.cargarHechosDeUnaFuente(unaFuente, criterios);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private void cargarHechosDeUnaFuente(Fuente fuente, List<CriterioDePertenencia> criterios) throws IOException {
+        this.hechos.addAll(ServicioFiltradorDeHechos.filtrarHechos(fuente.obtenerHechos(),criterios));
+
     }
 
     public List<Hecho> obtenerHechos() {
         return hechos.stream().filter(hecho->hecho.getVisible()).toList();
     }
 
-    // Navegacion de Hechos
-    public void navegarHechos(){
-        this.imprimirHechos(this.obtenerHechos());
-    }
-
-    public void navegarHechosFiltrandoPor(List<CriterioDePertenencia> filtros){
-        List <Hecho> hechosFiltrados = this.filtrarHechos(filtros);
-        this.imprimirHechos(hechosFiltrados);
-    }
-
+    //Solo para tests
     public void imprimirHechos(List<Hecho> unosHechos) {
         unosHechos.forEach(unHecho -> unHecho.imprimirHecho());
     }
 
-    // Filtrar hechos
-   /* public List<Hecho> filtrarHechos(List<CriterioDePertenencia> filtros){
-        return this.obtenerHechos().stream().filter(unHecho -> this.filtarHecho(unHecho, filtros))
-                .toList();
-    }*/
 
-    public List<Hecho> filtrarHechos(List<CriterioDePertenencia> filtros) {
-        return this.obtenerHechos().stream().filter(unHecho -> unHecho.filtrarHecho(filtros))
-                .toList();
-    }
 
-      /*  private boolean filtarHecho(Hecho unHecho,List<CriterioDePertenencia> filtros) {
-        List<Boolean> CumplioCondiciones = filtros.stream()
-                .map(unFiltro ->  cumpleElTipoDeFiltro(unHecho, unFiltro, filtros))
-                .toList();
-        //Dado un hecho y las condiciones, mapea cada condición, si la cumple queda true y sino false. Ej: CumplioCondiciones = [T,T,F,T]
-
-        boolean todosTrue = CumplioCondiciones.stream().allMatch(Boolean::booleanValue); //Checkea que la lista este llena de true
-        return todosTrue;
-    }
-
-    private boolean cumpleElTipoDeFiltro(Hecho unHecho, CriterioDePertenencia unFiltro, List<CriterioDePertenencia> filtros) {
-        return filtros.stream()
-                .filter( otroFiltro -> this.coincidenTipos(otroFiltro, unFiltro)) //esto nos deja los criterios que tenga el mismo tipo que un criterio
-                .anyMatch(criterioFiltrado -> criterioFiltrado.cumpleUno(unHecho));
-        // En la lista de criterios del mismo tipo, evalúo cada uno con unHecho, si uno solo cumple -> Devuelve true.
-    }
-
-    private Boolean coincidenTipos(CriterioDePertenencia unFiltro, CriterioDePertenencia otroFiltro) {
-        return unFiltro.getClass() == otroFiltro.getClass();
-    }
-*/
 }
 

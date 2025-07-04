@@ -61,7 +61,10 @@ public class FuenteEstatica extends Fuente {
     }
 
 
-    public List<Hecho> procesarHechosDesdeCSV() throws IOException {
+
+    
+    @Override
+    public List<Hecho> obtenerHechos() throws IOException {
         int indice=0;
         List<Hecho> hechos = new ArrayList<Hecho>();
         while ( indice < ListaDeDatasets.size() ){
@@ -114,15 +117,10 @@ public class FuenteEstatica extends Fuente {
         return hechos;
     }
 
-    public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios) throws IOException{
-        List<Hecho> losHechos = this.procesarHechosDesdeCSV();
-        return losHechos.stream().filter(unHecho -> unHecho.filtrarHecho(criterios))
-                    .toList();
-    }
 
     public Hecho buscarPorTitulo(String titulo) throws IOException {
 
-        List<Hecho> hechos = this.procesarHechosDesdeCSV();
+        List<Hecho> hechos = this.obtenerHechos();
 
         for (Hecho h : hechos) {
             if (h.getTitulo().equals(titulo)) {

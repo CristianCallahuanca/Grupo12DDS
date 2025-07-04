@@ -5,6 +5,7 @@ import AdministracionDeHechos.CriterioPertenencia.*;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.FuenteDinamica;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Servicios.ServicioFiltradorDeHechos;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,7 @@ public class GetColeccionesHandler implements Handler {
 
         // Obtener y filtrar coleccion
         Coleccion unaColeccion = ColeccionRepositoryEnMemoria.getInstancia().buscarPorHandle(id);
-        unaColeccion.filtrarHechos(criterios);
+        ServicioFiltradorDeHechos.filtrarHechos(unaColeccion.obtenerHechos(), criterios);
 
         ctx.json(unaColeccion);
     }

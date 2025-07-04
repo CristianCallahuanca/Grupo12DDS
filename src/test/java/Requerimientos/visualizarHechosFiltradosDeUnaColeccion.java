@@ -8,6 +8,7 @@ import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.Fuente;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
+import Servicios.ServicioFiltradorDeHechos;
 import org.junit.jupiter.api.Test;
 
 
@@ -44,19 +45,24 @@ public class visualizarHechosFiltradosDeUnaColeccion  {
                 return HechoRepositoryEnMemoria.getInstancia().obtenerTodas();
             }
 
+            /*
+            No se porque esto estaba overrideado, imagino que el test quedó viejo.
+            Si querés filtrar para hacer andar el test (que no entiendo), usa el servicio
             @Override
             public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios) {
                 return obtenerHechos().stream()
                         .filter(h -> h.filtrarHecho(criterios))
                         .toList();
             }
+            */
         };
 
         Coleccion coleccion = new Coleccion(fuente, "Eventos Naturales", "Hechos varios", List.of());
 
         CriterioDePertenencia criterioClima = new PorCategoria("Clima");
 
-        List<Hecho> filtrados = coleccion.filtrarHechos(List.of(criterioClima));
+        List<Hecho> filtrados = ServicioFiltradorDeHechos.filtrarHechos(coleccion.obtenerHechos(), List.of(criterioClima));
+
 
         assertEquals(2, filtrados.size());
         assertTrue(filtrados.stream().allMatch(h -> h.getCategoria().equals("Clima")));

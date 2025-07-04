@@ -27,15 +27,7 @@ public class HechoRepositoryEnMemoria implements HechoRepository{
     public void guardar(Hecho hecho) {
         hechos.add(hecho);
     }
-
-    @Override
-    public List<Hecho> filtrarHechosDelSistema(List<CriterioDePertenencia> criterios) throws IOException {
-        List<Hecho> hechosDelSistema = new ArrayList<>(hechos.stream().filter(unHecho -> unHecho.filtrarHecho(criterios))
-                .toList());
-        hechosDelSistema.addAll(FuenteEstatica.getInstancia().filtrarHechos(criterios));
-
-        return hechosDelSistema;
-    }
+    
 
     @Override
     public Hecho buscarPorTitulo(String titulo) {
@@ -47,7 +39,14 @@ public class HechoRepositoryEnMemoria implements HechoRepository{
         return null;
     }
 
-    @Override
+    //incluye estatica
+    public ArrayList<Hecho> obtenerTodosLosHechosDelSistema() throws IOException {
+        ArrayList<Hecho> todos = new ArrayList<>(hechos);  // Copiamos los hechos actuales
+        todos.addAll(FuenteEstatica.getInstancia().obtenerHechos());  // Agregamos los de la fuente estática
+        return todos;  // Devolvemos la lista combinada
+    }
+
+    @Override //solo los que están en este repo: los de dinamica y proxy
     public ArrayList<Hecho> obtenerTodas() {
         return new ArrayList<>(this.hechos);
     }

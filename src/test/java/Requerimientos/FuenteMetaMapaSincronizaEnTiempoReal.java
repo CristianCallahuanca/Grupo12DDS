@@ -7,6 +7,7 @@ import Fuentes.Proxy.FuenteMetaMapa;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Map;
 public class FuenteMetaMapaSincronizaEnTiempoReal {
 
     @Test
-    public void testSincronizaFuenteMetaMapaYObtieneHechos() {
+    public void testSincronizaFuenteMetaMapaYObtieneHechos() throws IOException {
         FuenteMetaMapa fuenteMetaMapa = new FuenteMetaMapa(mockAdaptadorMetaMapa());
 
         fuenteMetaMapa.sincronizar();
