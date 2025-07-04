@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class GetColeccionesHandler implements Handler {
+public class GetColeccionHechosHandler implements Handler {
 
     @Override
     public void handle(Context ctx) {

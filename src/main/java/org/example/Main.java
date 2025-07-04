@@ -30,17 +30,19 @@ public class Main {
         Javalin app = Javalin.create().start(7000);
 
         app.get("/hechos", new GetHechosHandler());
-        app.get("/colecciones/<identificador>/hechos", new GetHechosHandler());
+        app.get("/colecciones/<identificador>/hechos", new GetColeccionHechosHandler());
         app.post("/solicitudes",new PostSolicitudesHandler());
 
 
-        /*API DE LA ENTREGA 3
+        /*API DE LA ENTREGA 3*/
 
         app.post("/colecciones", new PostColeccionesHandler());
 
-        app.get("/colecciones",new getColeccionesHandler());
-        app.delete("/colecciones/:id",new deleteColeccionesHandler());*/
+        app.get("/colecciones",new GetTodasColeccionesHandler());
 
+        app.delete("/colecciones/{handle}",new DeleteColeccionesHandler());
+
+        app.put("/colecciones/{handle}",new UpdateColeccionesHandler());
 
 
     }

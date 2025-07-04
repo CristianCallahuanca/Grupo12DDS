@@ -12,6 +12,6 @@ public interface ColeccionRepository {
     Coleccion buscarPorTitulo(String titulo);
     public Coleccion buscarPorHandle(String handle);
     public ArrayList<Coleccion> obtenerTodas();
-    void eliminarPorTitulo(String titulo);
+    void eliminarPorHandle(String titulo);
 }
 

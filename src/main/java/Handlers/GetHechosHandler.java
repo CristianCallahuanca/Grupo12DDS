@@ -24,7 +24,8 @@ import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static Handlers.GetColeccionesHandler.crearYAgregarSiNoNulo;
+import static Handlers.GetColeccionHechosHandler.crearYAgregarSiNoNulo;
+import static Handlers.GetColeccionHechosHandler.crearYAgregarSiNoNulo;
 
 public class GetHechosHandler implements Handler {
 

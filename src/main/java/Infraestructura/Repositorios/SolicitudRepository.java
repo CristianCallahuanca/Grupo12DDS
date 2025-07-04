@@ -14,5 +14,4 @@ public interface SolicitudRepository {
     void eliminarPorHecho(Hecho hecho);
     public void eliminarSolicitud(SolicitudEliminar solicitud);
 
-
 }
