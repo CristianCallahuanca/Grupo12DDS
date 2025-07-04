@@ -97,26 +97,6 @@ public class Hecho {
         // Con esto basta para saber si puede ser editado?
     }
 
-    //Se fija si un hecho cumple una lista de criterios y retorna BOOL. NO FILTRA
-    public boolean filtrarHecho(List<CriterioDePertenencia> filtros) {
-        // Para cada tipo de filtro, verificamos si el hecho cumple al menos uno de ese tipo.
-        return filtros.stream()
-                .collect(Collectors.groupingBy(CriterioDePertenencia::getClass))
-                .values()
-                .stream()
-                .allMatch(grupo -> grupo.stream().anyMatch(f -> f.cumpleUno(this)));
-    }
 
-
-    private boolean cumpleElTipoDeFiltro(CriterioDePertenencia unFiltro, List<CriterioDePertenencia> filtros) {
-        return filtros.stream()
-                .filter( otroFiltro -> this.coincidenTipos(otroFiltro, unFiltro)) //esto nos deja los criterios que tenga el mismo tipo que un criterio
-                .anyMatch(criterioFiltrado -> criterioFiltrado.cumpleUno(this));
-        // En la lista de criterios del mismo tipo, evalúo cada uno con unHecho, si uno solo cumple -> Devuelve true.
-    }
-
-    private Boolean coincidenTipos(CriterioDePertenencia unFiltro, CriterioDePertenencia otroFiltro) {
-        return unFiltro.getClass() == otroFiltro.getClass();
-    }
 
 }
