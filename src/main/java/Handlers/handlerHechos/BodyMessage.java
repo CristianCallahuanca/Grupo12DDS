@@ -1,4 +1,4 @@
-package Handlers;
+package Handlers.handlerHechos;
 
 public class BodyMessage {
     private String titulo;

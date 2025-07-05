@@ -3,16 +3,29 @@ package Fuentes;
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.CriterioPertenencia.PorOrigen;
 import AdministracionDeHechos.Hecho;
+import Fuentes.FuenteEstatica.Dataset;
+import Fuentes.FuenteEstatica.FuenteEstatica;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import Servicios.ServicioDeAgregacion;
 import Servicios.ServicioFiltradorDeHechos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static AdministracionDeHechos.Origen.DINAMICA;
 
 public class FuenteDinamica extends Fuente {
 
+    private static final FuenteDinamica instance = new FuenteDinamica();
+    List<Dataset> ListaDeDatasets = new ArrayList<>();
+
+    //Singleton
+    public FuenteDinamica(){
+    }
+
+    public static FuenteDinamica getInstancia() {
+        return instance;
+    }
 
     @Override
     public List<Hecho> obtenerHechos(){

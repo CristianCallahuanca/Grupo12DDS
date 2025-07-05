@@ -1,11 +1,8 @@
-package Handlers;
+package Handlers.handlerHechos;
 
-import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.CriterioPertenencia.*;
 import AdministracionDeHechos.Ubicacion;
 import AdministracionDeHechos.Hecho;
-import Fuentes.FuenteEstatica.FuenteEstatica;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import Servicios.ServicioFiltradorDeHechos;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
@@ -15,17 +12,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import Fuentes.FuenteDinamica;
-import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import static Handlers.GetColeccionHechosHandler.crearYAgregarSiNoNulo;
-import static Handlers.GetColeccionHechosHandler.crearYAgregarSiNoNulo;
+import static Handlers.handlerHechos.GetHechosColeccionHandler.crearYAgregarSiNoNulo;
+import static Handlers.handlerHechos.GetHechosColeccionHandler.crearYAgregarSiNoNulo;
 
 public class GetHechosHandler implements Handler {
 

@@ -5,10 +5,23 @@ import AdministracionDeHechos.Origen;
 import SolicitudEliminar.SolicitudEliminar;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class FuenteMetaMapa extends FuenteProxy {
+
+    private static final FuenteMetaMapa instance = new FuenteMetaMapa();
+    List<Hecho> hechos  = new ArrayList<>();
+
+    //Singleton
+    public FuenteMetaMapa(){
+    }
+
+    public static FuenteMetaMapa getInstancia() {
+        return instance;
+    }
+
     private AdaptadorMetaMapa adapter;
 
     public FuenteMetaMapa(AdaptadorMetaMapa adapter) {

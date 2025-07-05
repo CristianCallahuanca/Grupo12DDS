@@ -1,7 +1,5 @@
-package Handlers;
+package Handlers.handlerColeccion;
 
-import AdministracionDeHechos.Coleccion;
-import Infraestructura.Repositorios.ColeccionRepository;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;

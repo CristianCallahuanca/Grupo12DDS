@@ -1,10 +1,14 @@
-package Handlers;
+package Handlers.handlerColeccion;
 
 import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.CriterioPertenencia.*;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
+import Fuentes.Fuente;
+import Fuentes.FuenteDinamica;
 import Fuentes.FuenteEstatica.FuenteEstatica;
+import Fuentes.Proxy.FuenteDemo;
+import Fuentes.Proxy.FuenteMetaMapa;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import io.javalin.http.Context;
 import io.javalin.http.Handler; // ¡ESTE import es clave!
@@ -23,22 +27,19 @@ public class PostColeccionesHandler implements Handler {
         BodyColeccion datos = ctx.bodyAsClass(BodyColeccion.class);
 
         List<CriterioDePertenencia> listCriterios = new ArrayList<CriterioDePertenencia>();
+        List<Fuente> listFuentes = new ArrayList<Fuente>();
 
         for(CriterioDTO criterio : datos.getCriterios()){
 
             listCriterios.add(JsonACriterio(criterio.tipo,criterio.parametros));
         }
 
-        //deshardcodear lo de fuente estatica
+        for(String fuente: datos.getFuentes()){
 
-        //Coleccion coleccion = new Coleccion(FuenteEstatica.getInstancia(),datos.getTitulo(),datos.getDescripcion(),listCriterios,datos.getHandle());
+            listFuentes.add(JsonAFuente(fuente));
+        }
 
-        Coleccion coleccion = new Coleccion(
-                List.of(FuenteEstatica.getInstancia()),
-                datos.getTitulo(),
-                datos.getDescripcion(),
-                listCriterios
-        );
+        Coleccion coleccion = new Coleccion(listFuentes,datos.getTitulo(),datos.getDescripcion(),listCriterios);
 
         ColeccionRepositoryEnMemoria.getInstancia().guardar(coleccion);
 
@@ -48,6 +49,21 @@ public class PostColeccionesHandler implements Handler {
 
         System.out.println(listCriterios.size());
 
+    }
+
+    public Fuente JsonAFuente(String tipo){
+
+        return switch(tipo.toLowerCase()){
+            case "fuenteestatica" -> FuenteEstatica.getInstancia();
+
+            case "fuentedinamica" -> FuenteDinamica.getInstancia();
+
+            case "fuentemetamapa" -> FuenteMetaMapa.getInstancia();
+
+            case "fuentedemo" -> FuenteDemo.getInstancia();
+
+            default -> throw new IllegalArgumentException("Tipo de fuente no valida");
+        };
     }
 
     public CriterioDePertenencia JsonACriterio(String tipo, Map<String, String> params){

@@ -1,10 +1,11 @@
-package Handlers;
+package Handlers.handlerSolicitudEliminacion;
 
 
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.CriterioPertenencia.PorTitulo;
 import AdministracionDeHechos.Hecho;
 
+import Handlers.handlerHechos.BodyMessage;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 
 import Servicios.ServicioFiltradorDeHechos;

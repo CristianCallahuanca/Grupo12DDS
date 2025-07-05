@@ -1,26 +1,18 @@
 package org.example;
 
-import AdministracionDeHechos.Coleccion;
-import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
-import AdministracionDeHechos.CriterioPertenencia.PorDescripcion;
-import AdministracionDeHechos.CriterioPertenencia.PorFechaCarga;
-import AdministracionDeHechos.Hecho;
-import Fuentes.FuenteDinamica;
-import Fuentes.FuenteEstatica.Dataset;
-import Fuentes.FuenteEstatica.FuenteEstatica;
-import Handlers.*;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
-import Persona.Administrador;
+import Handlers.handlerColeccion.DeleteColeccionesHandler;
+import Handlers.handlerColeccion.GetTodasColeccionesHandler;
+import Handlers.handlerColeccion.PostColeccionesHandler;
+import Handlers.handlerColeccion.UpdateColeccionesHandler;
+import Handlers.handlerHechos.GetHechosColeccionHandler;
+import Handlers.handlerSolicitudEliminacion.PostSolicitudesHandler;
 import io.javalin.Javalin;
-import io.javalin.http.Handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import Handlers.GetHechosHandler;
+
+import Handlers.handlerHechos.GetHechosHandler;
+
 
 public class Main {
     public static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -30,9 +22,8 @@ public class Main {
         Javalin app = Javalin.create().start(7000);
 
         app.get("/hechos", new GetHechosHandler());
-        app.get("/colecciones/<identificador>/hechos", new GetColeccionHechosHandler());
+        app.get("/colecciones/<identificador>/hechos", new GetHechosColeccionHandler());
         app.post("/solicitudes",new PostSolicitudesHandler());
-
 
         /*API DE LA ENTREGA 3*/
 

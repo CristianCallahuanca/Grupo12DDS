@@ -1,4 +1,4 @@
-package Handlers;
+package Handlers.handlerColeccion;
 
 import lombok.Setter;
 import lombok.Getter;
@@ -12,6 +12,6 @@ public class BodyColeccion {
 
     private String titulo;
     private String descripcion;
-    private String handle;
+    private List<String> fuentes;
     private List<CriterioDTO> criterios;
 }

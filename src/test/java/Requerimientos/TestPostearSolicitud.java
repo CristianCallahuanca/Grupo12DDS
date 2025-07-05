@@ -2,7 +2,7 @@
 
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Ubicacion;
-import Handlers.PostSolicitudesHandler;
+import Handlers.handlerSolicitudEliminacion.PostSolicitudesHandler;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import Infraestructura.Repositorios.SolicitudRepositoryEnMemoria;
 import io.javalin.Javalin;

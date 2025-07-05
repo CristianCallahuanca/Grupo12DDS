@@ -1,4 +1,4 @@
-package Handlers;
+package Handlers.handlerColeccion;
 
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import io.javalin.http.Context;

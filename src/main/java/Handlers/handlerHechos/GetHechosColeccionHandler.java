@@ -1,25 +1,22 @@
-package Handlers;
+package Handlers.handlerHechos;
 
 import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.CriterioPertenencia.*;
 import AdministracionDeHechos.Ubicacion;
-import Fuentes.FuenteDinamica;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import Servicios.ServicioFiltradorDeHechos;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class GetColeccionHechosHandler implements Handler {
+public class GetHechosColeccionHandler implements Handler {
 
     @Override
     public void handle(Context ctx) {

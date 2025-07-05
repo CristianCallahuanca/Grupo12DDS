@@ -1,9 +1,14 @@
-package Handlers;
+package Handlers.handlerColeccion;
 
 import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.CriterioPertenencia.*;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
+import Fuentes.Fuente;
+import Fuentes.FuenteDinamica;
+import Fuentes.FuenteEstatica.FuenteEstatica;
+import Fuentes.Proxy.FuenteDemo;
+import Fuentes.Proxy.FuenteMetaMapa;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
@@ -21,6 +26,7 @@ public class UpdateColeccionesHandler implements Handler {
 
         String handle = ctx.pathParam("handle");
         BodyColeccion datos = ctx.bodyAsClass(BodyColeccion.class);
+        List<Fuente> listFuentes = new ArrayList<Fuente>();
 
         Coleccion coleccion = ColeccionRepositoryEnMemoria.getInstancia().buscarPorHandle(handle);
 
@@ -30,6 +36,16 @@ public class UpdateColeccionesHandler implements Handler {
 
         if (datos.getDescripcion() != null) {
             coleccion.setDescripcion(datos.getDescripcion());
+        }
+
+        if (datos.getFuentes() != null) {
+
+            for(String fuente: datos.getFuentes()){
+
+                listFuentes.add(JsonAFuente(fuente));
+            }
+
+            coleccion.setFuentes(listFuentes);
         }
 
         if (datos.getCriterios() != null) {
@@ -43,6 +59,21 @@ public class UpdateColeccionesHandler implements Handler {
             coleccion.setCriterios(nuevosCriterios);
         }
 
+    }
+
+    public Fuente JsonAFuente(String tipo){
+
+        return switch(tipo.toLowerCase()){
+            case "fuenteestatica" -> FuenteEstatica.getInstancia();
+
+            case "fuentedinamica" -> FuenteDinamica.getInstancia();
+
+            case "fuentemetamapa" -> FuenteMetaMapa.getInstancia();
+
+            case "fuentedemo" -> FuenteDemo.getInstancia();
+
+            default -> throw new IllegalArgumentException("Tipo de fuente no valida");
+        };
     }
 
     public CriterioDePertenencia crearCriterio(String tipo, Map<String, String> params) {

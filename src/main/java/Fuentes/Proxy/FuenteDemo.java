@@ -3,13 +3,28 @@ package Fuentes.Proxy;
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
+import Fuentes.FuenteEstatica.Dataset;
+import Fuentes.FuenteEstatica.FuenteEstatica;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FuenteDemo extends FuenteProxy {
+
+    private static final FuenteDemo instance = new FuenteDemo();
+    List<Hecho> hechos  = new ArrayList<>();
+
+    //Singleton
+    public FuenteDemo(){
+    }
+
+    public static FuenteDemo getInstancia() {
+        return instance;
+    }
+
     private AdaptadorDemo adapter;
     LocalDateTime ultimaActualizacion;
 
