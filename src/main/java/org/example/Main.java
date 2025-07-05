@@ -1,5 +1,6 @@
 package org.example;
 
+import Handlers.handleAlgoritmoConsenso.CambiarAlgoritmoHandle;
 import Handlers.handlerColeccion.DeleteColeccionesHandler;
 import Handlers.handlerColeccion.GetTodasColeccionesHandler;
 import Handlers.handlerColeccion.PostColeccionesHandler;
@@ -27,6 +28,7 @@ public class Main {
 
         /*API DE LA ENTREGA 3*/
 
+        //Operaciones CRUD sobre las colecciones
         app.post("/colecciones", new PostColeccionesHandler());
 
         app.get("/colecciones",new GetTodasColeccionesHandler());
@@ -35,6 +37,17 @@ public class Main {
 
         app.put("/colecciones/{handle}",new UpdateColeccionesHandler());
 
+
+        // Modificación del algoritmo de consenso
+        app.put("/algoritmoConsenso", new CambiarAlgoritmoHandle());
+
+
+        // Agregar o quitar fuentes de hechos de una colección
+
+
+
+        //Aprobar o denegar una solicitud de eliminación de un hecho
+        //app.put("/solicitud",new AprobarDesaprobarSolicitudHandle);
 
     }
 }
