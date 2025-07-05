@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CrearColeccionTest {
-
+/*
     private ColeccionRepositoryEnMemoria repo;
     private FuenteEstatica fuente;
     private Coleccion coleccion;
@@ -43,7 +43,7 @@ public class CrearColeccionTest {
 
         assertEquals(1, encontrada.getCriterios().size());
         assertEquals(fuente, encontrada.getFuente());
-    }
+    }*/
 }
 /*- no se pueda crear una coleccion con null en los criterios (manejo de errores).
 

@@ -31,7 +31,14 @@ public class PostColeccionesHandler implements Handler {
 
         //deshardcodear lo de fuente estatica
 
-        Coleccion coleccion = new Coleccion(FuenteEstatica.getInstancia(),datos.getTitulo(),datos.getDescripcion(),listCriterios,datos.getHandle());
+        //Coleccion coleccion = new Coleccion(FuenteEstatica.getInstancia(),datos.getTitulo(),datos.getDescripcion(),listCriterios,datos.getHandle());
+
+        Coleccion coleccion = new Coleccion(
+                List.of(FuenteEstatica.getInstancia()),
+                datos.getTitulo(),
+                datos.getDescripcion(),
+                listCriterios
+        );
 
         ColeccionRepositoryEnMemoria.getInstancia().guardar(coleccion);
 
