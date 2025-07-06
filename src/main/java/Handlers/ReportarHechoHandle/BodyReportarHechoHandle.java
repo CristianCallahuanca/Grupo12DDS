@@ -15,6 +15,5 @@ public class BodyReportarHechoHandle {
     private String longitud;
     private String fechaAcontecimiento;
     private String etiqueta;
-    private String dni;
 
 }

@@ -1,7 +1,13 @@
 package Handlers.ReportarHechoHandle;
 
+import AdministracionDeHechos.Hecho;
+import AdministracionDeHechos.Origen;
+import AdministracionDeHechos.Ubicacion;
+import Fuentes.Proxy.FuenteMetaMapa;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+
+import java.time.LocalDateTime;
 
 public class ReportarHechoHandle implements Handler {
 
@@ -10,20 +16,14 @@ public class ReportarHechoHandle implements Handler {
         // Leer parametro del query params
         BodyReportarHechoHandle datos = ctx.bodyAsClass(BodyReportarHechoHandle.class);
 
+        Ubicacion ubi = new Ubicacion(Double.parseDouble(datos.getLatitud()),Double.parseDouble(datos.getLongitud()));
 
+        Hecho hecho = new Hecho(datos.getTitulo(), datos.getDescripcion(), datos.getCategoria(), ubi, LocalDateTime.parse(datos.getFechaAcontecimiento()), datos.getEtiqueta());
+        hecho.setOrigen(Origen.PROXY);
+        hecho.setFechaCarga(LocalDateTime.now());
+        hecho.setFuente(FuenteMetaMapa.getInstancia());
+        hecho.setVisible(true);
 
-        ctx.json("");
+        FuenteMetaMapa.getInstancia().getHechos().add(hecho);
     }
 }
-
-//titulo,desc,categoria,latitu,long,fechaAct,etiqueta,DNI
-
-/*
-*  String fechaReporteDesdeStr = ctx.queryParam("fecha_reporte_desde");
-        String fechaReporteHastaStr = ctx.queryParam("fecha_reporte_hasta");
-        String fechaAcontecimientoDesdeStr = ctx.queryParam("fecha_acontecimiento_desde");
-        String fechaAcontecimientoHastaStr = ctx.queryParam("fecha_acontecimiento_hasta");
-        String categoria = ctx.queryParam("categoria");
-        String latitudParam = ctx.queryParam("latitud");
-        String longitudParam = ctx.queryParam("longitud");
-* */
