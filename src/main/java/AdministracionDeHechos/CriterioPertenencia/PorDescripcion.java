@@ -14,6 +14,6 @@ public class PorDescripcion implements CriterioDePertenencia {
     @Override
     public boolean cumpleUno(Hecho unHecho) {
         return  unHecho.getDescripcion().toLowerCase()
-                .contains(fraseClave.toLowerCase());
+                .contains(this.fraseClave.toLowerCase());
     }
 }

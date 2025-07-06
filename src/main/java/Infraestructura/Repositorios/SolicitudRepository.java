@@ -13,5 +13,6 @@ public interface SolicitudRepository {
     public ArrayList<SolicitudEliminar> obtenerTodas();
     void eliminarPorHecho(Hecho hecho);
     public void eliminarSolicitud(SolicitudEliminar solicitud);
+    public SolicitudEliminar obtenerSolicitud(int id);
 
 }

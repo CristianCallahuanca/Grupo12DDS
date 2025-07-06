@@ -20,8 +20,6 @@ public class FuenteDinamica extends Fuente {
     List<Dataset> ListaDeDatasets = new ArrayList<>();
 
     //Singleton
-    public FuenteDinamica(){
-    }
 
     public static FuenteDinamica getInstancia() {
         return instance;

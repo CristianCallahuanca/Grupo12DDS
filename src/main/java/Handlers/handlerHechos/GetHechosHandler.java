@@ -56,10 +56,7 @@ public class GetHechosHandler implements Handler {
         crearYAgregarSiNoNulo(fechaHardcodeadaDesde, fechaAcontecimientoHasta, PorFechaCarga::new, criterios);
 
         // Obtener y filtrar hechos del sistema
-
         List<Hecho> hechosFiltradosDelSistema = ServicioFiltradorDeHechos.filtrarHechos(Infraestructura.Repositorios.HechoRepositoryEnMemoria.getInstancia().obtenerTodosLosHechosDelSistema(), criterios);
-
-
 
         ctx.json(hechosFiltradosDelSistema);
     }

@@ -8,6 +8,7 @@ import AdministracionDeHechos.Hecho;
 import Handlers.handlerHechos.BodyMessage;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 
+import Infraestructura.Repositorios.SolicitudRepositoryEnMemoria;
 import Servicios.ServicioFiltradorDeHechos;
 import SolicitudEliminar.SolicitudEliminar;
 import io.javalin.http.Context;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostSolicitudesHandler implements Handler {
+public class PostSolicitudesHandler implements Handler{
 
     @Override
     public void handle(@NotNull Context ctx) throws Exception{
@@ -29,33 +30,25 @@ public class PostSolicitudesHandler implements Handler {
         titulo = datos.getTitulo();
         justificacion = datos.getJustificacion();
 
-        /*IMPORTANTE HAY QUE BUSCAR EN LAS DEMAS FUENTES CUANDO ESTEN CREADAS, NECESITO QUE TODAS LAS FUENTES
-        TENGAN BUSCAR POR TITULO
-        // FuenteEstatica.getInstancia().buscarPorTitulo(titulo); //
-        // FuenteDinamica.getInstancia().buscarPorTitulo(titulo); //
-        // TODO: Buscar tambirn en otras fuentes cuando estrn implementadas
-
-         */
-
         if (titulo == null || justificacion == null) {
             ctx.status(400).result("Faltan campos obligatorios: título o justificación");
             return;
         }
 
-
         List<CriterioDePertenencia> listTitulo = new ArrayList<>();
         PorTitulo criterioTitulo = new PorTitulo(titulo);
         listTitulo.add(criterioTitulo);
 
-        List<Hecho> hecho = ServicioFiltradorDeHechos.filtrarHechos(HechoRepositoryEnMemoria.getInstancia().obtenerTodosLosHechosDelSistema(), listTitulo);
+        List<Hecho> hechos = ServicioFiltradorDeHechos.filtrarHechos(HechoRepositoryEnMemoria.getInstancia().obtenerTodosLosHechosDelSistema(), listTitulo);
 
-
-        if (hecho.isEmpty()){
+        if (hechos.isEmpty()){
             ctx.status(400).result("no se encontro el hecho");
             return;
         }
 
-        SolicitudEliminar solicitud = new SolicitudEliminar(hecho.get(0),justificacion);
+        SolicitudEliminar solicitud = new SolicitudEliminar(hechos.get(0),justificacion);
+
+        SolicitudRepositoryEnMemoria.getInstancia().guardar(solicitud);
 
         ctx.status(200).result("llego con exito");
 

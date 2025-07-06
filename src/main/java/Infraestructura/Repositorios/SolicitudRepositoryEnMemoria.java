@@ -1,5 +1,6 @@
 package Infraestructura.Repositorios;
 
+import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.Hecho;
 import SolicitudEliminar.SolicitudEliminar;
 
@@ -20,6 +21,17 @@ public class SolicitudRepositoryEnMemoria implements SolicitudRepository{
     @Override
     public void guardar(SolicitudEliminar solicitud) {
         solicitudes.add(solicitud);
+    }
+
+    @Override
+    public SolicitudEliminar obtenerSolicitud(int id){
+
+        for (SolicitudEliminar solicitud : solicitudes) {
+            if (solicitud.getId_solicitud() == id) {
+                return solicitud;
+            }
+        }
+        return null;
     }
 
     @Override

@@ -7,25 +7,21 @@ import Servicios.ServicioDeAgregacion;
 import java.util.List;
 
 public class MultiplesMenciones extends AlgoritmoDeConsenso {
+
+    private long fuentesConMismoHecho(Hecho unHecho, List<Fuente> fuentes){
+        return fuentes.stream().filter(f -> f.getHechos().stream()
+                        .anyMatch(h -> h.equals(unHecho)))
+                        .count();
+    }
+
+    private boolean fuentesConMismoTituloDistintosAtributos(Hecho unHecho, List<Fuente> fuentes){
+        return fuentes.stream().flatMap(f -> f.getHechos().stream())
+                      .anyMatch(h2 -> h2.getTitulo().equals(unHecho.getTitulo()) && !h2.equals(unHecho));
+    }
+
     @Override
-    public List<Hecho> verificar(List<Hecho> hechos){
-        List<Fuente> todasLasFuentes = ServicioDeAgregacion.getInstancia().getFuentes();
+    public boolean esConsensuado(Hecho h, List<Fuente> fuentes) {
 
-        return hechos.stream()
-                .filter(h1 -> {
-                    // Cantidad de fuentes que contienen un hecho igual a h1 (mismo título y mismos atributos)
-                    long fuentesConMismoHecho = todasLasFuentes.stream()
-                            .filter(f -> f.getHechos().stream()
-                                    .anyMatch(h2 -> h2.equals(h1)))
-                            .count();
-
-                    // Alguna fuente contiene otro hecho con mismo título pero distinto (atributos diferentes)
-                    boolean hayOtroDistinto = todasLasFuentes.stream()
-                            .flatMap(f -> f.getHechos().stream())
-                            .anyMatch(h2 -> h2.getTitulo().equals(h1.getTitulo()) && !h2.equals(h1));
-
-                    return fuentesConMismoHecho >= 2 && !hayOtroDistinto;
-                })
-                .toList();
+        return fuentesConMismoHecho(h, fuentes) >=2 && !fuentesConMismoTituloDistintosAtributos(h, fuentes);
     }
 }

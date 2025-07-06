@@ -9,6 +9,7 @@ import Fuentes.FuenteDinamica;
 import Fuentes.FuenteEstatica.FuenteEstatica;
 import Fuentes.Proxy.FuenteDemo;
 import Fuentes.Proxy.FuenteMetaMapa;
+import Handlers.ConversorStringObjetos;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import io.javalin.http.Context;
 import io.javalin.http.Handler; // ¡ESTE import es clave!
@@ -31,12 +32,12 @@ public class PostColeccionesHandler implements Handler {
 
         for(CriterioDTO criterio : datos.getCriterios()){
 
-            listCriterios.add(JsonACriterio(criterio.tipo,criterio.parametros));
+            listCriterios.add(ConversorStringObjetos.JsonACriterio(criterio.tipo,criterio.parametros));
         }
 
         for(String fuente: datos.getFuentes()){
 
-            listFuentes.add(JsonAFuente(fuente));
+            listFuentes.add(ConversorStringObjetos.JsonAFuente(fuente));
         }
 
         Coleccion coleccion = new Coleccion(listFuentes,datos.getTitulo(),datos.getDescripcion(),listCriterios);
@@ -49,55 +50,6 @@ public class PostColeccionesHandler implements Handler {
 
         System.out.println(listCriterios.size());
 
-    }
-
-    public Fuente JsonAFuente(String tipo){
-
-        return switch(tipo.toLowerCase()){
-            case "fuenteestatica" -> FuenteEstatica.getInstancia();
-
-            case "fuentedinamica" -> FuenteDinamica.getInstancia();
-
-            case "fuentemetamapa" -> FuenteMetaMapa.getInstancia();
-
-            case "fuentedemo" -> FuenteDemo.getInstancia();
-
-            default -> throw new IllegalArgumentException("Tipo de fuente no valida");
-        };
-    }
-
-    public CriterioDePertenencia JsonACriterio(String tipo, Map<String, String> params){
-
-        return switch (tipo.toLowerCase()) {
-            case "portitulo" -> new PorTitulo(params.get("tituloBuscado"));
-
-            case "porcategoria" -> new PorCategoria(params.get("categoriaDeseada"));
-
-            case "pordescripcion" -> new PorDescripcion(params.get("fraseClave"));
-
-            case "poretiqueta" -> new PorEtiqueta(params.get("etiquetaDeseada"));
-
-            case "pororigen" -> new PorOrigen(Origen.valueOf(params.get("unOrigen").toUpperCase()));
-
-            case "porubicacion" -> new PorUbicacion(
-                    new Ubicacion(
-                            Double.parseDouble(params.get("latitud")),
-                            Double.parseDouble(params.get("longitud"))
-                    )
-            );
-
-            case "porfechacarga" -> new PorFechaCarga(
-                    LocalDateTime.parse(params.get("desde")),
-                    LocalDateTime.parse(params.get("hasta"))
-            );
-
-            case "porfechaacontecimiento" -> new PorFechaAcontecimiento(
-                    LocalDateTime.parse(params.get("desde")),
-                    LocalDateTime.parse(params.get("hasta"))
-            );
-
-            default -> throw new IllegalArgumentException("Tipo de criterio no válido: ");
-        };
     }
 
 }

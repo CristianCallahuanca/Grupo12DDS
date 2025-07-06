@@ -18,7 +18,7 @@ public class Contribuyente_Registrado extends Contribuyente {
         this.edad = edad;
     }
 
-    public void subirHecho(Hecho hecho) {
+    public void cargarHecho(Hecho hecho) {
         hecho.setFechaCarga(LocalDateTime.now());
         hecho.setContribuyente(this);
         hecho.setOrigen(Origen.DINAMICA);
@@ -31,7 +31,7 @@ public class Contribuyente_Registrado extends Contribuyente {
         //hecho.marcarComoNoVisible(); //puede hacer esto? no es con solicitud de elim
     }
 
-    public void modificarHecho(Hecho hechoModificado, Hecho cambios) {
+    public void solicitarModificarHecho(Hecho hechoModificado, Hecho cambios) {
         if (hechoModificado.puedeSerEditado()) {
             hechoModificado.editarCon(cambios);
             // esto se puede pasar a Hechos sin revisar

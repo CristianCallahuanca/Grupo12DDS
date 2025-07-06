@@ -11,6 +11,5 @@ import java.util.List;
 @Setter
 public class BodyAlgoritmo {
 
-    private String handleColeccion;
     private String algoritmo;
 }

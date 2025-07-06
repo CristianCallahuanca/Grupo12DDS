@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public abstract class Fuente {
 
     protected List<Hecho> hechos = new ArrayList<>();
+    private String nombre;
 
     /*public Fuente(List<Hecho> hechos){
         this.hechos = hechos;

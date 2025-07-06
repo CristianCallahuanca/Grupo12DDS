@@ -27,9 +27,6 @@ public class FuenteEstatica extends Fuente {
     List<Dataset> ListaDeDatasets = new ArrayList<>();
 
     //Singleton
-    public FuenteEstatica(){
-    }
-
     public static FuenteEstatica getInstancia() {
         return instance;
     }

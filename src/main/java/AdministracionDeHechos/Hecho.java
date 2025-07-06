@@ -1,5 +1,6 @@
 package AdministracionDeHechos;
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
+import Fuentes.Fuente;
 import Fuentes.FuenteDinamica;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import Persona.Contribuyente.Contribuyente;
@@ -37,6 +38,7 @@ public class Hecho {
     private Contribuyente contribuyente;
     private Origen origen;
     private boolean visible;
+    private Fuente fuente;
 
     public boolean getVisible() {
         return visible;
