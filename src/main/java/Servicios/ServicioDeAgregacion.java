@@ -57,7 +57,7 @@ public class ServicioDeAgregacion {
 
     public void agregarHechosEnColeccion(Coleccion unaColeccion, List<Hecho> hechos){
         List <CriterioDePertenencia> fuentesABuscar = new ArrayList<>();
-        fuentes.forEach(unaFuente -> fuentesABuscar.add(new PorFuente(unaFuente)));
+        unaColeccion.getFuentes().forEach(unaFuente -> fuentesABuscar.add(new PorFuente(unaFuente)));
 
         List <Hecho> hechosDeCiertasFuentes = ServicioFiltradorDeHechos.filtrarHechos(hechos, fuentesABuscar);
         List <Hecho> hechosDeLaColeccion = ServicioFiltradorDeHechos.filtrarHechos(hechosDeCiertasFuentes, unaColeccion.getCriterios());
