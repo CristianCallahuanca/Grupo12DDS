@@ -1,5 +1,6 @@
 package org.example;
 
+import Handlers.endpointsAPI;
 import Handlers.handleAlgoritmoConsenso.CambiarAlgoritmoHandle;
 import Handlers.handlerColeccion.DeleteColeccionesHandler;
 import Handlers.handlerColeccion.GetTodasColeccionesHandler;
@@ -12,10 +13,12 @@ import Handlers.NavegarHandle.NavegarHandle;
 import Handlers.ReportarHechoHandle.ReportarHechoHandle;
 
 import Handlers.handlerSolicitudEliminacion.PostSolicitudesHandler;
+import Scheduler.Scheduler;
 import io.javalin.Javalin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.util.concurrent.*;
 
 import Handlers.handlerHechos.GetHechosHandler;
 
@@ -24,48 +27,10 @@ public class Main {
     public static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws IOException {
+        
+        new endpointsAPI().iniciarEndpoints();
 
-        Javalin app = Javalin.create().start(7000);
-
-        /*API administrativa de MetaMapa*/
-
-        //Operaciones CRUD sobre las colecciones
-        app.post("/colecciones", new PostColeccionesHandler());
-
-        app.get("/colecciones",new GetTodasColeccionesHandler());
-
-        app.delete("/colecciones/{handle}",new DeleteColeccionesHandler());
-
-        app.put("/colecciones/{handle}",new UpdateColeccionesHandler());
-
-        // Modificación del algoritmo de consenso
-        app.put("/algoritmoConsenso/{handle}", new CambiarAlgoritmoHandle());
-
-        // Agregar o quitar fuentes de hechos de una colección
-        app.put("/colecciones/{handle}/fuente",new ModificarFuentesColeccionHandle()); //una vez agregada la fuente o removida hay q actualizar la lista NO IMPLEMENTADO
-
-        //Aprobar o denegar una solicitud de eliminación de un hecho
-        app.put("/solicitud/{id}",new AprobarDesaprobarSolicitudHandle());
-
-
-        /*API pública para otras instancias de MetaMapa*/
-
-        //Consulta de hechos dentro de una colección
-        //Navegación filtrada sobre una colección
-        app.get("/colecciones/{identificador}/hechos", new GetHechosColeccionHandler()); //cumple las 2 funciones
-
-        //Generar una solicitud de eliminación a un hecho.
-        app.post("/solicitudes",new PostSolicitudesHandler());
-
-        //obtener hechos
-        app.get("/hechos", new GetHechosHandler());
-
-        //Navegación curada o irrestricta sobre una colección
-        app.get("/navegacion/{handle}", new NavegarHandle()); //esta bien el navegacion como ruta? o se podria mejorar
-
-        //Reportar un hecho (subir hecho)
-        app.post("/hecho",new ReportarHechoHandle());
-
+        new Scheduler().iniciarScheduler();
 
     }
 }

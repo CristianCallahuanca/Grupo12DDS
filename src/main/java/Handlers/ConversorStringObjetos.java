@@ -10,11 +10,6 @@ import Fuentes.Proxy.FuenteMetaMapa;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
 import java.time.LocalDateTime;
-import Fuentes.Fuente;
-import Fuentes.FuenteDinamica;
-import Fuentes.FuenteEstatica.FuenteEstatica;
-import Fuentes.Proxy.FuenteDemo;
-import Fuentes.Proxy.FuenteMetaMapa;
 
 import java.util.Map;
 

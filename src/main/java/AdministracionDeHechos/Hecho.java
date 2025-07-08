@@ -4,6 +4,7 @@ import Fuentes.Fuente;
 import Fuentes.FuenteDinamica;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import Persona.Contribuyente.Contribuyente;
+import Servicios.ServicioDeIdentificacion;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,10 +40,12 @@ public class Hecho {
     private Origen origen;
     private boolean visible;
     private Fuente fuente;
+    private int id_hecho;
 
     public boolean getVisible() {
         return visible;
     }
+    
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
                  LocalDateTime fechaAcontecimiento,String etiqueta) {
 
@@ -54,6 +57,7 @@ public class Hecho {
         this.etiqueta = etiqueta;
         this.visible = true;
         this.fechaCarga = LocalDateTime.now();
+        this.id_hecho = ServicioDeIdentificacion.getInstancia().generarIDHecho();
     }
 
     public void setOrigen(Origen unOrigen) {

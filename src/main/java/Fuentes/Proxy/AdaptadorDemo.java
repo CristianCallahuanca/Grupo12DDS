@@ -22,7 +22,6 @@ public class AdaptadorDemo {
         this.ultimaConsulta = LocalDateTime .now();
     }
 
-
     public List<Hecho> obtenerHechos() {
         List<Hecho> hechos = new ArrayList<>();
         Map<String, Object> data;
@@ -33,7 +32,7 @@ public class AdaptadorDemo {
             }
         } while (data != null);
 
-        this.ultimaConsulta = LocalDateTime .now();
+        this.ultimaConsulta = LocalDateTime.now();
         return hechos;
     }
 

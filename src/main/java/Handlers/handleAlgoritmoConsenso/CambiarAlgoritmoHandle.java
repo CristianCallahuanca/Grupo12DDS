@@ -4,8 +4,7 @@ import AdministracionDeHechos.Consenso.Absoluta;
 import AdministracionDeHechos.Consenso.AlgoritmoDeConsenso;
 import AdministracionDeHechos.Consenso.MayoriaSimple;
 import AdministracionDeHechos.Consenso.MultiplesMenciones;
-import Handlers.handlerColeccion.BodyColeccion;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Servicios.ServicioIdentificadorDeObjetos;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +17,7 @@ public class CambiarAlgoritmoHandle implements Handler {
         BodyAlgoritmo datos = ctx.bodyAsClass(BodyAlgoritmo.class);
         String handle = ctx.pathParam("handle");
 
-        ColeccionRepositoryEnMemoria.getInstancia().buscarPorHandle(handle).setAlgoritmoDeConsenso(JsonAlgoritmo(datos.getAlgoritmo()));
+        ServicioIdentificadorDeObjetos.getInstancia().obtenerColeccionPorHandle(handle).setAlgoritmoDeConsenso(JsonAlgoritmo(datos.getAlgoritmo()));
 
     }
 

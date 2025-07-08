@@ -6,6 +6,7 @@ import AdministracionDeHechos.CriterioPertenencia.PorFuente;
 import AdministracionDeHechos.Hecho;
 import Fuentes.Fuente;
 import Fuentes.FuenteDinamica;
+import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,19 +33,41 @@ public class ServicioDeAgregacion {
 
     public void guardar(Fuente fuente){fuentes.add(fuente);}
 
-    public void primeraCarga(List <Fuente> fuentes,
-                             List <CriterioDePertenencia> criterios,
-                             Coleccion unaColeccion) throws IOException {
+    public void primeraCarga(Coleccion unaColeccion) throws IOException {
 
         List <Hecho> hechosDelSistema = HechoRepositoryEnMemoria.getInstancia().obtenerTodosLosHechosDelSistema();
-
-        List <CriterioDePertenencia> fuentesABuscar = new ArrayList<>();
-        fuentes.forEach(unaFuente -> fuentesABuscar.add(new PorFuente(unaFuente)));
-
-        List <Hecho> hechosDeLaColeccion = ServicioFiltradorDeHechos.filtrarHechos(hechosDelSistema, fuentesABuscar);
-
-        unaColeccion.insertarHechos(hechosDeLaColeccion);
+//no tendría que ser desde las fuentes en lugar del repositorio? Para qué están como atributo sino?
+        this.agregarHechosEnColeccion(unaColeccion, hechosDelSistema);
 
     }
 
+    public void actualizar() throws IOException {
+
+        LocalDateTime ahora = LocalDateTime.now();
+
+        List<Hecho> hechosNuevos = this.obtenerHechosNuevosDesde(ultimaEjecucion);
+
+        for (Coleccion col : ColeccionRepositoryEnMemoria.getInstancia().obtenerTodas()){
+        this.agregarHechosEnColeccion(col, hechosNuevos);
+        }
+
+        ultimaEjecucion = ahora;
+
+    }
+
+    public void agregarHechosEnColeccion(Coleccion unaColeccion, List<Hecho> hechos){
+        List <CriterioDePertenencia> fuentesABuscar = new ArrayList<>();
+        fuentes.forEach(unaFuente -> fuentesABuscar.add(new PorFuente(unaFuente)));
+
+        List <Hecho> hechosDeCiertasFuentes = ServicioFiltradorDeHechos.filtrarHechos(hechos, fuentesABuscar);
+        List <Hecho> hechosDeLaColeccion = ServicioFiltradorDeHechos.filtrarHechos(hechosDeCiertasFuentes, unaColeccion.getCriterios());
+
+        unaColeccion.insertarHechos(hechosDeLaColeccion);
+    }
+
+    private List<Hecho> obtenerHechosNuevosDesde(LocalDateTime fecha) throws IOException {
+         List <Hecho> hechosDelSistema = HechoRepositoryEnMemoria.getInstancia().obtenerTodosLosHechosDelSistema();
+
+                return hechosDelSistema.stream().filter(h -> h.getFechaCarga().isAfter(fecha)).toList();
+    }
 }

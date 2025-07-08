@@ -3,9 +3,8 @@ import AdministracionDeHechos.Consenso.AlgoritmoDeConsenso;
 import AdministracionDeHechos.ModoNavegacion.ModoNavegacion;
 import Fuentes.Fuente;
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
-import Fuentes.FuenteDinamica;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import Servicios.ServicioDeAgregacion;
+import Servicios.ServicioDeIdentificacion;
 import Servicios.ServicioFiltradorDeHechos;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,8 +13,6 @@ import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.io.IOException;
-import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,45 +34,15 @@ public class Coleccion {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.criterios = criterios;
-        this.handle = generarHandle(titulo);
-        ServicioDeAgregacion.getInstancia().primeraCarga(this.fuentes, this.criterios, this);
-    }
-
-    private String generarHandle(String titulo) {
-        // Quita acentos
-        String normalizado = Normalizer.normalize(titulo, Normalizer.Form.NFD)
-                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-        // Elimina caracteres no alfanuméricos excepto espacios, y reemplaza espacios por guiones
-        return normalizado.toLowerCase()
-                .replaceAll("[^a-z0-9 ]", "")
-                .replaceAll("\\s+", "-");
+        this.handle = ServicioDeIdentificacion.getInstancia().generarHandle();
+        ServicioDeAgregacion.getInstancia().primeraCarga(this);
     }
 
     public void insertarHechos(List <Hecho> unosHechos) {this.hechos.addAll(unosHechos);}
-/*
-    private void consensuarHechos(){
-        // 1. Crear el JobDetail con la clase MiJob
-        JobDetail job = JobBuilder.newJob(MiJob.class)
-                .withIdentity("miTarea", "grupo1")
-                .build();
 
-        // 2. Crear el trigger que dispare todos los días a las 15:30
-        Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity("miTrigger", "grupo1")
-                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(15, 30))
-                .build();
-
-        // 3. Obtener el scheduler
-        Scheduler scheduler = new StdSchedulerFactory().getScheduler();
-
-        // 4. Iniciar el scheduler
-        scheduler.start();
-
-        // 5. Agendar la tarea
-        scheduler.scheduleJob(job, trigger);
+    public void consensuarHechos(){
+        this.algoritmoDeConsenso.verificar(this.hechos);
     }
-*/
-
     public List <Hecho> obtenerHechosPorModo(ModoNavegacion algunModo)
     {
         return algunModo.aplicarModoDeNavegacion(this.hechos, this.algoritmoDeConsenso);

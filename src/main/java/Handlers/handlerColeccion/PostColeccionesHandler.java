@@ -2,23 +2,15 @@ package Handlers.handlerColeccion;
 
 import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.CriterioPertenencia.*;
-import AdministracionDeHechos.Origen;
-import AdministracionDeHechos.Ubicacion;
 import Fuentes.Fuente;
-import Fuentes.FuenteDinamica;
-import Fuentes.FuenteEstatica.FuenteEstatica;
-import Fuentes.Proxy.FuenteDemo;
-import Fuentes.Proxy.FuenteMetaMapa;
 import Handlers.ConversorStringObjetos;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import io.javalin.http.Context;
 import io.javalin.http.Handler; // ¡ESTE import es clave!
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class PostColeccionesHandler implements Handler {
 

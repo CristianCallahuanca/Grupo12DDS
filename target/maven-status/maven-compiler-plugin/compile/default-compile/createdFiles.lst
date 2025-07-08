@@ -1,0 +1,12 @@
+Handlers/handlerHechos/GetHechosColeccionHandler.class
+AdministracionDeHechos/ModoNavegacion/ModoNavegacion.class
+Handlers/ConversorStringObjetos.class
+Handlers/handleAprobarDesaprobarSolicitudHandle/AprobarDesaprobarSolicitudHandle.class
+Handlers/ReportarHechoHandle/ReportarHechoHandle.class
+Handlers/ReportarHechoHandle/BodyReportarHechoHandle.class
+Handlers/endpointsAPI.class
+Handlers/handlerColeccion/CriterioDTO.class
+Handlers/handlerSolicitudEliminacion/BodyEliminarSolicitud.class
+Handlers/handlerColeccion/UpdateColeccionesHandler.class
+AdministracionDeHechos/ModoNavegacion/Curada.class
+Handlers/handlerColeccion/PostColeccionesHandler.class

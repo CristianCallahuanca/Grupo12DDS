@@ -1,52 +1,40 @@
 package Handlers.handlerSolicitudEliminacion;
 
 
-import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
-import AdministracionDeHechos.CriterioPertenencia.PorTitulo;
 import AdministracionDeHechos.Hecho;
 
-import Handlers.handlerHechos.BodyMessage;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
-
 import Infraestructura.Repositorios.SolicitudRepositoryEnMemoria;
-import Servicios.ServicioFiltradorDeHechos;
+import Servicios.ServicioIdentificadorDeObjetos;
 import SolicitudEliminar.SolicitudEliminar;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PostSolicitudesHandler implements Handler{
 
     @Override
     public void handle(@NotNull Context ctx) throws Exception{
 
-        BodyMessage datos = ctx.bodyAsClass(BodyMessage.class);
-        String titulo = null;
+        BodyEliminarSolicitud datos = ctx.bodyAsClass(BodyEliminarSolicitud.class);
+        String id_hecho = null;
         String justificacion = null;
 
-        titulo = datos.getTitulo();
+        id_hecho = datos.getId_hecho();
         justificacion = datos.getJustificacion();
 
-        if (titulo == null || justificacion == null) {
+        if (id_hecho == null || justificacion == null) {
             ctx.status(400).result("Faltan campos obligatorios: título o justificación");
             return;
         }
 
-        List<CriterioDePertenencia> listTitulo = new ArrayList<>();
-        PorTitulo criterioTitulo = new PorTitulo(titulo);
-        listTitulo.add(criterioTitulo);
+        Hecho hecho = ServicioIdentificadorDeObjetos.getInstancia().obtenerHechoPorID(Integer.parseInt(id_hecho));
 
-        List<Hecho> hechos = ServicioFiltradorDeHechos.filtrarHechos(HechoRepositoryEnMemoria.getInstancia().obtenerTodosLosHechosDelSistema(), listTitulo);
-
-        if (hechos.isEmpty()){
+        if (hecho == null){
             ctx.status(400).result("no se encontro el hecho");
             return;
         }
 
-        SolicitudEliminar solicitud = new SolicitudEliminar(hechos.get(0),justificacion);
+        SolicitudEliminar solicitud = new SolicitudEliminar(hecho,justificacion);
 
         SolicitudRepositoryEnMemoria.getInstancia().guardar(solicitud);
 

@@ -2,10 +2,14 @@ package Infraestructura.Repositorios;
 
 import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.Hecho;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class ColeccionRepositoryEnMemoria implements ColeccionRepository{
     private static final ColeccionRepositoryEnMemoria instance = new ColeccionRepositoryEnMemoria();
     private List<Coleccion> colecciones = new ArrayList<>();
@@ -21,27 +25,6 @@ public class ColeccionRepositoryEnMemoria implements ColeccionRepository{
     public void guardar(Coleccion coleccion) {
         colecciones.removeIf(c -> c.getHandle().equals(coleccion.getHandle()));
         colecciones.add(coleccion);
-    }
-
-
-    @Override
-    public Coleccion buscarPorTitulo(String titulo) {
-        for (Coleccion c : colecciones) {
-            if (c.getTitulo().equals(titulo)) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Coleccion buscarPorHandle(String handle) {
-        for (Coleccion c : colecciones) {
-            if (c.getHandle().equals(handle)) {
-                return c;
-            }
-        }
-        return null;
     }
 
     @Override

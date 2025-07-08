@@ -1,8 +1,7 @@
 package Handlers.handlerColeccion;
 
-import AdministracionDeHechos.Coleccion;
 import Handlers.ConversorStringObjetos;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Servicios.ServicioIdentificadorDeObjetos;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import Fuentes.Fuente;
@@ -17,7 +16,7 @@ public class ModificarFuentesColeccionHandle implements Handler {
         BodyModificarFuentesColeccion datos = ctx.bodyAsClass(BodyModificarFuentesColeccion.class);
         String handle = ctx.pathParam("handle");
 
-        List<Fuente> fuentes = ColeccionRepositoryEnMemoria.getInstancia().buscarPorHandle(handle).getFuentes();
+        List<Fuente> fuentes = ServicioIdentificadorDeObjetos.getInstancia().obtenerColeccionPorHandle(handle).getFuentes();
 
         for(String fuenteDelete: datos.getFuentesABorrar()){
             //el problema es que tengo del json las fuentes como string pero quiero borrar un objeto cuando coincida el nombre de la clase
@@ -30,6 +29,6 @@ public class ModificarFuentesColeccionHandle implements Handler {
             fuentes.add(ConversorStringObjetos.JsonAFuente(fuenteAdd));
         }
 
-        ColeccionRepositoryEnMemoria.getInstancia().buscarPorHandle(handle).setFuentes(fuentes);
+        ServicioIdentificadorDeObjetos.getInstancia().obtenerColeccionPorHandle(handle).setFuentes(fuentes);
     }
 }

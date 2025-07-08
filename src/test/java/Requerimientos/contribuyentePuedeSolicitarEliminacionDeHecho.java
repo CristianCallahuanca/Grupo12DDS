@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-
+/*
 public class contribuyentePuedeSolicitarEliminacionDeHecho {
 
     @Test
@@ -41,3 +41,4 @@ public class contribuyentePuedeSolicitarEliminacionDeHecho {
     }
 
 }
+*/

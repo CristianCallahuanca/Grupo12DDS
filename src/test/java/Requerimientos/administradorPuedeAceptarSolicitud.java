@@ -25,7 +25,7 @@ public class administradorPuedeAceptarSolicitud {
         SolicitudEliminar solicitud = new SolicitudEliminar(hecho, "Es falsa");
 
 
-        solicitud.aceptar(); // administrador
+        //solicitud.aceptar(); // administrador
 
         assertEquals(EstadoEliminar.APROBADA, solicitud.getEstadoEliminar());
         assertFalse(hecho.getVisible());

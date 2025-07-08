@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FuenteDemo extends FuenteProxy {
+    //
 
     private static final FuenteDemo instance = new FuenteDemo();
     List<Hecho> hechos  = new ArrayList<>();
@@ -32,21 +33,18 @@ public class FuenteDemo extends FuenteProxy {
         this.adapter = adapter;
         this.ultimaActualizacion = LocalDateTime.now();
     }
+
     public void setUltimaActualizacion(LocalDateTime ultimaActualizacion) {
         this.ultimaActualizacion = ultimaActualizacion;
     }
 
-    @Override
-    public void sincronizar() {
 
-        if (Duration.between(ultimaActualizacion, LocalDateTime.now()).toMinutes() >= 60) {
-            List<Hecho> nuevosHechos = adapter.obtenerHechos();
-            nuevosHechos.forEach(unHecho -> unHecho.setOrigen(Origen.PROXY));
-            this.hechos.addAll(nuevosHechos);
-            this.ultimaActualizacion = LocalDateTime.now();
-        }
+    public void sincronizar() {
+        List<Hecho> nuevosHechos = adapter.obtenerHechos();
+        nuevosHechos.forEach(unHecho -> unHecho.setOrigen(Origen.PROXY));
+        this.hechos.addAll(nuevosHechos);
+        this.ultimaActualizacion = LocalDateTime.now();
     } // Esto lo aplicamos asi de esta forma pero en realidad luego tenemos que evaluar con los CRON JOBS
     //ya que este mecanismo no tiene que ser propio de esta clase
-
 }
 

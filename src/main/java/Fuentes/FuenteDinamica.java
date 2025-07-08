@@ -17,8 +17,6 @@ import static AdministracionDeHechos.Origen.DINAMICA;
 public class FuenteDinamica extends Fuente {
 
     private static final FuenteDinamica instance = new FuenteDinamica();
-    List<Dataset> ListaDeDatasets = new ArrayList<>();
-
     //Singleton
 
     public static FuenteDinamica getInstancia() {

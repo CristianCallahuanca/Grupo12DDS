@@ -3,10 +3,14 @@ package Infraestructura.Repositorios;
 import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.Hecho;
 import SolicitudEliminar.SolicitudEliminar;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
+@Getter
 public class SolicitudRepositoryEnMemoria implements SolicitudRepository{
     private static final SolicitudRepositoryEnMemoria instance = new SolicitudRepositoryEnMemoria();
     private List<SolicitudEliminar> solicitudes = new ArrayList<>();
@@ -24,38 +28,27 @@ public class SolicitudRepositoryEnMemoria implements SolicitudRepository{
     }
 
     @Override
-    public SolicitudEliminar obtenerSolicitud(int id){
-
-        for (SolicitudEliminar solicitud : solicitudes) {
-            if (solicitud.getId_solicitud() == id) {
-                return solicitud;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public SolicitudEliminar buscarPorHecho(Hecho hecho) {
-        for (SolicitudEliminar s : solicitudes) {
-            if (s.getHecho().equals(hecho)) {
-                return s;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public ArrayList<SolicitudEliminar> obtenerTodas() {
         return new ArrayList<>(this.solicitudes);
     }
 
     @Override
-    public void eliminarPorHecho(Hecho hecho) {
-        solicitudes.removeIf(s -> s.getHecho().equals(hecho));
+    public void eliminarPorHecho(int id_hecho) {
+        solicitudes.removeIf(s -> s.getId_solicitud() == id_hecho);
     }
     @Override
     public void eliminarSolicitud(SolicitudEliminar solicitud) {
         solicitudes.remove(solicitud);
+    }
+
+    @Override
+    public SolicitudEliminar buscarPorHecho(int id_hecho) {
+        for (SolicitudEliminar s : solicitudes) {
+            if (s.getId_hecho() == id_hecho){
+                return s;
+            }
+        }
+        return null;
     }
 
 }

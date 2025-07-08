@@ -9,10 +9,8 @@ import java.util.Optional;
 
 public interface SolicitudRepository {
     void guardar(SolicitudEliminar solicitud);
-    SolicitudEliminar buscarPorHecho(Hecho hecho);
     public ArrayList<SolicitudEliminar> obtenerTodas();
-    void eliminarPorHecho(Hecho hecho);
+    void eliminarPorHecho(int id_hecho);
     public void eliminarSolicitud(SolicitudEliminar solicitud);
-    public SolicitudEliminar obtenerSolicitud(int id);
-
+    SolicitudEliminar buscarPorHecho(int id_hecho);
 }

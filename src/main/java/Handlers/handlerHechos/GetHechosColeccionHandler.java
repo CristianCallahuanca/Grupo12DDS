@@ -5,9 +5,11 @@ import AdministracionDeHechos.CriterioPertenencia.*;
 import AdministracionDeHechos.Ubicacion;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
 import Servicios.ServicioFiltradorDeHechos;
+import Servicios.ServicioIdentificadorDeObjetos;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ import java.util.function.Function;
 public class GetHechosColeccionHandler implements Handler {
 
     @Override
-    public void handle(Context ctx) {
+    public void handle(Context ctx) throws IOException {
         // Leer parametro del query params
         String id = ctx.pathParam("identificador");
 
@@ -57,7 +59,7 @@ public class GetHechosColeccionHandler implements Handler {
         crearYAgregarSiNoNulo(fechaHardcodeadaDesde, fechaAcontecimientoHasta, PorFechaCarga::new, criterios);
 
         // Obtener y filtrar coleccion
-        Coleccion unaColeccion = ColeccionRepositoryEnMemoria.getInstancia().buscarPorHandle(id);
+        Coleccion unaColeccion = ServicioIdentificadorDeObjetos.getInstancia().obtenerColeccionPorHandle(id);
         ServicioFiltradorDeHechos.filtrarHechos(unaColeccion.obtenerHechos(), criterios);
 
         ctx.json(unaColeccion);

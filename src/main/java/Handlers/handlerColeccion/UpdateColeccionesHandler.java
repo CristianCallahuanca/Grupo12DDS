@@ -2,23 +2,16 @@ package Handlers.handlerColeccion;
 
 import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.CriterioPertenencia.*;
-import AdministracionDeHechos.Origen;
-import AdministracionDeHechos.Ubicacion;
 import Fuentes.Fuente;
-import Fuentes.FuenteDinamica;
-import Fuentes.FuenteEstatica.FuenteEstatica;
-import Fuentes.Proxy.FuenteDemo;
-import Fuentes.Proxy.FuenteMetaMapa;
 import Handlers.ConversorStringObjetos;
 import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Servicios.ServicioIdentificadorDeObjetos;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class UpdateColeccionesHandler implements Handler {
 
@@ -29,7 +22,7 @@ public class UpdateColeccionesHandler implements Handler {
         BodyColeccion datos = ctx.bodyAsClass(BodyColeccion.class);
         List<Fuente> listFuentes = new ArrayList<Fuente>();
 
-        Coleccion coleccion = ColeccionRepositoryEnMemoria.getInstancia().buscarPorHandle(handle);
+        Coleccion coleccion = ServicioIdentificadorDeObjetos.getInstancia().obtenerColeccionPorHandle(handle);
 
         if (datos.getTitulo() != null) {
             coleccion.setTitulo(datos.getTitulo());
