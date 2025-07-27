@@ -8,10 +8,10 @@ import Fuentes.FuenteEstatica.Dataset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FuenteProxy extends Fuente {
+public abstract class FuenteProxy extends Fuente {
     //Singleton
-    private static final FuenteProxy instance = new FuenteProxy();
-    public static FuenteProxy getInstancia() {return instance;}
+   // private static final FuenteProxy instance = new FuenteProxy();
+    //public static FuenteProxy getInstancia() {return instance;}
     //Singleton
 
 }

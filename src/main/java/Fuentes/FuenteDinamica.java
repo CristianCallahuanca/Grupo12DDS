@@ -5,7 +5,7 @@ import AdministracionDeHechos.CriterioPertenencia.PorOrigen;
 import AdministracionDeHechos.Hecho;
 import Fuentes.FuenteEstatica.Dataset;
 import Fuentes.FuenteEstatica.FuenteEstatica;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositorio;
 import Servicios.ServicioDeAgregacion;
 import Servicios.ServicioFiltradorDeHechos;
 
@@ -26,7 +26,7 @@ public class FuenteDinamica extends Fuente {
     @Override
     public List<Hecho> obtenerHechos(){
         return
-        ServicioFiltradorDeHechos.filtrarHechos(HechoRepositoryEnMemoria.getInstancia().obtenerTodas(),List.of(new PorOrigen(DINAMICA)));
+        ServicioFiltradorDeHechos.filtrarHechos(HechoRepositorio.getInstancia().obtenerTodas(),List.of(new PorOrigen(DINAMICA)));
     }
     /*
     public void agregarHecho(Hecho hecho) {

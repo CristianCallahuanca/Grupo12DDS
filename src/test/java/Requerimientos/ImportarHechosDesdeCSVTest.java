@@ -48,7 +48,7 @@ public class ImportarHechosDesdeCSVTest {
     }
 }
 
-/*Verificar si los hechos tambien se guardan automaticamente en HechoRepositoryEnMemoria
+/*Verificar si los hechos tambien se guardan automaticamente en HechoRepositorio
 
 Probar que pasa con un archivo que no llega a 10.000 lineas
 

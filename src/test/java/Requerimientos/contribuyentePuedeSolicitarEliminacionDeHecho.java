@@ -3,8 +3,8 @@ package Requerimientos;
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
-import Infraestructura.Repositorios.SolicitudRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositorio;
+import Infraestructura.Repositorios.SolicitudRepositorio;
 import Persona.Contribuyente.Contribuyente_Registrado;
 import SolicitudEliminar.SolicitudEliminar;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ public class contribuyentePuedeSolicitarEliminacionDeHecho {
         usuario.solicitarEliminarHecho(hecho, motivo);
 
 
-        List<SolicitudEliminar> solicitudes = SolicitudRepositoryEnMemoria.getInstancia().obtenerTodas();
+        List<SolicitudEliminar> solicitudes = SolicitudRepositorio.getInstancia().obtenerTodas();
         assertEquals(1, solicitudes.size());
 
         SolicitudEliminar solicitud = solicitudes.get(0);

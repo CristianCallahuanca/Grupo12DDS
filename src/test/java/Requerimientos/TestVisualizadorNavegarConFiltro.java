@@ -4,7 +4,7 @@ import AdministracionDeHechos.CriterioPertenencia.*;
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.FuenteDinamica;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositorio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -67,9 +67,9 @@ public class TestVisualizadorNavegarConFiltro {
                 "trabajo");
 
 
-        HechoRepositoryEnMemoria.getInstancia().guardar(hecho1);
-        HechoRepositoryEnMemoria.getInstancia().guardar(hecho2);
-        HechoRepositoryEnMemoria.getInstancia().guardar(hecho3);
+        HechoRepositorio.getInstancia().guardar(hecho1);
+        HechoRepositorio.getInstancia().guardar(hecho2);
+        HechoRepositorio.getInstancia().guardar(hecho3);
 
         criterioTiempoCarga = new PorFechaCarga(fa1, fc1);
         criterioDescripcion = new PorDescripcion("generando gran preocupación entre los vecinos");

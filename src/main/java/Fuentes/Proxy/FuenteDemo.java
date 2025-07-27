@@ -5,7 +5,7 @@ import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
 import Fuentes.FuenteEstatica.Dataset;
 import Fuentes.FuenteEstatica.FuenteEstatica;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositorio;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -40,7 +40,7 @@ public class FuenteDemo extends FuenteProxy {
 
 
     public void sincronizar() {
-        List<Hecho> nuevosHechos = adapter.obtenerHechos();
+        List<Hecho> nuevosHechos = adapter.conseguirHechos();
         nuevosHechos.forEach(unHecho -> unHecho.setOrigen(Origen.PROXY));
         this.hechos.addAll(nuevosHechos);
         this.ultimaActualizacion = LocalDateTime.now();

@@ -45,16 +45,12 @@ public class Coleccion {
     }
     public List <Hecho> obtenerHechosPorModo(ModoNavegacion algunModo)
     {
-        return algunModo.aplicarModoDeNavegacion(this.hechos, this.algoritmoDeConsenso);
+        return algunModo.aplicarModoDeNavegacion(this.obtenerHechosVisibles(), this.algoritmoDeConsenso);
     }
 
-    private void cargarHechosDeUnaFuente(Fuente fuente, List<CriterioDePertenencia> criterios) throws IOException {
-        this.hechos.addAll(ServicioFiltradorDeHechos.filtrarHechos(fuente.obtenerHechos(),criterios));
 
-    }
-
-    public List<Hecho> obtenerHechos() {
-        return hechos.stream().filter(hecho->hecho.getVisible()).toList();
+    public List<Hecho> obtenerHechosVisibles() {
+        return hechos.stream().filter(hecho->hecho.getEstadoHecho() != EstadoHecho.NO_VISIBLE).toList();
     }
 
 
@@ -63,14 +59,23 @@ public class Coleccion {
         unosHechos.forEach(unHecho -> unHecho.imprimirHecho());
     }
 
+    //Para que los usuarios puedan navegar en la colección
+    private List<Hecho> obtenerHechosFiltrados(List<CriterioDePertenencia> filtros) throws IOException {
+        return ServicioFiltradorDeHechos.filtrarHechos(this.hechos ,filtros);
+    }
+
     /*
     ===================================
     ==============DEPRECADO============
     ===================================
 
+    private void cargarHechosDeUnaFuente(Fuente fuente, List<CriterioDePertenencia> criterios) throws IOException {
+        this.hechos.addAll(ServicioFiltradorDeHechos.filtrarHechos(fuente.obtenerHechos(),criterios));
+
+    }
 
     private void cargarColeccion() {
-        ColeccionRepositoryEnMemoria.getInstancia().guardar(this);
+        ColeccionRepositorio.getInstancia().guardar(this);
     }
 
     public void cargarHechos(List<Fuente> fuentes, List<CriterioDePertenencia> criterios) throws IOException {

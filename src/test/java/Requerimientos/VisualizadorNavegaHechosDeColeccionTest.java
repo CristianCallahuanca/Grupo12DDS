@@ -6,7 +6,7 @@ import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.Fuente;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositorio;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -20,8 +20,8 @@ public class VisualizadorNavegaHechosDeColeccionTest {
     @Test
     public void visualizarHechosDesdeFuenteDinamica() throws IOException {
 
-        HechoRepositoryEnMemoria.getInstancia().limpiar();//TEST
-        System.out.println("Hechos al iniciar test: " + HechoRepositoryEnMemoria.getInstancia().obtenerTodas().size());
+        HechoRepositorio.getInstancia().limpiar();//TEST
+        System.out.println("Hechos al iniciar test: " + HechoRepositorio.getInstancia().obtenerTodas().size());
 
 
         Hecho h1 = new Hecho("Inundacion", "Descripcion 1", "Clima",
@@ -33,19 +33,19 @@ public class VisualizadorNavegaHechosDeColeccionTest {
         h2.setOrigen(Origen.DINAMICA);
 
 
-        System.out.println("Hechos despues de guardar: " + HechoRepositoryEnMemoria.getInstancia().obtenerTodas().size());
+        System.out.println("Hechos despues de guardar: " + HechoRepositorio.getInstancia().obtenerTodas().size());
 
         Fuente fuenteDinamica = new Fuente() {
             @Override
             public List<Hecho> obtenerHechos() {
-                return HechoRepositoryEnMemoria.getInstancia().obtenerTodas();
+                return HechoRepositorio.getInstancia().obtenerTodas();
             }
 
             /* No se porque esto estaba overrideado, imagino que el test quedó viejo.
             Si querés filtrar para hacer andar el test (que no entiendo), usa el servicio
             @Override
             public List<Hecho> filtrarHechos(List<CriterioDePertenencia> criterios) {
-                return HechoRepositoryEnMemoria.getInstancia().obtenerTodas().stream()
+                return HechoRepositorio.getInstancia().obtenerTodas().stream()
                         .filter(h -> h.filtrarHecho(criterios))
                         .toList();
             }

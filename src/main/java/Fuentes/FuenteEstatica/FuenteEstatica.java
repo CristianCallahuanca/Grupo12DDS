@@ -5,7 +5,7 @@ import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.Fuente;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositorio;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.Getter;
@@ -114,19 +114,6 @@ public class FuenteEstatica extends Fuente {
         return hechos;
     }
 
-
-    public Hecho buscarPorTitulo(String titulo) throws IOException {
-
-        List<Hecho> hechos = this.obtenerHechos();
-
-        for (Hecho h : hechos) {
-            if (h.getTitulo().equals(titulo)) {
-                return h;
-            }
-        }
-        return null;
-
-    }
 }
 
 

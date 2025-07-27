@@ -2,7 +2,7 @@ package Fuentes;
 
 import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import AdministracionDeHechos.Hecho;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Infraestructura.Repositorios.ColeccionRepositorio;
 import Servicios.ServicioDeAgregacion;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Setter
 public abstract class Fuente {
 
-    protected List<Hecho> hechos = new ArrayList<>();
+    private List<Hecho> hechos = new ArrayList<>();
     private String nombre;
 
     /*public Fuente(List<Hecho> hechos){

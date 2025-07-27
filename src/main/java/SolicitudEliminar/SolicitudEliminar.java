@@ -1,7 +1,7 @@
 package SolicitudEliminar;
 
 import AdministracionDeHechos.Hecho;
-import Infraestructura.Repositorios.SolicitudRepositoryEnMemoria;
+import Infraestructura.Repositorios.SolicitudRepositorio;
 import Servicios.ServicioDeIdentificacion;
 import Servicios.ServicioIdentificadorDeObjetos;
 import lombok.Setter;
@@ -38,13 +38,13 @@ public class SolicitudEliminar {
     public void rechazar() {
         if (this.estadoEliminar != EstadoEliminar.RECHAZADA) {
             this.estadoEliminar = EstadoEliminar.RECHAZADA;
-            SolicitudRepositoryEnMemoria.getInstancia().eliminarSolicitud(this);
+            SolicitudRepositorio.getInstancia().eliminarSolicitud(this);
         }
     }
 
 
 
-    public void cargarSolicitud() { SolicitudRepositoryEnMemoria.getInstancia().guardar(this); }
+    public void cargarSolicitud() { SolicitudRepositorio.getInstancia().guardar(this); }
 
     /* public EstadoEliminar getEstadoEliminar() {
         return estadoEliminar;

@@ -1,8 +1,6 @@
 package AdministracionDeHechos;
-import AdministracionDeHechos.CriterioPertenencia.CriterioDePertenencia;
 import Fuentes.Fuente;
-import Fuentes.FuenteDinamica;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositorio;
 import Persona.Contribuyente.Contribuyente;
 import Servicios.ServicioDeIdentificacion;
 import lombok.EqualsAndHashCode;
@@ -13,7 +11,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.example.Main.logger;
 
@@ -38,13 +35,11 @@ public class Hecho {
     private LocalDateTime fechaCarga;
     private Contribuyente contribuyente;
     private Origen origen;
-    private boolean visible;
     private Fuente fuente;
     private int id_hecho;
+    private EstadoHecho estadoHecho;
+    private EstadoEdicionHecho estadoEdicionHecho;
 
-    public boolean getVisible() {
-        return visible;
-    }
     
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
                  LocalDateTime fechaAcontecimiento,String etiqueta) {
@@ -55,20 +50,22 @@ public class Hecho {
         this.ubicacion = ubicacion;
         this.fechaAcontecimiento = fechaAcontecimiento;
         this.etiqueta = etiqueta;
-        this.visible = true;
+        this.estadoHecho = EstadoHecho.EN_REVISION;
+        this.estadoEdicionHecho = EstadoEdicionHecho.NO_EDITADO;
         this.fechaCarga = LocalDateTime.now();
         this.id_hecho = ServicioDeIdentificacion.getInstancia().generarIDHecho();
     }
 
     public void setOrigen(Origen unOrigen) {
         this.origen = unOrigen;
-        if (unOrigen != Origen.ESTATICA) {HechoRepositoryEnMemoria.getInstancia().guardar(this);}
+        if (unOrigen != Origen.ESTATICA) {HechoRepositorio.getInstancia().guardar(this);}
     }
 
     //METODOS DE HECHOS
     public void marcarComoNoVisible() {
-        this.visible = false;
+        this.estadoHecho = EstadoHecho.NO_VISIBLE;
     }
+
 
     public void editarCon(Hecho cambios) {
         if (this.puedeSerEditado()) {
@@ -79,6 +76,7 @@ public class Hecho {
             this.etiqueta = cambios.getEtiqueta();
             this.archivosMultimedia = new ArrayList<>(cambios.getArchivosMultimedia());
             this.fechaAcontecimiento = cambios.getFechaAcontecimiento();
+            this.estadoEdicionHecho = EstadoEdicionHecho.EDITADO;
             //NO cambiar contribuyente, origen ni fecha de carga
         } else {
             throw new IllegalStateException("El hecho ya no puede ser editado.");
@@ -102,7 +100,6 @@ public class Hecho {
                 ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
         // Con esto basta para saber si puede ser editado?
     }
-
 
 
 }

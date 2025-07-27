@@ -4,7 +4,7 @@ import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.CriterioPertenencia.*;
 import Fuentes.Fuente;
 import Handlers.ConversorStringObjetos;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Infraestructura.Repositorios.ColeccionRepositorio;
 import Servicios.ServicioIdentificadorDeObjetos;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;

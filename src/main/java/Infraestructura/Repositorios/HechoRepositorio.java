@@ -8,35 +8,23 @@ import java.util.ArrayList;
 import java.util.List;
 import Fuentes.FuenteEstatica.FuenteEstatica;
 
-public class HechoRepositoryEnMemoria implements HechoRepository{
+public class HechoRepositorio{
 
-    private static HechoRepositoryEnMemoria instance = null;
+    private static HechoRepositorio instance = null;
     private List<Hecho> hechos = new ArrayList<>();
 
-    public HechoRepositoryEnMemoria() {
+    public HechoRepositorio() {
     }
 
-    public static HechoRepositoryEnMemoria getInstancia() {
+    public static HechoRepositorio getInstancia() {
         if (instance == null) {
-            instance = new HechoRepositoryEnMemoria();
+            instance = new HechoRepositorio();
         }
         return instance;
     }
 
-    @Override
     public void guardar(Hecho hecho) {
         hechos.add(hecho);
-    }
-    
-
-    @Override
-    public Hecho buscarPorTitulo(String titulo) {
-        for (Hecho h : hechos) {
-            if (h.getTitulo().equals(titulo)) {
-                return h;
-            }
-        }
-        return null;
     }
 
     //incluye estatica
@@ -46,12 +34,11 @@ public class HechoRepositoryEnMemoria implements HechoRepository{
         return todos;  // Devolvemos la lista combinada
     }
 
-    @Override //solo los que están en este repo: los de dinamica y proxy
+    //solo los que están en este repo: los de dinamica y proxy
     public ArrayList<Hecho> obtenerTodas() {
         return new ArrayList<>(this.hechos);
     }
 
-    @Override
     public void eliminarPorTitulo(String titulo) {
         hechos.removeIf(h -> h.getTitulo().equals(titulo));
     }

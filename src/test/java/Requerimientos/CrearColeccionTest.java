@@ -2,7 +2,7 @@ package Requerimientos;
 
 import AdministracionDeHechos.Coleccion;
 import Fuentes.FuenteEstatica.FuenteEstatica;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Infraestructura.Repositorios.ColeccionRepositorio;
 import AdministracionDeHechos.CriterioPertenencia.PorDescripcion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CrearColeccionTest {
 /*
-    private ColeccionRepositoryEnMemoria repo;
+    private ColeccionRepositorio repo;
     private FuenteEstatica fuente;
     private Coleccion coleccion;
 
     @BeforeEach
     public void setUp() {
-        repo = ColeccionRepositoryEnMemoria.getInstancia();
+        repo = ColeccionRepositorio.getInstancia();
         fuente = FuenteEstatica.getInstancia();
         repo.obtenerTodas().clear(); // Limpiamos por si había datos previos
     }

@@ -2,8 +2,7 @@ package Persona.Contribuyente;
 
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
-import Fuentes.FuenteDinamica;
-import HechosSinRevisar.HechosSinRevisar;
+
 import java.time.LocalDateTime;
 
 
@@ -22,7 +21,6 @@ public class Contribuyente_Registrado extends Contribuyente {
         hecho.setFechaCarga(LocalDateTime.now());
         hecho.setContribuyente(this);
         hecho.setOrigen(Origen.DINAMICA);
-        HechosSinRevisar.getInstance().agregarHecho(hecho);
         listaDeHechos.add(hecho);
     }
 
@@ -35,12 +33,13 @@ public class Contribuyente_Registrado extends Contribuyente {
         if (hechoModificado.puedeSerEditado()) {
             hechoModificado.editarCon(cambios);
             // esto se puede pasar a Hechos sin revisar
-            if(!HechosSinRevisar.getInstance().contiene(cambios)){
-                HechosSinRevisar.getInstance().agregarHecho(cambios);
+            /*
+            /*if(!Hecho.HechosSinRevisar.getInstance().contiene(cambios)){
+                Hecho.HechosSinRevisar.getInstance().agregarHecho(cambios);
             } else {
-                HechosSinRevisar.getInstance().sacarHecho(hechoModificado);
-                HechosSinRevisar.getInstance().agregarHecho(cambios);
-            }
+                Hecho.HechosSinRevisar.getInstance().sacarHecho(hechoModificado);
+                Hecho.HechosSinRevisar.getInstance().agregarHecho(cambios);
+            }*/
 
 
         } else {

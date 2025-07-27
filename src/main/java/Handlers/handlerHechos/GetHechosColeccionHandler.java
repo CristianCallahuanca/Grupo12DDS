@@ -3,7 +3,7 @@ package Handlers.handlerHechos;
 import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.CriterioPertenencia.*;
 import AdministracionDeHechos.Ubicacion;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Infraestructura.Repositorios.ColeccionRepositorio;
 import Servicios.ServicioFiltradorDeHechos;
 import Servicios.ServicioIdentificadorDeObjetos;
 import io.javalin.http.Context;
@@ -60,7 +60,7 @@ public class GetHechosColeccionHandler implements Handler {
 
         // Obtener y filtrar coleccion
         Coleccion unaColeccion = ServicioIdentificadorDeObjetos.getInstancia().obtenerColeccionPorHandle(id);
-        ServicioFiltradorDeHechos.filtrarHechos(unaColeccion.obtenerHechos(), criterios);
+        ServicioFiltradorDeHechos.filtrarHechos(unaColeccion.obtenerHechosVisibles(), criterios);
 
         ctx.json(unaColeccion);
     }

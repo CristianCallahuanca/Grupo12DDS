@@ -2,7 +2,7 @@ package Scheduler;
 import AdministracionDeHechos.Coleccion;
 import Fuentes.Proxy.FuenteDemo;
 import Fuentes.Proxy.FuenteProxy;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Infraestructura.Repositorios.ColeccionRepositorio;
 import Servicios.ServicioDeAgregacion;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class Scheduler{
         int intervalo = 86400;
 
         scheduler.scheduleAtFixedRate(() -> {
-            ColeccionRepositoryEnMemoria.getInstancia().getColecciones().forEach(Coleccion::consensuarHechos);
+            ColeccionRepositorio.getInstancia().getColecciones().forEach(Coleccion::consensuarHechos);
 
         },delay, intervalo, TimeUnit.SECONDS);
     }

@@ -1,6 +1,6 @@
 package Handlers.handleAprobarDesaprobarSolicitudHandle;
 
-import Infraestructura.Repositorios.SolicitudRepositoryEnMemoria;
+import Infraestructura.Repositorios.SolicitudRepositorio;
 import Servicios.ServicioIdentificadorDeObjetos;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;

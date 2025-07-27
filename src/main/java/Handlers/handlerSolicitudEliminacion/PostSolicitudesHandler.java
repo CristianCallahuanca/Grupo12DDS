@@ -3,7 +3,7 @@ package Handlers.handlerSolicitudEliminacion;
 
 import AdministracionDeHechos.Hecho;
 
-import Infraestructura.Repositorios.SolicitudRepositoryEnMemoria;
+import Infraestructura.Repositorios.SolicitudRepositorio;
 import Servicios.ServicioIdentificadorDeObjetos;
 import SolicitudEliminar.SolicitudEliminar;
 import io.javalin.http.Context;
@@ -36,7 +36,7 @@ public class PostSolicitudesHandler implements Handler{
 
         SolicitudEliminar solicitud = new SolicitudEliminar(hecho,justificacion);
 
-        SolicitudRepositoryEnMemoria.getInstancia().guardar(solicitud);
+        SolicitudRepositorio.getInstancia().guardar(solicitud);
 
         ctx.status(200).result("llego con exito");
 

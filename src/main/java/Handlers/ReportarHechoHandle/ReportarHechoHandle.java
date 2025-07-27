@@ -1,5 +1,6 @@
 package Handlers.ReportarHechoHandle;
 
+import AdministracionDeHechos.EstadoHecho;
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
@@ -22,7 +23,7 @@ public class ReportarHechoHandle implements Handler {
         hecho.setOrigen(Origen.PROXY);
         hecho.setFechaCarga(LocalDateTime.now());
         hecho.setFuente(FuenteMetaMapa.getInstancia());
-        hecho.setVisible(true);
+        hecho.setEstadoHecho(EstadoHecho.EN_REVISION);
 
         FuenteMetaMapa.getInstancia().getHechos().add(hecho);
     }

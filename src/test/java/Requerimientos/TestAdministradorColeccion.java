@@ -9,7 +9,7 @@ import AdministracionDeHechos.TestCriteriosPertenencia;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.Fuente;
 import Fuentes.FuenteDinamica;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Infraestructura.Repositorios.ColeccionRepositorio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -77,7 +77,7 @@ public class TestAdministradorColeccion{
 
         coleccionPrueba = new Coleccion(fuentePrueba, "Coleccion de prueba", "", criterioPrueba);
 
-        ColeccionRepositoryEnMemoria repositorio = ColeccionRepositoryEnMemoria.getInstancia();
+        ColeccionRepositorio repositorio = ColeccionRepositorio.getInstancia();
         todasLasColecciones = repositorio.obtenerTodas();
     }
 

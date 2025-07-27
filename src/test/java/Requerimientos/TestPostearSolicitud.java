@@ -3,8 +3,8 @@
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Ubicacion;
 import Handlers.handlerSolicitudEliminacion.PostSolicitudesHandler;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
-import Infraestructura.Repositorios.SolicitudRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositorio;
+import Infraestructura.Repositorios.SolicitudRepositorio;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,7 @@ public class TestPostearSolicitud {
                 fa1,
                 "PRUEBA");
 
-        HechoRepositoryEnMemoria.getInstancia().guardar(hecho1);
+        HechoRepositorio.getInstancia().guardar(hecho1);
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -63,7 +63,7 @@ public class TestPostearSolicitud {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        List<SolicitudEliminar> solicitudes = SolicitudRepositoryEnMemoria.getInstancia().obtenerTodas();
+        List<SolicitudEliminar> solicitudes = SolicitudRepositorio.getInstancia().obtenerTodas();
 
         assertEquals(1, solicitudes.size());
 

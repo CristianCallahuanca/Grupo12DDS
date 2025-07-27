@@ -3,7 +3,7 @@ package Requerimientos;
 import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositorio;
 import Persona.Contribuyente.Contribuyente;
 import Persona.Contribuyente.Contribuyente_No_Registrado;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class contribuyentePuedeCrearHechoDinamico {
     @Test
     public void contribuyentePuedeCrearHechoDinamicoTest() {
 
-        HechoRepositoryEnMemoria.getInstancia().limpiar();
+        HechoRepositorio.getInstancia().limpiar();
 
         Contribuyente_No_Registrado contribuyente = new Contribuyente_No_Registrado();
 
@@ -28,7 +28,7 @@ public class contribuyentePuedeCrearHechoDinamico {
 
         hechoCreado.setOrigen(Origen.DINAMICA);  // Esto también guarda el hecho automáticamente
 
-        List<Hecho> hechosEnRepo = HechoRepositoryEnMemoria.getInstancia().obtenerTodas();
+        List<Hecho> hechosEnRepo = HechoRepositorio.getInstancia().obtenerTodas();
 
         assertEquals(1, hechosEnRepo.size());
         assertEquals("Rotura de caño", hechosEnRepo.get(0).getTitulo());

@@ -65,6 +65,6 @@ LocalDateTime fa1 = LocalDateTime.of(2025, 1, 1, 12, 0);
 
         Coleccion coleccionPrueba = new Coleccion(fuentePrueba, "Coleccion de prueba", "", criterioPrueba, "1");
 
-        ColeccionRepositoryEnMemoria.getInstancia().guardar(coleccionPrueba);
+        ColeccionRepositorio.getInstancia().guardar(coleccionPrueba);
 */
 

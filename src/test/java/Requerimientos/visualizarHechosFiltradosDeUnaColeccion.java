@@ -7,7 +7,7 @@ import AdministracionDeHechos.Hecho;
 import AdministracionDeHechos.Origen;
 import AdministracionDeHechos.Ubicacion;
 import Fuentes.Fuente;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositorio;
 import Servicios.ServicioFiltradorDeHechos;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ public class visualizarHechosFiltradosDeUnaColeccion  {
     @Test
     public void testVisualizacion() throws IOException {
         // Limpiar estado TEST
-        HechoRepositoryEnMemoria.getInstancia().limpiar();
+        HechoRepositorio.getInstancia().limpiar();
 
         // Crear hechos
         Hecho h1 = new Hecho("Inundación", "Desc", "Clima",
@@ -42,7 +42,7 @@ public class visualizarHechosFiltradosDeUnaColeccion  {
         Fuente fuente = new Fuente() {
             @Override
             public List<Hecho> obtenerHechos() {
-                return HechoRepositoryEnMemoria.getInstancia().obtenerTodas();
+                return HechoRepositorio.getInstancia().obtenerTodas();
             }
 
             /*

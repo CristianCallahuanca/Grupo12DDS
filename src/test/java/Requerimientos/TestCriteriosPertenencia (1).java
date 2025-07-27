@@ -5,7 +5,7 @@ import AdministracionDeHechos.CriterioPertenencia.PorDescripcion;
 import AdministracionDeHechos.CriterioPertenencia.PorFechaCarga;
 import AdministracionDeHechos.CriterioPertenencia.PorUbicacion;
 import Fuentes.FuenteDinamica;
-import Infraestructura.Repositorios.HechoRepositoryEnMemoria;
+import Infraestructura.Repositorios.HechoRepositorio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
@@ -56,9 +56,9 @@ public class TestCriteriosPertenencia {
                 fa3,
                 "trabajo");
 
-        HechoRepositoryEnMemoria.getInstancia().guardar(hecho1);
-        HechoRepositoryEnMemoria.getInstancia().guardar(hecho2);
-        HechoRepositoryEnMemoria.getInstancia().guardar(hecho3);
+        HechoRepositorio.getInstancia().guardar(hecho1);
+        HechoRepositorio.getInstancia().guardar(hecho2);
+        HechoRepositoriogetInstancia().guardar(hecho3);
 
 
 

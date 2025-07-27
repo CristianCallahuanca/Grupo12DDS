@@ -22,7 +22,7 @@ public class AdaptadorDemo {
         this.ultimaConsulta = LocalDateTime .now();
     }
 
-    public List<Hecho> obtenerHechos() {
+    public List<Hecho> conseguirHechos() {
         List<Hecho> hechos = new ArrayList<>();
         Map<String, Object> data;
         do {

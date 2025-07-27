@@ -4,7 +4,7 @@ import AdministracionDeHechos.Coleccion;
 import AdministracionDeHechos.CriterioPertenencia.*;
 import Fuentes.Fuente;
 import Handlers.ConversorStringObjetos;
-import Infraestructura.Repositorios.ColeccionRepositoryEnMemoria;
+import Infraestructura.Repositorios.ColeccionRepositorio;
 import io.javalin.http.Context;
 import io.javalin.http.Handler; // ¡ESTE import es clave!
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class PostColeccionesHandler implements Handler {
 
         Coleccion coleccion = new Coleccion(listFuentes,datos.getTitulo(),datos.getDescripcion(),listCriterios);
 
-        ColeccionRepositoryEnMemoria.getInstancia().guardar(coleccion);
+        ColeccionRepositorio.getInstancia().guardar(coleccion);
 
         System.out.println("se creo la coleccion correctamente");
 

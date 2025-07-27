@@ -10,31 +10,30 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ColeccionRepositoryEnMemoria implements ColeccionRepository{
-    private static final ColeccionRepositoryEnMemoria instance = new ColeccionRepositoryEnMemoria();
+public class ColeccionRepositorio {
+
+    private static final ColeccionRepositorio instance = new ColeccionRepositorio();
     private List<Coleccion> colecciones = new ArrayList<>();
 
-    private ColeccionRepositoryEnMemoria() {
+    private ColeccionRepositorio() {
     }
 
-    public static ColeccionRepositoryEnMemoria getInstancia() {
+    public static ColeccionRepositorio getInstancia() {
         return instance;
     }
 
-    @Override
     public void guardar(Coleccion coleccion) {
         colecciones.removeIf(c -> c.getHandle().equals(coleccion.getHandle()));
         colecciones.add(coleccion);
     }
 
-    @Override
     public ArrayList<Coleccion> obtenerTodas() {
         return new ArrayList<>(this.colecciones);
     }
 
-    @Override
     public void eliminarPorHandle(String handle) {
         colecciones.removeIf(c-> c.getHandle().equals(handle));
     }
 
 }
+
