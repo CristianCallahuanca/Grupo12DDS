@@ -22,16 +22,25 @@ import java.util.concurrent.*;
 
 import Handlers.handlerHechos.GetHechosHandler;
 
+import static java.lang.Thread.sleep;
+
 
 public class Main {
     public static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws IOException {
-        
-        new endpointsAPI().iniciarEndpoints();
+        String instanciaId = args.length > 0 ? args[0] : "default";
+        logger.info("Iniciando instancia: " + instanciaId);
 
-        new Scheduler().iniciarScheduler();
+        try {
+            Thread.sleep(10000); // 10 segundos
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        logger.info("Me desperte");
+        // new endpointsAPI().iniciarEndpoints();
+        // new Scheduler().iniciarScheduler();
     }
 }
 
