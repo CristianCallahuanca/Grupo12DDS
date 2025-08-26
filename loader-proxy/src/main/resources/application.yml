@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: loader-proxy
+server:
+  port: 8103

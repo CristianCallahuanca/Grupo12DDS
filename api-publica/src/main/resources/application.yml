@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: api-publica
+server:
+  port: 8400

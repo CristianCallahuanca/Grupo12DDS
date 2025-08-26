@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: loader-dinamico
+server:
+  port: 8102

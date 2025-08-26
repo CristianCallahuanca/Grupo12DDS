@@ -1,0 +1,12 @@
+# Build (todos los módulos)
+**/target/
+**/out/
+
+# IntelliJ / IDE
+.idea/
+*.iml
+
+# Logs / SO
+*.log
+.DS_Store
+Thumbs.db

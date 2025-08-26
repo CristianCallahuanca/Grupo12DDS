@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: agregador
+server:
+  port: 8200
