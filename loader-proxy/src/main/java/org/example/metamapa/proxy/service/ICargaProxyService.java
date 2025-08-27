@@ -1,4 +1,4 @@
 package org.example.metamapa.proxy.service;
 
-public class ProxyService {
+public interface ICargaProxyService {
 }
