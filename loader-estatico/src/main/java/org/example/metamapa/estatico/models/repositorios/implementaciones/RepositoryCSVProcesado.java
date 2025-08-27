@@ -1,4 +1,7 @@
-package loader;
+package org.example.metamapa.estatico.models.repositorios.implementaciones;
+
+import org.example.metamapa.estatico.models.repositorios.AdapterFS;
+import org.example.metamapa.estatico.models.entidades.ElementoCSV;
 
 import java.util.ArrayList;
 import java.util.List;

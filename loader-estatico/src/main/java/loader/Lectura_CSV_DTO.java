@@ -2,6 +2,8 @@ package loader;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.metamapa.estatico.models.entidades.ElementoCSV;
+import org.example.metamapa.estatico.models.entidades.HechoCrudo;
 
 import java.util.List;
 

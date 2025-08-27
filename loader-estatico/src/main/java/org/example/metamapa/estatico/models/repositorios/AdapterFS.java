@@ -1,4 +1,4 @@
-package loader;
+package org.example.metamapa.estatico.models.repositorios;
 
 import java.util.List;
 

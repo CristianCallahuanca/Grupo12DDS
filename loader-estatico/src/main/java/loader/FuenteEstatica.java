@@ -3,6 +3,10 @@ package loader;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.Getter;
+import org.example.metamapa.estatico.models.entidades.ElementoCSV;
+import org.example.metamapa.estatico.models.entidades.HechoCrudo;
+import org.example.metamapa.estatico.models.repositorios.AdapterFS;
+import org.example.metamapa.estatico.models.repositorios.implementaciones.RepositoryCSVProcesado;
 
 import java.io.FileReader;
 import java.io.IOException;

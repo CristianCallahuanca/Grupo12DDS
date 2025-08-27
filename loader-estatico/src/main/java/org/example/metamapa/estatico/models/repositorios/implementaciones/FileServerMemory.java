@@ -1,15 +1,10 @@
-package loader;
+package org.example.metamapa.estatico.models.repositorios.implementaciones;
 
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
+import org.example.metamapa.estatico.models.repositorios.AdapterFS;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-public class FileServerMemory implements AdapterFS{
+public class FileServerMemory implements AdapterFS {
 
     private final List<String> csvRepository;
 

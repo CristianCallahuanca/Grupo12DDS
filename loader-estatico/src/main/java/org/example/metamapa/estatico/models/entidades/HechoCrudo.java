@@ -1,4 +1,4 @@
-package loader;
+package org.example.metamapa.estatico.models.entidades;
 
 import lombok.Getter;
 import lombok.Setter;
