@@ -1,23 +1,25 @@
 package org.example.metamapa.admin.Controladores;
 
-import org.example.metamapa.admin.models.dtos.output.ColeccionOutputDto;
-import org.example.metamapa.admin.servicios.impl.IColeccionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.example.metamapa.admin.Servicios.IColeccionesService;
+import org.example.metamapa.admin.Servicios.Implementaciones.ColeccionesService;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("apiadministrativa/colecciones")
+@RequestMapping("apiadministrativa")
 public class ColeccionesController {
 
-    @Autowired
-    private IColeccionService coleccionService;
+    private final IColeccionesService colecciones;
 
-    @GetMapping
-    public List<ColeccionOutputDto> buscarTodasLasColecciones() {
-        return this.coleccionService.buscarTodas(); //implementar buscarTodas
+    public ColeccionesController(IColeccionesService coleccionesService){
+        this.colecciones = coleccionesService;
     }
+
+    @GetMapping("/saludo")
+    public String saludo() {
+        return colecciones.obtenerSaludo();
+    }
+
+
 }

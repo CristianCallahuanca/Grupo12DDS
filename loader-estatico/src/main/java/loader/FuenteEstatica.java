@@ -24,7 +24,6 @@ public class FuenteEstatica {
         return instance;
     }
 
-
     public void procesarCSV(int filasAProcesar) throws IOException {
 
         ElementoCSV archivoCSV = RepositoryCSVProcesado.getInstancia().csvALeer(this.adaptadorFileServer);
