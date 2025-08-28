@@ -57,6 +57,7 @@ public class Hecho {
         this.visible = false;
     }
 
+    /*
     public void editarCon(Hecho cambios) {
         if (this.puedeSerEditado()) {
             this.titulo = cambios.getTitulo();
@@ -72,26 +73,14 @@ public class Hecho {
         }
     }
 
-    public void imprimirHecho() {
-        logger.info("Título: {}", this.getTitulo());
-        logger.info("Descripción: {}", this.getDescripcion());
-        logger.info("Categoría: {}", this.getCategoria());
-        logger.info("Ubicación: {}", this.getUbicacion());
-        logger.info("Fecha del hecho: {}", this.getFechaAcontecimiento());
-        logger.info("Fecha de carga: {}", this.getFechaAcontecimiento());
-        logger.info("Origen: {}", this.getOrigen());
-        logger.info("-------------------------------------------");
-
-    }
-
     public boolean puedeSerEditado() {
         return this.origen == Origen.DINAMICA && //hay que ver que sea registrado
                 ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
         // Con esto basta para saber si puede ser editado?
-    }
+    }*/
 
     //Se fija si un hecho cumple una lista de criterios y retorna BOOL. NO FILTRA
-    public boolean filtrarHecho(List<CriterioDePertenencia> filtros) {
+    public boolean cumpleCondiones(List<CriterioDePertenencia> filtros) {
         // Para cada tipo de filtro, verificamos si el hecho cumple al menos uno de ese tipo.
         return filtros.stream()
                 .collect(Collectors.groupingBy(CriterioDePertenencia::getClass))
