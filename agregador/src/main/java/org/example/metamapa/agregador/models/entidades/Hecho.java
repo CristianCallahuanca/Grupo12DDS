@@ -1,5 +1,15 @@
 package org.example.metamapa.agregador.models.entidades;
 
+import dinamico.models.entidades.hecho.EstadoHecho;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Getter
+@Setter
 public class Hecho {
     private String titulo;
     private String descripcion;
@@ -37,5 +47,9 @@ public class Hecho {
         this.origen = unOrigen;
         if (unOrigen != Origen.ESTATICA) {RepositorioHechos.guardar(this);}
     }*/
+
+    public void marcarComoNoVisible() {
+        this.estadoHecho = EstadoHecho.NO_VISIBLE;
+    }
 
 }
