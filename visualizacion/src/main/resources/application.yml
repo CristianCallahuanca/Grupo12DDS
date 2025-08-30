@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: visualizacion
+server:
+  port: 8500

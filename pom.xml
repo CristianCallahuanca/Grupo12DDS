@@ -33,5 +33,6 @@
         <module>agregador</module>
         <module>api-admin</module>
         <module>api-publica</module>
+        <module>visualizacion</module>
     </modules>
 </project>
