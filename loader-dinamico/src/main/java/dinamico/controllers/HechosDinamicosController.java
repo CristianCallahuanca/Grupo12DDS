@@ -23,4 +23,9 @@ public class HechosDinamicosController {
         return ResponseEntity.ok("El hecho se subio con exito");
     }
 
+    @GetMapping("/saludar")
+    public void saludar(){
+        System.out.println("hola wachin");
+    }
+
 }

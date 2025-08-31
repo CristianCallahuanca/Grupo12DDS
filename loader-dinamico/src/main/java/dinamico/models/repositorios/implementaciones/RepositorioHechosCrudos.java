@@ -19,7 +19,7 @@ public class RepositorioHechosCrudos implements IRepositorioHechosCrudos {
 
     public void guardar(HechoCrudo hecho){
         hechos.add(hecho);
-        System.out.println("se agrego el hecho XD");
+        System.out.println("hay cargador:" + hechos.size() + " hechos");
     }
 
 }
