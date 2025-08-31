@@ -15,13 +15,15 @@ public class Contribuyente_registrado {
     private String nombre;
     private String apellido;
     private int edad;
+    private int dni;
     private String id;
     protected List<HechoCrudo> listaDeHechos = new ArrayList<>();
 
-    public Contribuyente_registrado(String nombre, String apellido, int edad) {
+    public Contribuyente_registrado(String nombre, String apellido, int edad,int dni) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.edad = edad;
+        this.dni = dni;
         this.id = UUID.randomUUID().toString().replaceAll("-", "");
     }
 

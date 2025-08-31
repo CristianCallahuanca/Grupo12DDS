@@ -16,4 +16,5 @@ public class HechoCrudoDTO_IN {
     private String fechaAcontecimiento;
     private String etiqueta;
     private List<String> archivosMultimedia;
+    private String contribuyenteID;
 }

@@ -30,8 +30,9 @@ public class cargarHechosService implements ICargarHechosService {
                 hecho.getLongitud(),
                 hecho.getFechaAcontecimiento(),
                 hecho.getEtiqueta(),
-                "id a agregar",
+                hecho.getContribuyenteID(),
                 hecho.getArchivosMultimedia()
+
         );
 
         hechosRepository.guardar(hechoCrudo);

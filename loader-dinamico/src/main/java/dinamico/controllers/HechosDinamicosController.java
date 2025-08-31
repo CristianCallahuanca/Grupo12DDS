@@ -18,14 +18,8 @@ public class HechosDinamicosController {
 
     @PostMapping("/reportarhecho")
     public ResponseEntity<String> subirHechoPublico(@RequestBody HechoCrudoDTO_IN hecho) {
-
         hechosService.cargarHecho(hecho);
         return ResponseEntity.ok("El hecho se subio con exito");
-    }
-
-    @GetMapping("/saludar")
-    public void saludar(){
-        System.out.println("hola wachin");
     }
 
 }
