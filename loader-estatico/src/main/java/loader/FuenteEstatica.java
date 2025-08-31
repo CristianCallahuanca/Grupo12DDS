@@ -24,6 +24,7 @@ public class FuenteEstatica {
         return instance;
     }
 
+    //Contemplar el caso en que las filas a procesar son mayores a las filas disponibles en el CSV
     public void procesarCSV(int filasAProcesar) throws IOException {
 
         ElementoCSV archivoCSV = RepositoryCSVProcesado.getInstancia().csvALeer(this.adaptadorFileServer);

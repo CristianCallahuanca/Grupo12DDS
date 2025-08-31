@@ -10,7 +10,7 @@ import java.util.List;
 public class RepositorioHechos implements IRepositorioHechos {
 
     private List<Hecho> hechos;
-
+/*
     private static final RepositorioHechos instancia = new RepositorioHechos();
 
     private RepositorioHechos() {}
@@ -18,15 +18,18 @@ public class RepositorioHechos implements IRepositorioHechos {
     public static RepositorioHechos getInstance() {
         return instancia;
     }
-
+*/
+    @Override
     public List<Hecho> obtenerTodosLosHechosDelSistema(){
         return hechos;
     }
 
+    @Override
     public void guardarHecho(Hecho unHecho){
         hechos.add(unHecho);
     }
 
+    @Override
     public void guardarListaHechos(List<Hecho> hechos2){
         hechos.addAll(hechos2);
     }
