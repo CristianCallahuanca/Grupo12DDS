@@ -13,7 +13,6 @@ public class cargarHechosService {
     //Llamar a los repositorios para persistencia
     //Preparar los DTOs
 
-    @Autowired
     private final IRepositorioHechosCrudos hechosRepository;
 
     public cargarHechosService(IRepositorioHechosCrudos hechosRepository){
@@ -33,6 +32,8 @@ public class cargarHechosService {
                 "id a agregar",
                 hecho.getArchivosMultimedia()
         );
+
+        hechosRepository.guardar(hechoCrudo);
     }
 }
 

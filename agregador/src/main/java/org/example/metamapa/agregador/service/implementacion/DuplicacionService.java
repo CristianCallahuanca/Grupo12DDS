@@ -27,6 +27,12 @@ public class DuplicacionService {
         return repositorioHechos.obtenerTodosLosHechosDelSistema().stream().
                 filter(ultimaHora::cumpleUno).toList();
     }
+
+    private List<Hecho> obtenerHechosMismoLugar(List<Hecho> hechos){
+        
+
+        return null;
+    }
 }
 
 

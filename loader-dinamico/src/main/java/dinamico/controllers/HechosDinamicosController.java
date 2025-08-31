@@ -1,7 +1,6 @@
 package dinamico.controllers;
 
 import dinamico.models.dtos.input.HechoCrudoDTO_IN;
-import dinamico.models.entidades.hecho.HechoCrudo;
 import dinamico.service.ICargarHechosService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;

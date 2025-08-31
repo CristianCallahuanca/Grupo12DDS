@@ -30,7 +30,7 @@ public class Contribuyente_registrado {
     }
 
     protected void cargarHecho(HechoCrudo hecho) {
-        hecho.setFechaCarga(LocalDateTime.now());
+        //hecho.setFechaCarga(LocalDateTime.now());
         agregarAListaDeHechos(hecho);
     }
 

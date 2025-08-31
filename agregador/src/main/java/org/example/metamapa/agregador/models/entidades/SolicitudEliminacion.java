@@ -29,13 +29,13 @@ public class SolicitudEliminacion {
 
     public void aceptar() throws IOException {
         this.estadoEliminar = EstadoEliminar.APROBADA;
-
+/*TO DO
         for(Hecho hecho: RepositorioHechos.getInstance().obtenerTodosLosHechosDelSistema()){
 
             if(Objects.equals(hecho.getId_hecho(), id_hecho)) {
                 hecho.marcarComoNoVisible();
             }
-        }
+        }*/
     }
 
     public void rechazar() {
