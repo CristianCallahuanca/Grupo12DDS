@@ -7,6 +7,6 @@ import java.util.Map;
 
 public interface IAdapaterFuenteProxy {
 
-    public List<HechoCrudo> conseguirHechos();
+    List<HechoCrudo> adaptarHechosDesdeFuente();
 
 }

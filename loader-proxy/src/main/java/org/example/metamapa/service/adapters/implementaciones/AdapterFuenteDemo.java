@@ -2,68 +2,55 @@ package org.example.metamapa.service.adapters.implementaciones;
 
 import org.example.metamapa.models.entidades.HechoCrudo;
 import org.example.metamapa.service.adapters.IAdapaterFuenteProxy;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+
+@Component
 public class AdapterFuenteDemo implements IAdapaterFuenteProxy {
 
-    private Conexion conexion;
-    private URL url;
-    private LocalDateTime ultimaConsulta;
-
-    public AdapterFuenteDemo(Conexion conexion, URL url) {
-        this.conexion = conexion;
-        this.url = url;
-        this.ultimaConsulta = LocalDateTime.now();
-    }
+    private final Conexion conexion = new Conexion(); // clase fake que simula API externa
+    private final URL url = crearUrlDemo();           // endpoint de la fuente demo
+    private LocalDateTime ultimaConsulta = LocalDateTime.now(); // se actualiza tras cada sync
 
     @Override
-    public List<HechoCrudo> conseguirHechos() {
+    public List<HechoCrudo> adaptarHechosDesdeFuente() {
         List<HechoCrudo> hechos = new ArrayList<>();
         Map<String, Object> data;
+
         do {
             data = conexion.siguienteHecho(url, ultimaConsulta);
             if (data != null) {
-                hechos.add(this.mapearAHecho(data));
+                hechos.add(mapearAHecho(data));
             }
         } while (data != null);
 
-        this.ultimaConsulta = LocalDateTime.now();
+        ultimaConsulta = LocalDateTime.now();
         return hechos;
     }
 
-    //Faltan atributos del hecho? Por ejemplo fecha de acontecimiento
     private HechoCrudo mapearAHecho(Map<String, Object> data) {
-        String titulo = (String) data.get("titulo");
-        String descripcion = (String) data.get("descripcion");
-        String categoria = (String) data.get("categoria");
+        String titulo = (String) data.getOrDefault("titulo", "Sin título");
+        String descripcion = (String) data.getOrDefault("descripcion", "Sin descripción");
+        String categoria = (String) data.getOrDefault("categoria", "Sin categoría");
+        String latitud = (String) data.getOrDefault("latitud", "0.0");
+        String longitud = (String) data.getOrDefault("longitud", "0.0");
 
-        String latitud = (String) data.get("latitud");
-        String longitud = (String) data.get("longitud");
+        String fechaActual = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        // Definís el formato que quieras
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        // Convertís a String
-        String fechaActual = LocalDateTime.now().format(formatter);
-
-        HechoCrudo unHecho = new HechoCrudo(
-                titulo,
-                descripcion,
-                categoria,
-                latitud,
-                longitud,
-                fechaActual
-                //"demo"
-        );
-
-        return unHecho;
+        return new HechoCrudo(titulo, descripcion, categoria, latitud, longitud, fechaActual);
     }
 
-
+    private URL crearUrlDemo() {
+        try {
+            return new URL("http://fuente-demo.fake"); // puede ser cualquier valor
+        } catch (Exception e) {
+            throw new RuntimeException("URL inválida para fuente demo");
+        }
+    }
 }

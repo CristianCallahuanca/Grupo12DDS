@@ -1,5 +1,10 @@
 package org.example.metamapa.models.entidades;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class HechoCrudo {
     private String titulo;
     private String descripcion;
