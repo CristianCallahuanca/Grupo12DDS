@@ -22,4 +22,8 @@ public class RepositorioHechosCrudos implements IRepositorioHechosCrudos {
         System.out.println("hay cargador:" + hechos.size() + " hechos");
     }
 
+    public void vaciarListaHechos(){
+        hechos.clear();
+    }
+
 }

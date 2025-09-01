@@ -1,9 +1,13 @@
 package dinamico.controllers;
 
 import dinamico.models.dtos.input.HechoCrudoDTO_IN;
+import dinamico.models.entidades.hecho.HechoCrudo;
 import dinamico.service.ICargarHechosService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -22,4 +26,13 @@ public class HechosDinamicosController {
         return ResponseEntity.ok("El hecho se subio con exito");
     }
 
+    @GetMapping("/hechos")
+    public List<HechoCrudo> obtenerHechos(){
+        return hechosService.obtenerHechos();
+    }
+
 }
+
+
+
+

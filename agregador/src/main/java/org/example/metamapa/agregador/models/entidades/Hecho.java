@@ -21,11 +21,11 @@ public class Hecho {
     private String etiqueta;
     private LocalDateTime fechaAcontecimiento;
     private LocalDateTime fechaCarga;
-    private String contribuyente_id;
     private Origen origen;
-    private String id_hecho;
     private EstadoEdicionHecho estadoEdicionHecho;
     private EstadoHecho estadoHecho;
+    private String contribuyente_id;
+    private String id_hecho;
 
 
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,

@@ -43,6 +43,7 @@ public class NormalizacionService {
         hechoSinNormalizar.setCategoria(newCategory);
     }
 
+    //TO DO los no contemplado deberian ser seteados por un admin
     public void normalizarCategorias(List<HechoDTO> hechoSinNormalizar){
         hechoSinNormalizar.forEach(this::normalizarCategoria);
     }

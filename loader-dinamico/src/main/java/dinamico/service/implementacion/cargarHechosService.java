@@ -7,6 +7,9 @@ import dinamico.service.ICargarHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class cargarHechosService implements ICargarHechosService {
 
@@ -36,6 +39,17 @@ public class cargarHechosService implements ICargarHechosService {
         );
 
         hechosRepository.guardar(hechoCrudo);
+    }
+
+    public List<HechoCrudo> obtenerHechos(){
+
+        List<HechoCrudo> hechos = new ArrayList<>();
+
+        hechos.addAll(hechosRepository.obtenerHechos());
+
+        hechosRepository.vaciarListaHechos();
+
+        return hechos;
     }
 }
 
