@@ -28,9 +28,9 @@ public class IntegracionScheduled {
 
         List<HechoDTO> hechos = new ArrayList<>();
 
-        hechos = agregacionService.agregar();
+        hechos = agregacionService.agregar(); //
 
-        
+
 
         //agregar la logica del normalizador
 

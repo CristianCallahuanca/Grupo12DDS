@@ -119,10 +119,11 @@ public class DuplicacionService {
         return hechosRepetidos;
     }
 
-    //Devuelve True si se borraron con exito
-    public boolean eliminarHechosRepetidos(List <Hecho> hechosDeLosLoaders){
-        List <Hecho> candidatosAEliminar = obtenerHechosMismaFechaAcontecimiento(obtenerHechosMismoLugar(hechosDeLosLoaders));
+    //Devuelve True si se borraron con exito METODO PRINCIPAL
+    public void eliminarHechosRepetidos(List<Hecho> hechosDeLosLoaders){
+        List<Hecho> candidatosAEliminar = obtenerHechosMismaFechaAcontecimiento(obtenerHechosMismoLugar(hechosDeLosLoaders));
+        candidatosAEliminar.addAll(obtenerHechosRepetidos(hechosDeLosLoaders));
 
-        return hechosDeLosLoaders.removeAll(candidatosAEliminar);
+        hechosDeLosLoaders.removeAll(candidatosAEliminar);
     }
 }
