@@ -1,6 +1,7 @@
 package dinamico.controllers;
 
 
+import dinamico.models.dtos.input.usuarioDTO;
 import dinamico.service.ICrearUsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

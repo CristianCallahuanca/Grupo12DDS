@@ -35,7 +35,6 @@ public class cargarHechosService implements ICargarHechosService {
                 hecho.getEtiqueta(),
                 hecho.getContribuyenteID(),
                 hecho.getArchivosMultimedia()
-
         );
 
         hechosRepository.guardar(hechoCrudo);
@@ -48,6 +47,8 @@ public class cargarHechosService implements ICargarHechosService {
         hechos.addAll(hechosRepository.obtenerHechos());
 
         hechosRepository.vaciarListaHechos();
+
+        System.out.println("se vacio la lista de hechos");
 
         return hechos;
     }
