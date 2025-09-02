@@ -10,7 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>visualizacion</artifactId>
+    <artifactId>Administrador de datos y visualiazacion</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
