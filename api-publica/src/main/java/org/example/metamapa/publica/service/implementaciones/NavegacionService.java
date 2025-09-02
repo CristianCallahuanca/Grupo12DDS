@@ -1,6 +1,6 @@
 package org.example.metamapa.publica.service.implementaciones;
 
-import org.example.metamapa.publica.clientes.AgregadorClient;
+import org.example.metamapa.publica.clientes.AdministradorClient;
 import org.example.metamapa.publica.models.dtos.input.FiltroDTO;
 import org.example.metamapa.publica.models.dtos.input.HechoInputDTO;
 import org.example.metamapa.publica.models.dtos.input.ModoNavegacionDTO;
@@ -13,15 +13,15 @@ import java.util.List;
 @Service
 public class NavegacionService implements INavegacionService {
 
-    private final AgregadorClient agregadorClient;
+    private final AdministradorClient adminClient;
 
-    public NavegacionService(AgregadorClient agregadorClient) {
-        this.agregadorClient = agregadorClient;
+    public NavegacionService(AdministradorClient adminClient) {
+        this.adminClient = adminClient;
     }
 
     @Override
     public List<HechoOutputDTO> obtenerHechosDeColeccion(String idColeccion) {
-        return agregadorClient.obtenerHechosPorColeccion(idColeccion)
+        return adminClient.obtenerHechosPorColeccion(idColeccion)
                 .stream()
                 .map(this::toOutput)
                 .toList();
@@ -29,7 +29,7 @@ public class NavegacionService implements INavegacionService {
 
     @Override
     public List<HechoOutputDTO> navegarFiltrada(FiltroDTO filtro) {
-        return agregadorClient.navegacionFiltrada(filtro)
+        return adminClient.navegacionFiltrada(filtro)
                 .stream()
                 .map(this::toOutput)
                 .toList();
@@ -37,7 +37,7 @@ public class NavegacionService implements INavegacionService {
 
     @Override
     public List<HechoOutputDTO> navegarModo(String idColeccion, ModoNavegacionDTO modo) {
-        return agregadorClient.navegacionPorModo(idColeccion, modo)
+        return adminClient.navegacionPorModo(idColeccion, modo)
                 .stream()
                 .map(this::toOutput)
                 .toList();
@@ -54,3 +54,4 @@ public class NavegacionService implements INavegacionService {
         return out;
     }
 }
+

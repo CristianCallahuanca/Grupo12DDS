@@ -1,6 +1,6 @@
 package org.example.metamapa.publica.service.implementaciones;
 
-import org.example.metamapa.publica.clientes.AgregadorClient;
+import org.example.metamapa.publica.clientes.AdministradorClient;
 import org.example.metamapa.publica.models.dtos.input.HechoInputDTO;
 import org.example.metamapa.publica.models.dtos.output.HechoOutputDTO;
 import org.example.metamapa.publica.service.IColeccionService;
@@ -11,15 +11,15 @@ import java.util.List;
 @Service
 public class ColeccionService implements IColeccionService {
 
-    private final AgregadorClient agregadorClient;
+    private final AdministradorClient adminClient;
 
-    public ColeccionService(AgregadorClient agregadorClient) {
-        this.agregadorClient = agregadorClient;
+    public ColeccionService(AdministradorClient adminClient) {
+        this.adminClient = adminClient;
     }
 
     @Override
     public List<HechoOutputDTO> obtenerHechosDeColeccion(String idColeccion) {
-        return agregadorClient.obtenerHechosPorColeccion(idColeccion)
+        return adminClient.obtenerHechosPorColeccion(idColeccion)
                 .stream()
                 .map(this::mapearAOutput)
                 .toList();
@@ -36,4 +36,5 @@ public class ColeccionService implements IColeccionService {
         return output;
     }
 }
+
 

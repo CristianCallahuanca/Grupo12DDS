@@ -3,3 +3,6 @@ spring:
     name: api-publica
 server:
   port: 8400
+admin:
+  datos:
+    url: http://localhost:8500

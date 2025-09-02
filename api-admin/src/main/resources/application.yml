@@ -3,3 +3,6 @@ spring:
     name: api-admin
 server:
   port: 8300
+modulo:
+  administracion:
+    url=http://localhost:8082:
