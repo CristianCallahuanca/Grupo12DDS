@@ -24,6 +24,7 @@ public class Hecho {
     private Origen origen;
     private EstadoEdicionHecho estadoEdicionHecho;
     private EstadoHecho estadoHecho;
+    private Boolean sinCategorizar;
     private String contribuyente_id;
     private String id_hecho;
 

@@ -37,13 +37,15 @@ public class AdapterFuenteDemo implements IAdapaterFuenteProxy {
         String titulo = (String) data.getOrDefault("titulo", "Sin título");
         String descripcion = (String) data.getOrDefault("descripcion", "Sin descripción");
         String categoria = (String) data.getOrDefault("categoria", "Sin categoría");
-        String latitud = (String) data.getOrDefault("latitud", "0.0");
-        String longitud = (String) data.getOrDefault("longitud", "0.0");
+        String ubicacion = (String) data.getOrDefault("ubicacion", "Sin ubicacion");
+        //String latitud = (String) data.getOrDefault("latitud", "0.0");
+        //String longitud = (String) data.getOrDefault("longitud", "0.0");
 
         String fechaActual = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        return new HechoCrudo(titulo, descripcion, categoria, latitud, longitud, fechaActual);
+        //return new HechoCrudo(titulo, descripcion, categoria, latitud, longitud, fechaActual);
+        return new HechoCrudo(titulo, descripcion, categoria, ubicacion, fechaActual);
     }
 
     private URL crearUrlDemo() {

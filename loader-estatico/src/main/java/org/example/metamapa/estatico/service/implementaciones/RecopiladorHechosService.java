@@ -30,6 +30,8 @@ public class RecopiladorHechosService implements IRecopiladorHechos {
         this.repositorio = repositorio;
     }
 
+    //TO DO: comparar cantidadFilasALeer <= ElementoCSV.ultimaFilaLeida
+
     @Override
     public List<HechoCrudoDTO> obtenerHechosCrudos(int cantidad) throws IOException {
         ElementoCSV archivo = repositorio.csvALeer(fileServer);

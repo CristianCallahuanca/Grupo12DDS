@@ -3,14 +3,22 @@ package org.example.metamapa.estatico.models.dtos;
 import lombok.Getter;
 import org.example.metamapa.estatico.models.entidades.HechoCrudo;
 
+import java.util.List;
+
 @Getter
 public class HechoCrudoDTO {
-    private final String titulo;
-    private final String descripcion;
-    private final String categoria;
-    private final String latitud;
-    private final String longitud;
-    private final String fechaAcontecimiento;
+    private String titulo;
+    private String descripcion;
+    private String categoria;
+    private String latitud;
+    private String longitud;
+    private String fechaAcontecimiento;
+    //
+    private String etiqueta;
+    private String contribuyenteID;
+    private List<String> archivosMultimedia;
+    private String fechaCarga;
+    private String id_hecho;
 
     public HechoCrudoDTO(HechoCrudo hecho) {
         this.titulo = hecho.getTitulo();
@@ -19,5 +27,10 @@ public class HechoCrudoDTO {
         this.latitud = hecho.getLatitud();
         this.longitud = hecho.getLongitud();
         this.fechaAcontecimiento = hecho.getFechaAcontecimiento();
+        this.etiqueta = null;
+        this.contribuyenteID = null;
+        this.archivosMultimedia = null;
+        this.fechaCarga = null;
+        this.id_hecho = null;
     }
 }

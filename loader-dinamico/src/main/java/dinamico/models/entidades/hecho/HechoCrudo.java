@@ -35,6 +35,4 @@ public class HechoCrudo{
         this.contribuyenteID = contribuyenteID;
         this.archivosMultimedia = archivosMultimedia;
     }
-
-    //le saque la logica ya que solamente se van a persistir no es el hecho real que ese esta en el agregador
 }

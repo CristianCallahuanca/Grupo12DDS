@@ -1,14 +1,15 @@
 package dinamico.service.implementacion;
 
 import dinamico.models.dtos.input.HechoCrudoDTO_IN;
+import dinamico.models.dtos.output.HechoCrudoDTO;
 import dinamico.models.entidades.hecho.HechoCrudo;
 import dinamico.models.repositorios.IRepositorioHechosCrudos;
 import dinamico.service.ICargarHechosService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class cargarHechosService implements ICargarHechosService {
@@ -40,17 +41,22 @@ public class cargarHechosService implements ICargarHechosService {
         hechosRepository.guardar(hechoCrudo);
     }
 
-    public List<HechoCrudo> obtenerHechos(){
+    public List<HechoCrudoDTO> obtenerHechos(){
 
-        List<HechoCrudo> hechos = new ArrayList<>();
+        List<HechoCrudoDTO> hechos = new ArrayList<>();
 
-        hechos.addAll(hechosRepository.obtenerHechos());
+        hechos = hechosRepository.obtenerHechos().stream().map(this::hechoCrudoADTO).collect(Collectors.toList());
 
         hechosRepository.vaciarListaHechos();
 
         System.out.println("se vacio la lista de hechos");
 
         return hechos;
+    }
+
+    public HechoCrudoDTO hechoCrudoADTO(HechoCrudo hechoCrudo){
+
+        return new HechoCrudoDTO(hechoCrudo);
     }
 }
 

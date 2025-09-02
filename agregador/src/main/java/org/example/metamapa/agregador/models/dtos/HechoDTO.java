@@ -3,6 +3,7 @@ package org.example.metamapa.agregador.models.dtos;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -17,6 +18,8 @@ public class HechoDTO {
     private String etiqueta;
     private String contribuyenteID;
     private List<String> archivosMultimedia;
+    private Boolean sinCategorizar;
+    private LocalDateTime fechaAcontecimientoPosta;
 
     HechoDTO(String titulo, String descripcion, String categoria, String latitud, String longitud,
              String fechaAcontecimiento, String etiqueta, String contribuyenteID, List<String> archivosMultimedia) {

@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/hechos-crudos")
+@RequestMapping("/fuenteEstatica")
 @Slf4j
 public class HechosCrudosController {
 
@@ -23,7 +23,7 @@ public class HechosCrudosController {
         this.recopiladorHechos = recopiladorHechos;
     }
 
-    @GetMapping
+    @GetMapping("/hechos")
     public List<HechoCrudoDTO> obtenerHechosCrudos(@RequestParam(name = "cantidad", defaultValue = "100") int cantidad) throws IOException {
         log.info("Llego una peticion para obtener HechosCrudos");
         return recopiladorHechos.obtenerHechosCrudos(cantidad);

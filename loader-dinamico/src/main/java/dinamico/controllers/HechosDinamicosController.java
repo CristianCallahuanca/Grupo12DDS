@@ -1,6 +1,7 @@
 package dinamico.controllers;
 
 import dinamico.models.dtos.input.HechoCrudoDTO_IN;
+import dinamico.models.dtos.output.HechoCrudoDTO;
 import dinamico.models.entidades.hecho.HechoCrudo;
 import dinamico.service.ICargarHechosService;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class HechosDinamicosController {
     }
 
     @GetMapping("/hechos")
-    public List<HechoCrudo> obtenerHechos(){
+    public List<HechoCrudoDTO> obtenerHechos(){
         return hechosService.obtenerHechos();
     }
 

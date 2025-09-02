@@ -1,5 +1,6 @@
 package org.example.metamapa.agregador;
 
+import org.example.metamapa.agregador.service.implementacion.AgregacionService;
 import org.example.metamapa.common.HechoDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
