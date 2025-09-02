@@ -25,15 +25,20 @@ public class ColeccionService implements IColeccionService {
                 .toList();
     }
 
-    private HechoOutputDTO mapearAOutput(HechoInputDTO input) {
-        HechoOutputDTO output = new HechoOutputDTO();
-
-        output.setDescripcion(input.getDescripcion());
-        output.setTipo(input.getTipo());
-        output.setFuente(input.getFuente());
-        output.setFecha(input.getFecha());
-        output.setUbicacion(input.getUbicacion());
-        return output;
+    private HechoOutputDTO mapearAOutput(HechoInputDTO dto) {
+        HechoOutputDTO out = new HechoOutputDTO();
+        out.setTitulo(dto.getTitulo());
+        out.setDescripcion(dto.getDescripcion());
+        out.setCategoria(dto.getCategoria());
+        out.setLatitud(dto.getLatitud());
+        out.setLongitud(dto.getLongitud());
+        out.setFechaAcontecimiento(dto.getFechaAcontecimiento());
+        out.setEtiqueta(dto.getEtiqueta());
+        out.setContribuyenteID(dto.getContribuyenteID());
+        out.setArchivosMultimedia(dto.getArchivosMultimedia());
+        out.setSinCategorizar(dto.getSinCategorizar());
+        out.setFechaAcontecimientoPosta(dto.getFechaAcontecimientoPosta());
+        return out;
     }
 }
 

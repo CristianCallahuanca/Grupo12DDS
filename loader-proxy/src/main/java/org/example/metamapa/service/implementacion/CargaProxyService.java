@@ -9,6 +9,7 @@ import org.example.metamapa.service.fuentes.IFuenteProxy;
 import org.example.metamapa.service.fuentes.FuenteProxyFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +57,19 @@ public class CargaProxyService implements ICargaProxyService {
         dto.setLatitud(hecho.getLatitud());
         dto.setLongitud(hecho.getLongitud());
         dto.setFechaAcontecimiento(hecho.getFechaAcontecimiento());
+        dto.setEtiqueta(hecho.getEtiqueta());
+        dto.setContribuyenteID(hecho.getContribuyenteID());
+        dto.setArchivosMultimedia(hecho.getArchivosMultimediaComoLista());
+        dto.setSinCategorizar(hecho.getCategoria() == null || hecho.getCategoria().isBlank());
+        dto.setFechaAcontecimientoPosta(parseFechaAcontecimiento(hecho.getFechaAcontecimiento()));
         return dto;
+    }
+
+    private LocalDateTime parseFechaAcontecimiento(String fecha) {
+        try {
+            return LocalDateTime.parse(fecha); // ISO 8601: "2024-09-01T10:15:30"
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

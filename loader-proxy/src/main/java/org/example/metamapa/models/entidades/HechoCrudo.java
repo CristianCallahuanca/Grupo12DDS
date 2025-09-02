@@ -19,19 +19,13 @@ public class HechoCrudo {
     private String fechaCarga;
     private String contribuyenteID;
     private String id_hecho;
-    //
     private String latitud;
     private String longitud;
 
-    public HechoCrudo(String titulo, String descripcion, String categoria, String ubicacion,
-                      String fechaAcontecimiento) {
-
-        this.titulo = titulo;
-        this.descripcion = descripcion;
-        this.categoria = categoria;
-        this.ubicacion = ubicacion;
-        this.fechaAcontecimiento = fechaAcontecimiento;
-        this.latitud = null;
-        this.longitud = null;
+    public List<String> getArchivosMultimediaComoLista() {
+        return archivosMultimedia == null || archivosMultimedia.isBlank()
+                ? List.of()
+                : List.of(archivosMultimedia.split(";"));
     }
+
 }

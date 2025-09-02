@@ -34,19 +34,24 @@ public class AdapterFuenteDemo implements IAdapaterFuenteProxy {
     }
 
     private HechoCrudo mapearAHecho(Map<String, Object> data) {
-        String titulo = (String) data.getOrDefault("titulo", "Sin título");
-        String descripcion = (String) data.getOrDefault("descripcion", "Sin descripción");
-        String categoria = (String) data.getOrDefault("categoria", "Sin categoría");
-        String ubicacion = (String) data.getOrDefault("ubicacion", "Sin ubicacion");
-        //String latitud = (String) data.getOrDefault("latitud", "0.0");
-        //String longitud = (String) data.getOrDefault("longitud", "0.0");
+        HechoCrudo hecho = new HechoCrudo();
 
-        String fechaActual = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        hecho.setTitulo((String) data.getOrDefault("titulo", "Sin título"));
+        hecho.setDescripcion((String) data.getOrDefault("descripcion", "Sin descripción"));
+        hecho.setCategoria((String) data.getOrDefault("categoria", "Sin categoría"));
+        hecho.setUbicacion((String) data.getOrDefault("ubicacion", "Sin ubicación"));
+        hecho.setLatitud((String) data.getOrDefault("latitud", null));
+        hecho.setLongitud((String) data.getOrDefault("longitud", null));
+        hecho.setEtiqueta((String) data.getOrDefault("etiqueta", null));
+        hecho.setContribuyenteID((String) data.getOrDefault("contribuyenteID", null));
+        hecho.setArchivosMultimedia((String) data.getOrDefault("archivosMultimedia", null));
+        hecho.setId_hecho((String) data.getOrDefault("id_hecho", UUID.randomUUID().toString())); // generar ID si no viene
+        hecho.setFechaAcontecimiento((String) data.getOrDefault("fechaAcontecimiento", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
+        hecho.setFechaCarga(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
-        //return new HechoCrudo(titulo, descripcion, categoria, latitud, longitud, fechaActual);
-        return new HechoCrudo(titulo, descripcion, categoria, ubicacion, fechaActual);
+        return hecho;
     }
+
 
     private URL crearUrlDemo() {
         try {
