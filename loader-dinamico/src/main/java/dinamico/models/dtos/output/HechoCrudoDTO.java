@@ -1,4 +1,4 @@
-package org.example.metamapa.dinamico.models.dtos.output;
+package dinamico.models.dtos.output;
 
 public class HechoCrudoDTO {
 }
