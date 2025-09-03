@@ -1,10 +1,5 @@
 package org.example.metamapa.estatico;
 
-import org.example.metamapa.common.HechoDTO;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 /*
 @RestController
 class HealthController {

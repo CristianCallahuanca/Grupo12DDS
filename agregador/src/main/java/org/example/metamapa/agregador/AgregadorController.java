@@ -1,7 +1,8 @@
 package org.example.metamapa.agregador;
 
+import org.example.metamapa.agregador.models.dtos.HechoDTO;
 import org.example.metamapa.agregador.service.implementacion.AgregacionService;
-import org.example.metamapa.common.HechoDTO;
+import org.example.metamapa.common.HechoDTOCommon;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,5 +14,5 @@ class AgregadorController {
     AgregadorController(AgregacionService s){ this.svc = s; }
 
     @GetMapping("/hechos-aggregados")
-    List<HechoDTO> hechosAggregados(){ return svc.agregar(); }
+    List<HechoDTO> hechosAggregados(){ return svc.getHechosDTO3FuentesSinLimpiar(); }
 }

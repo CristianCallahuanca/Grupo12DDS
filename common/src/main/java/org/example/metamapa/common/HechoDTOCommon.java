@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data @NoArgsConstructor @AllArgsConstructor
-public class HechoDTO {
+public class HechoDTOCommon {
     private String titulo;
     private String descripcion;
     private String categoria;

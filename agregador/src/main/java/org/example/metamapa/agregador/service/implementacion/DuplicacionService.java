@@ -120,10 +120,13 @@ public class DuplicacionService {
     }
 
     //Devuelve True si se borraron con exito METODO PRINCIPAL
-    public void eliminarHechosRepetidos(List<Hecho> hechosDeLosLoaders){
+    // Comentario 2, fue modificado y ahora devuelve la lista sin los repetidos. Falta testear
+    public List<Hecho> eliminarHechosRepetidos(List<Hecho> hechosDeLosLoaders){
         List<Hecho> candidatosAEliminar = obtenerHechosMismaFechaAcontecimiento(obtenerHechosMismoLugar(hechosDeLosLoaders));
         candidatosAEliminar.addAll(obtenerHechosRepetidos(hechosDeLosLoaders));
 
         hechosDeLosLoaders.removeAll(candidatosAEliminar);
+
+        return hechosDeLosLoaders;
     }
 }

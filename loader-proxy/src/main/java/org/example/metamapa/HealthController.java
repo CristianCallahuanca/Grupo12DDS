@@ -1,6 +1,6 @@
 package org.example.metamapa;
 
-import org.example.metamapa.common.HechoDTO;
+import org.example.metamapa.common.HechoDTOCommon;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,10 +15,10 @@ class HealthController {
 @RestController
 class HechosController {
     @GetMapping("/hechos")
-    List<HechoDTO> hechos() {
+    List<HechoDTOCommon> hechos() {
         return List.of(
-                new HechoDTO("1","proxy","Derrame reportado"),
-                new HechoDTO("2","proxy","Incendio en reserva")
+                new HechoDTOCommon("1","proxy","Derrame reportado"),
+                new HechoDTOCommon("2","proxy","Incendio en reserva")
         );
     }
 }
