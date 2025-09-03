@@ -33,9 +33,11 @@ public class AgregacionService {
 
     public List<HechoDTO> getHechosDTO3FuentesSinLimpiar() {
         List<HechoDTO> all = new ArrayList<>();
-        all.addAll(listar(estatico));
+        //all.addAll(listar(estatico));
         all.addAll(listar(dinamico));
-        all.addAll(listar(proxy));
+        //all.addAll(listar(proxy));
+        System.out.println("se recibieron de las fuentes: " + all.size() + "hechos");
+
         return all;
     }
 
@@ -50,7 +52,7 @@ public class AgregacionService {
 
         List<Hecho> hechos = normalizacionService.normalizarHechos(getHechosDTO3FuentesSinLimpiar());
 
-        hechos = duplicacionService.eliminarHechosRepetidos(hechos);
+        //hechos = duplicacionService.eliminarHechosRepetidos(hechos);
 
         hechosRepository.guardarListaHechos(hechos);
 

@@ -24,10 +24,12 @@ public class IntegracionScheduled {
         this.agregacionService = agregacionService;
     }
 
-    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+    @Scheduled(initialDelay = 0, fixedRate = 15, timeUnit = TimeUnit.SECONDS)
     public void obtenerHechosTodasLasFuentes(){
+        System.out.println("LLAME A TODAS LAS FUENTES");
         agregacionService.integrarHechosFuentes();
     }
+
 }
 
 

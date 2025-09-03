@@ -1,24 +1,17 @@
 package org.example.metamapa.agregador.models.repositorios.implementaciones;
 
+import dinamico.models.entidades.hecho.HechoCrudo;
 import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class RepositorioHechos implements IRepositorioHechos {
+    private final List<Hecho> hechos = new ArrayList<>();
 
-    private List<Hecho> hechos;
-/*
-    private static final RepositorioHechos instancia = new RepositorioHechos();
-
-    private RepositorioHechos() {}
-
-    public static RepositorioHechos getInstance() {
-        return instancia;
-    }
-*/
     @Override
     public List<Hecho> obtenerTodosLosHechosDelSistema(){
         return hechos;

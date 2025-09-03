@@ -56,7 +56,7 @@ public class RecopiladorHechosService implements IRecopiladorHechos {
         log.info("Última fila leída: {}", csvAProcesar.getUltimaFilaLeida());
 
 
-        try (CSVReader csvReader = new CSVReader(new FileReader(csvAProcesar.getArchivoCSV()))) {
+        try(CSVReader csvReader = new CSVReader(new FileReader(csvAProcesar.getArchivoCSV()))) {
             String[] parts;
             int filaActual = 0;
             int ultimaFilaLeida = csvAProcesar.getUltimaFilaLeida();

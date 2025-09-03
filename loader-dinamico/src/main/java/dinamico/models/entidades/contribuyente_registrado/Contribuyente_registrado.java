@@ -34,7 +34,7 @@ public class Contribuyente_registrado {
     protected void cargarHecho(HechoCrudo hecho) {
         //hecho.setFechaCarga(LocalDateTime.now());
         agregarAListaDeHechos(hecho);
-    }
+    } // TO DO: habría que unificarlo, no?
 
     //Un contribuyente sube un hecho de forma anonima, pero conserva la referencia a la misma
     public void cargarHechoAnonimo(HechoCrudo hecho) {

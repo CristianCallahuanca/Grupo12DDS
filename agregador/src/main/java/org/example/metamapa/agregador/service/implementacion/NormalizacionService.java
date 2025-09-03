@@ -58,7 +58,6 @@ public class NormalizacionService {
             DateTimeFormatter.ofPattern("yyyy-MM-dd") // ojo: solo fecha
     );
 
-
     private void normalizarUbicacion(HechoDTO hechoSinNormalizar){
         String latitudNormalizada = hechoSinNormalizar.getLatitud().replace(",", ".");
         hechoSinNormalizar.setLatitud(latitudNormalizada);
@@ -126,7 +125,6 @@ public class NormalizacionService {
                 hechoDTO.getFechaAcontecimientoPosta(), //PREGUNTAR A MARIANO NO SE SI ESTA BIEN YA QUE ESTA EL POSTA Y EL ORIGINAL
                 hechoDTO.getEtiqueta()
         );
-
     }
 
     public List<Hecho> normalizarHechos(List<HechoDTO> hechosSinNormalizar){
