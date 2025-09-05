@@ -6,18 +6,20 @@ import org.example.metamapa.service.fuentes.FuenteProxyFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 @Component
 @Slf4j
-public class SincronizadorFuenteDemo {
+public class SchedulerFuenteDemo {
 
     private final FuenteProxyFactory factory;
 
-    public SincronizadorFuenteDemo(FuenteProxyFactory factory) {
+    public SchedulerFuenteDemo(FuenteProxyFactory factory) {
         this.factory = factory;
     }
 
-    @Scheduled(fixedRate = 3600000)
-    public void sincronizar() {
+    @Scheduled(initialDelay = 0, fixedRate = 1, timeUnit = TimeUnit.HOURS)
+    public void obtenerHechosFuenteDemo() {
         FuenteDemo demo = factory.getFuenteDemo();
         if (demo != null) {
             log.info("Ejecutando sincronizacion automatica de FuenteDemo...");

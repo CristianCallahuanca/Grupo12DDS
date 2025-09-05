@@ -24,7 +24,7 @@ public class IntegracionScheduled {
         this.agregacionService = agregacionService;
     }
 
-    @Scheduled(initialDelay = 0, fixedRate = 15, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(initialDelay = 0, fixedRate = 1, timeUnit = TimeUnit.HOURS)
     public void obtenerHechosTodasLasFuentes(){
         System.out.println("LLAME A TODAS LAS FUENTES");
         agregacionService.integrarHechosFuentes();
