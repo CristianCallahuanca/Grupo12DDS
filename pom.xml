@@ -31,9 +31,10 @@
         <module>loader-dinamico</module>
         <module>loader-proxy</module>
         <module>agregador</module>
-        <module>Gestor-de-datos</module>
+        <module>gestor-datos</module>
         <module>api-publica</module>
-        <module>Visualizacion</module>
+        <module>estadisticas</module>
+
     </modules>
 
     <dependencyManagement>

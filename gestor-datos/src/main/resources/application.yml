@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: gestor-datos
+server:
+  port: 8500
