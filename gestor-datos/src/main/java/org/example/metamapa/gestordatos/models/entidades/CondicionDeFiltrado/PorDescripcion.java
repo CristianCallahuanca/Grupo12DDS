@@ -2,7 +2,7 @@ package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 
-public class PorDescripcion {
+public class PorDescripcion implements CondicionDeFiltrado{
     private String fraseClave;
 
     public PorDescripcion(String keyPhrase){

@@ -1,7 +1,12 @@
 package org.example.metamapa.gestordatos.clientes;
 
+import org.example.metamapa.gestordatos.models.dtos.input.AlgoritmoConsensoInputDTO;
+import org.example.metamapa.gestordatos.models.dtos.input.ColeccionInputDTO;
+import org.example.metamapa.gestordatos.models.dtos.output.ColeccionOutputDTO;
+import org.example.metamapa.gestordatos.models.dtos.output.SolicitudOutputDTO;
 import org.springframework.cloud.openfeign.FeignClient;
-/*
+import org.springframework.web.bind.annotation.*;
+
 @FeignClient(name = "modulo-administracion", url = "${modulo.administracion.url}")
 public interface AdministracionClient {
 
@@ -32,4 +37,3 @@ public interface AdministracionClient {
     @PostMapping("/solicitudes/{id}/denegar")
     SolicitudOutputDTO denegarSolicitud(@PathVariable Long id);
 }
-*/

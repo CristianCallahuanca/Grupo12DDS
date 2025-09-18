@@ -11,6 +11,6 @@ public class PorOrigen implements FilterCondition{
     }
 
     public boolean cumpleUno(Hecho unHecho){
-        return unHecho.getOrigen().equals(unOrigen);
+        return unHecho.getOrigenes().contains(unOrigen);
     }
 }

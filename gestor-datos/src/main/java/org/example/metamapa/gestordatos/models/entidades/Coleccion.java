@@ -1,5 +1,6 @@
 package org.example.metamapa.gestordatos.models.entidades;
 
+import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.models.entidades.Consenso.AlgoritmoConsenso;
 import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 
@@ -10,7 +11,7 @@ public class Coleccion {
     private List<Origen> fuentes;
     private String titulo;
     private String descripcion;
-    private List<CondicionFiltrado> criterios;
+    private List<CondicionDeFiltrado> criterios;
     private List<Hecho> hechos;
     private String handle;
     private AlgoritmoConsenso algoritmo;
