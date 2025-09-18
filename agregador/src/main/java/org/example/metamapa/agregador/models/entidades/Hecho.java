@@ -21,7 +21,7 @@ public class Hecho {
     private String etiqueta;
     private LocalDateTime fechaAcontecimiento;
     private LocalDateTime fechaCarga;
-    private Origen origen;
+    private List<Origen> origenes;
     private EstadoEdicionHecho estadoEdicionHecho;
     private EstadoHecho estadoHecho;
     private Boolean sinCategorizar;

@@ -10,6 +10,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.Comparator;
 
 @Service
 public class DuplicacionService {
@@ -70,7 +75,8 @@ public class DuplicacionService {
     }
 
     private boolean estaRepetido(Hecho h1, Hecho h2){
-        return (h1.getTitulo().equals(h2.getTitulo()) && h1.getCategoria().equals(h2.getCategoria())) || h1.getContribuyente_id().equals(h2.getContribuyente_id());
+        return (h1.getTitulo().equals(h2.getTitulo()) && h1.getCategoria().equals(h2.getCategoria())) ||
+                h1.getContribuyente_id().equals(h2.getContribuyente_id());
     }
 
     private List<Hecho> obtenerHechosMismoLugar(List<Hecho> hechosDelPeriodo){
@@ -121,12 +127,63 @@ public class DuplicacionService {
 
     //Devuelve True si se borraron con exito METODO PRINCIPAL
     // Comentario 2, fue modificado y ahora devuelve la lista sin los repetidos. Falta testear
-    public List<Hecho> eliminarHechosRepetidos(List<Hecho> hechosDeLosLoaders){
+    /*public List<Hecho> eliminarHechosRepetidos(List<Hecho> hechosDeLosLoaders){
         List<Hecho> candidatosAEliminar = obtenerHechosMismaFechaAcontecimiento(obtenerHechosMismoLugar(hechosDeLosLoaders));
         candidatosAEliminar.addAll(obtenerHechosRepetidos(hechosDeLosLoaders));
 
         hechosDeLosLoaders.removeAll(candidatosAEliminar);
 
         return hechosDeLosLoaders;
+    }*/
+    // es medio una porquería esto pero no sabía cómo hacer ---> agrupa según duplicados
+    // y se queda con un representante de cada grupo, sino se estaban borrando TODOS los hechos
+    public List<Hecho> eliminarHechosRepetidos(List<Hecho> hechosDeLosLoaders) {
+        List<Hecho> resultado = new ArrayList<>();
+        Set<String> idsProcesados = new HashSet<>();
+
+        for (Hecho hecho : hechosDeLosLoaders) {
+            if (idsProcesados.contains(hecho.getId_hecho())) {
+                // ya lo procesamos en algún grupo
+                continue;
+            }
+
+            // Buscar duplicados del hecho actual
+            List<Hecho> grupo = hechosDeLosLoaders.stream()
+                    .filter(h -> sonHechosDistintos(h, hecho))
+                    .filter(h -> ocurrieronMismoDia(h, hecho))
+                    .filter(h -> estaEnBoundingBox(h, obtenerBoundingBox(hecho))) // 100m de radio, ajustar
+                    .filter(h -> estaRepetido(h, hecho))
+                    .collect(Collectors.toList());
+
+            // Agregar también el "hecho base" al grupo
+            grupo.add(hecho);
+
+            // Marcar todos como procesados ---> para no tener que volver a analizarlo
+            grupo.forEach(h -> idsProcesados.add(h.getId_hecho()));
+
+            // Elegir representante y agregar al resultado
+            Hecho representante = elegirRepresentante(grupo);
+            asociarTodosLosOrigenes(grupo, representante);
+            resultado.add(representante);
+        }
+
+        return resultado;
     }
+
+    private Hecho elegirRepresentante(List<Hecho> grupo) {
+        return grupo.get(0); //tomo el primero
+    }
+
+    private void asociarTodosLosOrigenes(List<Hecho> grupo, Hecho representante){
+        // Agrego los orígenes de los otros duplicados
+        grupo.stream()
+                .filter(h -> h != representante)
+                .forEach(h -> representante.getOrigenes().addAll(h.getOrigenes()));
+
+// Evitar orígenes repetidos
+        representante.setOrigenes(
+                representante.getOrigenes().stream().distinct().toList()
+        );
+    }
+
 }

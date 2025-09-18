@@ -11,7 +11,10 @@ import java.util.UUID;
 
 @Getter
 @Setter
+
 public class HechoCrudo{
+
+
     private String titulo;
     private String descripcion;
     private String categoria;
