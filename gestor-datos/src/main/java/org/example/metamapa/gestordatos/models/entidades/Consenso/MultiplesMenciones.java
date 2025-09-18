@@ -2,6 +2,8 @@ package org.example.metamapa.gestordatos.models.entidades.Consenso;
 
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 
+import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
+
 public class MultiplesMenciones implements AlgoritmoConsenso{
 
     private final IRepositorioHechos repositorioHechos;
