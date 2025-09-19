@@ -8,12 +8,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="estadisticas" />
+        <module name="loader-demo" />
         <module name="agregador" />
         <module name="common" />
         <module name="loader-dinamico" />
-        <module name="loader-proxy" />
         <module name="gestor-datos" />
         <module name="loader-estatico" />
+        <module name="loader-metamapa" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -31,9 +32,10 @@
       <module name="common" options="-parameters" />
       <module name="estadisticas" options="-parameters" />
       <module name="gestor-datos" options="-parameters" />
+      <module name="loader-demo" options="-parameters" />
       <module name="loader-dinamico" options="-parameters" />
       <module name="loader-estatico" options="-parameters" />
-      <module name="loader-proxy" options="-parameters" />
+      <module name="loader-metamapa" options="-parameters" />
     </option>
   </component>
 </project>

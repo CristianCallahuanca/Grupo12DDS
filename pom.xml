@@ -29,7 +29,8 @@
         <module>common</module>
         <module>loader-estatico</module>
         <module>loader-dinamico</module>
-        <module>loader-proxy</module>
+        <module>loader-metamapa</module>
+        <module>loader-demo</module>
         <module>agregador</module>
         <module>gestor-datos</module>
         <module>estadisticas</module>

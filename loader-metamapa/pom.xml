@@ -11,7 +11,7 @@
     </parent>
 
     <!-- CAMBIAR por el nombre del servicio -->
-    <artifactId>loader-proxy</artifactId>
+    <artifactId>loader-metamapa</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
