@@ -40,7 +40,8 @@ public class Coleccion {
     @Column(name = "descripcion")
     private String descripcion;
 
-    //esta es medio falopa help
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY) //a chequear esto
+    @JoinColumn(name = "coleccion_id")
     private List<CondicionDeFiltrado> criterios;
 
     @OneToMany

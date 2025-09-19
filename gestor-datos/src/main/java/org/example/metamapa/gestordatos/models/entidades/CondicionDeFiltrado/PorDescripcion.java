@@ -7,9 +7,10 @@ import jakarta.persistence.*;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @DiscriminatorValue("DESCRIPCION")
 public class PorDescripcion extends CondicionDeFiltrado{
+
+    @Column(name = "fraseClave")
     private String fraseClave;
 
     public PorDescripcion(String keyPhrase){

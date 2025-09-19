@@ -1,12 +1,21 @@
 package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 
+import lombok.NoArgsConstructor;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
+
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("CARGA")
 public class PorFechaCarga extends CondicionDeFiltrado{
+
+    @Column(name = "desde")
     private LocalDateTime desde;
+
+    @Column(name = "hasta")
     private LocalDateTime hasta;
 
     public PorFechaCarga(LocalDateTime fa1, LocalDateTime fc1) {

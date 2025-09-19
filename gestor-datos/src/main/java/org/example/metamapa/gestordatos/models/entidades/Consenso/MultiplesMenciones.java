@@ -6,11 +6,11 @@ import org.example.metamapa.gestordatos.models.repositorios.IRepositorioHechos;
 
 public class MultiplesMenciones extends AlgoritmoConsenso{
 
-    private final IRepositorioHechos repositorioHechos;
+    //private final IRepositorioHechos repositorioHechos;
 
-    public MultiplesMenciones(IRepositorioHechos repositorioHechos) {
-        this.repositorioHechos = repositorioHechos;
-    }
+     //   public MultiplesMenciones(IRepositorioHechos repositorioHechos) {
+       // this.repositorioHechos = repositorioHechos;
+    //}
 
     @Override
     public boolean esConsensuado(Hecho hecho) {
@@ -18,10 +18,10 @@ public class MultiplesMenciones extends AlgoritmoConsenso{
         //return hecho.getOrigenes().size() > 1 && !mismoTituloDistintosAtributos(hecho);
     }
 
-    private boolean mismoTituloDistintosAtributos(Hecho hecho){
+    /*private boolean mismoTituloDistintosAtributos(Hecho hecho){
         return repositorioHechos.findAll().stream()
         .anyMatch(h2 -> h2.getTitulo().equals(hecho.getTitulo()) && !h2.equals(hecho));
         //TERMINAR ESTO
-    }
+    }*/
 }
 

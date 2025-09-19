@@ -1,10 +1,17 @@
 package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 
+import lombok.NoArgsConstructor;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import jakarta.persistence.*;
 import java.util.Objects;
 
+
+@Entity
+@NoArgsConstructor
+@DiscriminatorValue("ETIQUETA")
 public class PorEtiqueta extends CondicionDeFiltrado {
+
+    @Column(name = "etiqueta")
     private String etiquetaDeseada;
 
     public PorEtiqueta(String etiquetaDeseada) {

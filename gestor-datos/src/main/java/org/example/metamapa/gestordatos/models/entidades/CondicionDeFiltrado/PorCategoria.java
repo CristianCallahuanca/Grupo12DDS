@@ -1,6 +1,5 @@
 package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import jakarta.persistence.*;
@@ -9,7 +8,6 @@ import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @DiscriminatorValue("CATEGORIA")
 public class PorCategoria extends CondicionDeFiltrado {
 

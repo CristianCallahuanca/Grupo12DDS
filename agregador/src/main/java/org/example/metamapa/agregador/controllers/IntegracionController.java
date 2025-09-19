@@ -4,6 +4,7 @@ import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
 import org.example.metamapa.agregador.service.ISpamSolicitudes;
 import org.example.metamapa.agregador.service.implementacion.SpamSolicitudes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,12 +13,13 @@ import java.util.List;
 @RequestMapping("agregador")
 public class IntegracionController {
 
-    private final SpamSolicitudes serviceSolicitud;
+
+    private final ISpamSolicitudes serviceSolicitud;
     private final IRepositorioHechos hechosRepository;
 
-    public IntegracionController(IRepositorioHechos hechosRepository, SpamSolicitudes serviceSolicitud){
-        this.hechosRepository = hechosRepository;
+    public IntegracionController(ISpamSolicitudes serviceSolicitud, IRepositorioHechos hechosRepository) {
         this.serviceSolicitud = serviceSolicitud;
+        this.hechosRepository = hechosRepository;
     }
 
     @GetMapping("/hechos")

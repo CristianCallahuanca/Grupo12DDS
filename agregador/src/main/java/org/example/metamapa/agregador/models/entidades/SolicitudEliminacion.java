@@ -59,10 +59,7 @@ public class SolicitudEliminacion {
     }
 
     public void rechazar() {
-        if (this.estadoEliminar != EstadoEliminar.RECHAZADA) {
-            this.estadoEliminar = EstadoEliminar.RECHAZADA;
-            repositorioSpam.delete(this);
-        }
+
     }
 
     public void cargarSolicitud() { repositorioSpam.save(this); }
