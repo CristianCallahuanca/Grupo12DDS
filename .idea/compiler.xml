@@ -14,12 +14,12 @@
         <module name="loader-proxy" />
         <module name="gestor-datos" />
         <module name="loader-estatico" />
-        <module name="api-publica" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Administrador de datos y visualiazacion" target="17" />
       <module name="api-admin" target="17" />
+      <module name="api-publica" target="17" />
       <module name="Visualizacion" target="17" />
     </bytecodeTargetLevel>
   </component>

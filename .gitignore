@@ -1,12 +1,16 @@
 # Build (todos los módulos)
+target/
 **/target/
+out/
 **/out/
 
-# IntelliJ / IDE
+# IntelliJ / JetBrains
 .idea/
 *.iml
 
-# Logs / SO
+# Logs
 *.log
+
+# Archivos del SO
 .DS_Store
 Thumbs.db

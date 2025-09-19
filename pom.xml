@@ -32,7 +32,6 @@
         <module>loader-proxy</module>
         <module>agregador</module>
         <module>gestor-datos</module>
-        <module>api-publica</module>
         <module>estadisticas</module>
 
     </modules>
