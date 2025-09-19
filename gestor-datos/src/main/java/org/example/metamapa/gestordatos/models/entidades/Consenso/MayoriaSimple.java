@@ -1,8 +1,8 @@
 package org.example.metamapa.gestordatos.models.entidades.Consenso;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
-import org.example.metamapa.gestordatos.models.entidades.Origen;
+import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 
-public class MayoriaSimple implements AlgoritmoConsenso {
+public class MayoriaSimple extends AlgoritmoConsenso {
     @Override
     public boolean esConsensuado(Hecho hecho) {
         int cantidadFuentes = hecho.getOrigenes().size();

@@ -1,22 +1,42 @@
 package org.example.metamapa.agregador.models.entidades;
 
-import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.metamapa.agregador.models.repositorios.ISpamRepository;
-import org.example.metamapa.agregador.models.repositorios.implementaciones.RepositorioHechos;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.UUID;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "solicitudEliminacion")
 public class SolicitudEliminacion {
-    private String id_solicitud;
-    private String id_hecho;
+
+    @Autowired
+    private ISpamRepository repositorioSpam;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name = "id_hecho")
+    private long id_hecho;
+
+    @Column(name = "justificacion")
     private String justificacion;
+
+    @Enumerated(EnumType.STRING)
     private EstadoEliminar estadoEliminar;
 
     public SolicitudEliminacion(Hecho hecho, String justificacion) {
-        this.id_solicitud = UUID.randomUUID().toString().replaceAll("-", ""); // asignación automática de ID
-        this.id_hecho = hecho.getId_hecho(); //creo
+        //this.id = UUID.randomUUID().toString().replaceAll("-", ""); // asignación automática de ID
+        this.id_hecho = hecho.getId(); //creo
         this.justificacion = justificacion;
 
         if (DetectorDeSpamSingleton.getInstance().esSpam(justificacion)) {
@@ -41,10 +61,10 @@ public class SolicitudEliminacion {
     public void rechazar() {
         if (this.estadoEliminar != EstadoEliminar.RECHAZADA) {
             this.estadoEliminar = EstadoEliminar.RECHAZADA;
-            ISpamRepository.eliminarSolicitud(this);
+            repositorioSpam.delete(this);
         }
     }
 
-    public void cargarSolicitud() { ISpamRepository.guardar(this); }
+    public void cargarSolicitud() { repositorioSpam.save(this); }
 
 }

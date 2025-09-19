@@ -1,9 +1,10 @@
 package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
+import jakarta.persistence.*;
 import org.example.metamapa.gestordatos.models.entidades.Ubicacion;
 
-public class PorUbicacion implements CondicionDeFiltrado{
+public class PorUbicacion extends CondicionDeFiltrado{
 
     private final Ubicacion ubicacionBuscada;
 

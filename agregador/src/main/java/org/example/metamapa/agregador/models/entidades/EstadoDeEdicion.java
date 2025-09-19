@@ -1,6 +1,6 @@
 package org.example.metamapa.agregador.models.entidades;
 
-public enum EstadoEdicionHecho {
+public enum EstadoDeEdicion {
     NO_EDITADO,
     EDITADO
 }

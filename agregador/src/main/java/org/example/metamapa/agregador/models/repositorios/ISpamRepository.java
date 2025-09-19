@@ -1,13 +1,6 @@
 package org.example.metamapa.agregador.models.repositorios;
 
 import org.example.metamapa.agregador.models.entidades.SolicitudEliminacion;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ISpamRepository {
-    public static void eliminarSolicitud(SolicitudEliminacion solicitud) {
-
-    }
-
-    public static void guardar(SolicitudEliminacion solicitud) {
-
-    }
-}
+public interface ISpamRepository  extends JpaRepository<SolicitudEliminacion, Long> { }

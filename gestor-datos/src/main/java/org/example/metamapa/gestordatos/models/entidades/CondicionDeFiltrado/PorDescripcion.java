@@ -1,8 +1,15 @@
 package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
+import jakarta.persistence.*;
 
-public class PorDescripcion implements CondicionDeFiltrado{
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@DiscriminatorValue("DESCRIPCION")
+public class PorDescripcion extends CondicionDeFiltrado{
     private String fraseClave;
 
     public PorDescripcion(String keyPhrase){

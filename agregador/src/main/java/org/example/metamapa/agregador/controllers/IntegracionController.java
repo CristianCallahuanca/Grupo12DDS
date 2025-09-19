@@ -1,12 +1,10 @@
 package org.example.metamapa.agregador.controllers;
 
-import dinamico.models.entidades.hecho.HechoCrudo;
-import dinamico.models.repositorios.IRepositorioHechosCrudos;
 import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.example.metamapa.agregador.service.ISpamSolicitudes;
+import org.example.metamapa.agregador.service.implementacion.SpamSolicitudes;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,18 +12,24 @@ import java.util.List;
 @RequestMapping("agregador")
 public class IntegracionController {
 
-    //esta logica no es 100% correcta queria algo para testear los hechos del agregador
-
+    private final SpamSolicitudes serviceSolicitud;
     private final IRepositorioHechos hechosRepository;
 
-    public IntegracionController(IRepositorioHechos hechosRepository){
+    public IntegracionController(IRepositorioHechos hechosRepository, SpamSolicitudes serviceSolicitud){
         this.hechosRepository = hechosRepository;
+        this.serviceSolicitud = serviceSolicitud;
     }
-
 
     @GetMapping("/hechos")
     List<Hecho> hechosCrudos() {
-        return hechosRepository.obtenerTodosLosHechosDelSistema();
+        //return hechosRepository.obtenerTodosLosHechosDelSistema();
+        return hechosRepository.findAll();
     }
+
+    @PostMapping("/solicitud_eliminacion/cancelar/{id}")
+    void cancelarSolicitud(@PathVariable Long id){
+        this.serviceSolicitud.cancelarSolicitud(id);
+    }
+
 
 }

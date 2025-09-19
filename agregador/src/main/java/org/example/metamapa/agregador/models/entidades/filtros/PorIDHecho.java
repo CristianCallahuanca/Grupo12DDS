@@ -2,14 +2,14 @@ package org.example.metamapa.agregador.models.entidades.filtros;
 
 import org.example.metamapa.agregador.models.entidades.Hecho;
 
-public class PorIDHecho {
-    private final String idBuscado;
+public class PorIDHecho extends CondicionDeFiltrado{
+    private final Long idBuscado;
 
-    public PorIDHecho(String id) {
+    public PorIDHecho(Long id) {
         this.idBuscado = id;
     }
 
     public boolean cumpleUno(Hecho unHecho) {
-        return unHecho.getId_hecho().equals(idBuscado);
+        return unHecho.getId() == idBuscado;
     }
 }

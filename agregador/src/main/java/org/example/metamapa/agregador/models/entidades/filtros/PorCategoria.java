@@ -4,7 +4,7 @@ import org.example.metamapa.agregador.models.entidades.Hecho;
 
 import java.util.Objects;
 
-public class PorCategoria implements FilterCondition {
+public class PorCategoria extends CondicionDeFiltrado {
     private String categoriaDeseada;
 
     public PorCategoria(String keyPhrase){

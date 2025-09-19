@@ -1,11 +1,11 @@
 package org.example.metamapa.gestordatos.models.entidades;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoDeEdicion;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
+import org.example.metamapa.gestordatos.models.entidades.ContribuyenteRegistrado;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoDeEdicion;
 
 import java.time.LocalDateTime;
@@ -23,7 +23,6 @@ import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 @Entity
 @Table(name = "hecho")
 public class Hecho {
-    // acordarme de cambiar origen a orígenes
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,23 +41,43 @@ public class Hecho {
     @JoinColumn(name = "ubicacion_id")
     private Ubicacion ubicacion;
 
-
+    @Column(name = "facha_acontecimiento")
     private LocalDateTime fechaAcontecimiento;
 
+    @Column(name = "fecha_carga")
     private LocalDateTime fechaCarga;
 
+    @Enumerated(EnumType.STRING)
     private EstadoHecho estadoHecho;
 
+    @Enumerated(EnumType.STRING)
     private EstadoDeEdicion estadoEdicionHecho;
 
+    @ElementCollection
+    @CollectionTable(
+            name = "hecho_multimedia",
+            joinColumns = @JoinColumn(name = "hecho_id")
+    )
+    @Column(name = "archivoMultimedia")
     private List<String> archivosMultimedia;
 
+    @Column(name = "etiqueta")
     private String etiqueta;
 
+    @JoinColumn(name = "contribuyente_id")
+    @ManyToOne
     private ContribuyenteRegistrado contribuyente;
 
+    @ElementCollection(targetClass = Origen.class)
+    @CollectionTable(
+            name = "hecho_origenes",
+            joinColumns = @JoinColumn(name = "hecho_id")
+    )
+    @Column(name = "origen")
+    @Enumerated(EnumType.STRING)
     private List<Origen> origenes;
 
+    @Column( name = "sin_categorizar")
     private Boolean sinCategorizar;
 
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
@@ -101,7 +120,7 @@ public class Hecho {
     }
 
     public boolean puedeSerEditado() {
-        return this.origenes.contains(Origen.DINAMICA)  && //hay que ver que sea registrado
+        return this.origenes.contains("Dinamica")  && //hay que ver que sea registrado
                 ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
     }
 

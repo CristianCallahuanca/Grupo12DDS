@@ -1,8 +1,9 @@
 package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
+import jakarta.persistence.*;
 
-public class PorIdContribuyente implements CondicionDeFiltrado{
+public class PorIdContribuyente extends CondicionDeFiltrado{
     private final String idBuscado;
 
     public PorIdContribuyente(String idBuscado) {

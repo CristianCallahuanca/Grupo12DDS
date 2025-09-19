@@ -3,7 +3,7 @@ package org.example.metamapa.agregador.models.entidades.filtros;
 import org.example.metamapa.agregador.models.entidades.Hecho;
 import java.util.Objects;
 
-public class PorEtiqueta implements FilterCondition {
+public class PorEtiqueta extends CondicionDeFiltrado {
     private String etiquetaDeseada;
 
     public PorEtiqueta(String etiquetaDeseada) {

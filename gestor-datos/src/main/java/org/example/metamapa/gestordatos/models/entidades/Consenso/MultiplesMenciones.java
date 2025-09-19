@@ -1,10 +1,10 @@
-/* package org.example.metamapa.gestordatos.models.entidades.Consenso;
+package org.example.metamapa.gestordatos.models.entidades.Consenso;
 
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
-import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
+import org.example.metamapa.gestordatos.models.repositorios.IRepositorioHechos;
 
 
-public class MultiplesMenciones implements AlgoritmoConsenso{
+public class MultiplesMenciones extends AlgoritmoConsenso{
 
     private final IRepositorioHechos repositorioHechos;
 
@@ -14,31 +14,14 @@ public class MultiplesMenciones implements AlgoritmoConsenso{
 
     @Override
     public boolean esConsensuado(Hecho hecho) {
-
-        return hecho.getOrigenes().size() > 1 && !mismoTituloDistintosAtributos(hecho);
+        return false; //puse esto para que deje de romper
+        //return hecho.getOrigenes().size() > 1 && !mismoTituloDistintosAtributos(hecho);
     }
 
     private boolean mismoTituloDistintosAtributos(Hecho hecho){
-        return repositorioHechos.obtenerTodosLosHechosDelSistema().stream()
-        .anyMatch(h2 -> h2.getTitulo().equals(unHecho.getTitulo()) && !h2.equals(unHecho))
+        return repositorioHechos.findAll().stream()
+        .anyMatch(h2 -> h2.getTitulo().equals(hecho.getTitulo()) && !h2.equals(hecho));
         //TERMINAR ESTO
     }
-
-  private long fuentesConMismoHecho(Hecho unHecho, List<Fuente> fuentes){
-        return fuentes.stream().filter(f -> f.getHechos().stream()
-                        .anyMatch(h -> h.equals(unHecho)))
-                .count();
-    }
-
-    private boolean fuentesConMismoTituloDistintosAtributos(Hecho unHecho, List<Fuente> fuentes){
-        return fuentes.stream().flatMap(f -> f.getHechos().stream())
-                .anyMatch(h2 -> h2.getTitulo().equals(unHecho.getTitulo()) && !h2.equals(unHecho));
-    }
-
-    @Override
-    public boolean esConsensuado(Hecho h, List<Fuente> fuentes) {
-
-        return fuentesConMismoHecho(h, fuentes) >=2 && !fuentesConMismoTituloDistintosAtributos(h, fuentes);
-    }
 }
-*/
+

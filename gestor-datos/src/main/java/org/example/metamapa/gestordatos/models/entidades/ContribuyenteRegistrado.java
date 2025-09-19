@@ -1,16 +1,41 @@
 package org.example.metamapa.gestordatos.models.entidades;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.example.metamapa.gestordatos.models.entidades.enums.Origen.DINAMICA;
+//import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "contribuyente_registrado")
 public class ContribuyenteRegistrado  {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private long id;
+
+        @Column(name = "nombre")
         private String nombre;
+
+        @Column(name = "apellido")
         private String apellido;
+
+        @Column(name = "dni")
         private Number dni;
+
+        @Column(name = "edad")
         private Number edad;
+
+        @OneToMany(mappedBy = "contribuyente")
         private List<Hecho> hechos;
 
         public List<Hecho> getMisHechos() {
@@ -29,12 +54,12 @@ public class ContribuyenteRegistrado  {
                 this.dni = dni;
         }
 
-        public void cargarHecho(Hecho hecho) {
+        /*public void cargarHecho(Hecho hecho) {
                 hecho.setFechaCarga(LocalDateTime.now());
                 hecho.setContribuyente(this);
-                hecho.agregarOrigen(DINAMICA);
+                hecho.agregarOrigen(Origen.DINAMICA);
                 hechos.add(hecho);
-        }
+        }*/
 
         public void eliminarHecho(Hecho hecho) {
                 hechos.remove(hecho);

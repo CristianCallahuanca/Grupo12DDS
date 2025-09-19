@@ -4,7 +4,7 @@ import org.example.metamapa.agregador.models.entidades.Hecho;
 
 import java.util.Objects;
 
-public class PorTitulo implements FilterCondition {
+public class PorTitulo extends CondicionDeFiltrado{
     private final String tituloBuscado;
 
     public PorTitulo(String titulo) {

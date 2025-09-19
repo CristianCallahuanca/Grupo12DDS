@@ -54,7 +54,7 @@ public class AgregacionService {
 
         //hechos = duplicacionService.eliminarHechosRepetidos(hechos);
 
-        hechosRepository.guardarListaHechos(hechos);
+        hechosRepository.saveAll(hechos);
 
     }
 

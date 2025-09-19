@@ -26,14 +26,6 @@ public class DuplicacionService {
     @Autowired
     private IRepositorioHechos  repositorioHechos;
 
-    private List<Hecho> obtenerLosUltimosHechos(){
-        LocalDateTime horaActual = LocalDateTime.now();
-        FilterCondition ultimaHora = new PorFechaCarga(horaActual.minusHours(1), horaActual);
-
-        return repositorioHechos.obtenerTodosLosHechosDelSistema().stream().
-                filter(ultimaHora::cumpleUno).toList();
-    }
-
     private double[] obtenerBoundingBox(Hecho unHecho) {
         return calcularBoundingBox(unHecho.getUbicacion().getLatitud(), unHecho.getUbicacion().getLongitud(), 100.0);
     }
@@ -67,7 +59,7 @@ public class DuplicacionService {
     }
 
     private boolean sonHechosDistintos(Hecho h1, Hecho h2){
-        return !h1.getId_hecho().equals(h2.getId_hecho());
+        return !(h1.getId() == h2.getId());
     }
 
     private boolean ocurrieronMismoDia(Hecho h1, Hecho h2){
@@ -75,7 +67,7 @@ public class DuplicacionService {
     }
 
     private boolean estaRepetido(Hecho h1, Hecho h2){
-        return (h1.getTitulo().equals(h2.getTitulo()) && h1.getCategoria().equals(h2.getCategoria())) ||
+        return (h1.getTitulo().equals(h2.getTitulo()) && h1.getCategoria().equals(h2.getCategoria())) &&
                 h1.getContribuyente_id().equals(h2.getContribuyente_id());
     }
 
@@ -127,22 +119,15 @@ public class DuplicacionService {
 
     //Devuelve True si se borraron con exito METODO PRINCIPAL
     // Comentario 2, fue modificado y ahora devuelve la lista sin los repetidos. Falta testear
-    /*public List<Hecho> eliminarHechosRepetidos(List<Hecho> hechosDeLosLoaders){
-        List<Hecho> candidatosAEliminar = obtenerHechosMismaFechaAcontecimiento(obtenerHechosMismoLugar(hechosDeLosLoaders));
-        candidatosAEliminar.addAll(obtenerHechosRepetidos(hechosDeLosLoaders));
 
-        hechosDeLosLoaders.removeAll(candidatosAEliminar);
-
-        return hechosDeLosLoaders;
-    }*/
     // es medio una porquería esto pero no sabía cómo hacer ---> agrupa según duplicados
     // y se queda con un representante de cada grupo, sino se estaban borrando TODOS los hechos
     public List<Hecho> eliminarHechosRepetidos(List<Hecho> hechosDeLosLoaders) {
         List<Hecho> resultado = new ArrayList<>();
-        Set<String> idsProcesados = new HashSet<>();
+        Set<Long> idsProcesados = new HashSet<>();
 
         for (Hecho hecho : hechosDeLosLoaders) {
-            if (idsProcesados.contains(hecho.getId_hecho())) {
+            if (idsProcesados.contains(hecho.getId())) {
                 // ya lo procesamos en algún grupo
                 continue;
             }
@@ -159,7 +144,7 @@ public class DuplicacionService {
             grupo.add(hecho);
 
             // Marcar todos como procesados ---> para no tener que volver a analizarlo
-            grupo.forEach(h -> idsProcesados.add(h.getId_hecho()));
+            grupo.forEach(h -> idsProcesados.add(h.getId()));
 
             // Elegir representante y agregar al resultado
             Hecho representante = elegirRepresentante(grupo);
@@ -180,7 +165,7 @@ public class DuplicacionService {
                 .filter(h -> h != representante)
                 .forEach(h -> representante.getOrigenes().addAll(h.getOrigenes()));
 
-// Evitar orígenes repetidos
+        // Evitar orígenes repetidos
         representante.setOrigenes(
                 representante.getOrigenes().stream().distinct().toList()
         );

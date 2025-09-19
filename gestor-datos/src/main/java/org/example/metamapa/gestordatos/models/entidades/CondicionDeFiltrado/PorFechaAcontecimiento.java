@@ -3,8 +3,9 @@ package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 
 import java.time.LocalDateTime;
+import jakarta.persistence.*;
 
-public class PorFechaAcontecimiento implements CondicionDeFiltrado {
+public class PorFechaAcontecimiento extends CondicionDeFiltrado {
     private LocalDateTime desde;
     private LocalDateTime hasta;
 

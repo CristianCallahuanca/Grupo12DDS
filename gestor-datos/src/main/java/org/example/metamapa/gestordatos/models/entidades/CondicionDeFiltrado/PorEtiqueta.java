@@ -1,10 +1,10 @@
 package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
-
+import jakarta.persistence.*;
 import java.util.Objects;
 
-public class PorEtiqueta implements CondicionDeFiltrado {
+public class PorEtiqueta extends CondicionDeFiltrado {
     private String etiquetaDeseada;
 
     public PorEtiqueta(String etiquetaDeseada) {

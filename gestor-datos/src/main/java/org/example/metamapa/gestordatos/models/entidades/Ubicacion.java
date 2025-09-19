@@ -24,9 +24,14 @@ public class Ubicacion {
     private long id;
 
     @Column(name = "latitud")
-    private String latitud;
+    private double latitud;
 
     @Column(name = "longitud")
-    private String longitud;
+    private double longitud;
+
+    public Ubicacion(double latitud, double longitud) {
+        this.latitud = latitud;
+        this.longitud = longitud;
+    }
 
 }

@@ -4,7 +4,7 @@ import org.example.metamapa.agregador.models.entidades.Hecho;
 
 import java.util.Objects;
 
-public class PorDescripcion implements FilterCondition {
+public class PorDescripcion extends CondicionDeFiltrado {
     private String fraseClave;
 
     public PorDescripcion(String keyPhrase){

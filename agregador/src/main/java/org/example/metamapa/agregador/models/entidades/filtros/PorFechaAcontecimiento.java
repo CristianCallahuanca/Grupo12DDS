@@ -4,7 +4,7 @@ import org.example.metamapa.agregador.models.entidades.Hecho;
 
 import java.time.LocalDateTime;
 
-public class PorFechaAcontecimiento implements FilterCondition {
+public class PorFechaAcontecimiento extends CondicionDeFiltrado {
     private LocalDateTime desde;
     private LocalDateTime hasta;
 
