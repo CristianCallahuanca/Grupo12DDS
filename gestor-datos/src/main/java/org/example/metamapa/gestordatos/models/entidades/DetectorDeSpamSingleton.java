@@ -1,4 +1,4 @@
-package org.example.metamapa.agregador.models.entidades;
+package org.example.metamapa.gestordatos.models.entidades;
 
 public class DetectorDeSpamSingleton  implements DetectorDeSpam {
     private static final DetectorDeSpamSingleton instancia = new DetectorDeSpamSingleton();

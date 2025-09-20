@@ -68,7 +68,7 @@ public class DuplicacionService {
 
     private boolean estaRepetido(Hecho h1, Hecho h2){
         return (h1.getTitulo().equals(h2.getTitulo()) && h1.getCategoria().equals(h2.getCategoria())) &&
-                h1.getContribuyente_id().equals(h2.getContribuyente_id());
+                h1.getContribuyente().getId() == h2.getContribuyente().getId();
     }
 
     private List<Hecho> obtenerHechosMismoLugar(List<Hecho> hechosDelPeriodo){

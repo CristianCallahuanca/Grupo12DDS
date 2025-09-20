@@ -26,7 +26,7 @@ public class Hecho {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long hecho_id;
 
     @Column(name = "titulo")
     private String titulo;
@@ -50,7 +50,7 @@ public class Hecho {
     @Enumerated(EnumType.STRING)
     private EstadoHecho estadoHecho;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private EstadoDeEdicion estadoEdicionHecho;
 
     @ElementCollection

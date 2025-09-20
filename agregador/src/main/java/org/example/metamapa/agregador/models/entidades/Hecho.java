@@ -24,7 +24,7 @@ public class Hecho {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long hecho_id;
 
     @Column(name = "titulo")
     private String titulo;
@@ -48,7 +48,7 @@ public class Hecho {
     @Enumerated(EnumType.STRING)
     private EstadoHecho estadoHecho;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private EstadoDeEdicion estadoEdicionHecho;
 
     @ElementCollection
@@ -56,7 +56,6 @@ public class Hecho {
             name = "hecho_multimedia",
             joinColumns = @JoinColumn(name = "hecho_id")
     )
-
     @Column(name = "archivoMultimedia")
     private List<String> archivosMultimedia;
 
@@ -65,7 +64,7 @@ public class Hecho {
 
     @JoinColumn(name = "contribuyente_id")
     @ManyToOne
-    private ContribuyenteRegistrado contribuyente_id;
+    private ContribuyenteRegistrado contribuyente;
 
     @ElementCollection(targetClass = Origen.class)
     @CollectionTable(
@@ -76,8 +75,9 @@ public class Hecho {
     @Enumerated(EnumType.STRING)
     private List<Origen> origenes;
 
-
+    @Column( name = "sin_categorizar")
     private Boolean sinCategorizar;
+
 
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
                  LocalDateTime fechaAcontecimiento,String etiqueta) {

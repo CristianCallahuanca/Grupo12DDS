@@ -13,7 +13,6 @@ public class PorUbicacion extends CondicionDeFiltrado{
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ubicacion_id")
-    @Column(name = "ubicacion_buscada")
     private Ubicacion ubicacionBuscada;
 
     public PorUbicacion(Ubicacion ubicacion1) {

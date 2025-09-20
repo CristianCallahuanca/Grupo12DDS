@@ -19,7 +19,7 @@ public class SolicitudEliminacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private long id;
 
     @OneToOne
     @JoinColumn(name = "hecho_id")

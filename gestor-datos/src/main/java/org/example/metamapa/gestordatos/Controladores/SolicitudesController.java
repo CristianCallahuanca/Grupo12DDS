@@ -7,10 +7,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/solicitudes")
-@RequiredArgsConstructor
 public class SolicitudesController {
 
     private final ISolicitudesService solicitudesService;
+
+    SolicitudesController(ISolicitudesService solicitudesService){
+        this.solicitudesService = solicitudesService;
+    }
 
     @PostMapping("/{id}/aprobar")
     public SolicitudOutputDTO aprobar(@PathVariable Long id) {

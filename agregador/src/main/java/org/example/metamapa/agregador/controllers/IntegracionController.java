@@ -2,9 +2,6 @@ package org.example.metamapa.agregador.controllers;
 
 import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
-import org.example.metamapa.agregador.service.ISpamSolicitudes;
-import org.example.metamapa.agregador.service.implementacion.SpamSolicitudes;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,11 +11,10 @@ import java.util.List;
 public class IntegracionController {
 
 
-    private final ISpamSolicitudes serviceSolicitud;
+
     private final IRepositorioHechos hechosRepository;
 
-    public IntegracionController(ISpamSolicitudes serviceSolicitud, IRepositorioHechos hechosRepository) {
-        this.serviceSolicitud = serviceSolicitud;
+    public IntegracionController( IRepositorioHechos hechosRepository) {
         this.hechosRepository = hechosRepository;
     }
 

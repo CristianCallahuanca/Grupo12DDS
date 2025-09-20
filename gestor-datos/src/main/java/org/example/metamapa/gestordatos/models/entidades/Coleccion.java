@@ -22,8 +22,8 @@ import java.util.List;
 public class Coleccion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(name = "handle", nullable = false, unique = true)
+    private String handle;
 
     @ElementCollection(targetClass = Origen.class)
     @CollectionTable(
@@ -45,11 +45,8 @@ public class Coleccion {
     private List<CondicionDeFiltrado> criterios;
 
     @OneToMany
-    @JoinColumn(name = "hecho_id") //hay que especificar como se tiene que llamar la columna de la tabla hecho que apunta a coleccion
-    private List<Hecho> hechos;
-
-    @Column(name = "handle")
-    private String handle;
+    @JoinColumn(name = "coleccion_id") //hay que especificar como se tiene que llamar la columna de la tabla hecho que apunta a coleccion
+    private List<HechoDeColeccion> hechosColeccion; //TODO habría que cambiarlo a hechos de coleccion
 
     @Convert(converter = AlgoritmoConsensoAttributeConverter.class)
     @Column(name = "algoritmoConsenso")
