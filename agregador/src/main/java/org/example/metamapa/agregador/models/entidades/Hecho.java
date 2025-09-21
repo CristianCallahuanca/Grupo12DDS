@@ -35,7 +35,7 @@ public class Hecho {
     @Column(name = "categoria")
     private String categoria;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ubicacion_id")
     private Ubicacion ubicacion;
 
@@ -48,7 +48,7 @@ public class Hecho {
     @Enumerated(EnumType.STRING)
     private EstadoHecho estadoHecho;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private EstadoDeEdicion estadoEdicionHecho;
 
     @ElementCollection
@@ -80,7 +80,7 @@ public class Hecho {
 
 
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
-                 LocalDateTime fechaAcontecimiento,String etiqueta) {
+                 LocalDateTime fechaAcontecimiento,String etiqueta,List<String> archivosMultimedia) {
 
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -88,17 +88,15 @@ public class Hecho {
         this.ubicacion = ubicacion;
         this.fechaAcontecimiento = fechaAcontecimiento;
         this.etiqueta = etiqueta;
+        this.archivosMultimedia = archivosMultimedia;
         this.estadoHecho = EstadoHecho.EN_REVISION;
         this.estadoEdicionHecho = EstadoDeEdicion.NO_EDITADO;
         this.fechaCarga = LocalDateTime.now();
+
+        if(categoria == "Sin categoria"){
+            this.setSinCategorizar(true);
+        }
     }
-
-    //Ahora los hechos provenientes de fuente estatica se guardan?
-
-    /*public void setOrigen(Origen unOrigen) {
-        this.origen = unOrigen;
-        if (unOrigen != Origen.ESTATICA) {RepositorioHechos.guardar(this);}
-    }*/
 
     public void marcarComoNoVisible() {
         this.estadoHecho = EstadoHecho.NO_VISIBLE;

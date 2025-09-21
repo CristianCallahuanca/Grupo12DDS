@@ -1,4 +1,4 @@
 package org.example.metamapa.agregador.service;
 
-public interface IServicioAgregacion {
+public interface IAgregacionService {
 }

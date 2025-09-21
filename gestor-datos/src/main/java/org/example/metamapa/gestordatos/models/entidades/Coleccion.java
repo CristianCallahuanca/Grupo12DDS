@@ -53,9 +53,13 @@ public class Coleccion {
     private AlgoritmoConsenso algoritmo;
 
 
-    public void consensuarHechos(){
-        //this.algoritmoDeConsenso.esConsensuado(this.hechos);
-    }
+    //public void obtenerHechosConsensuados(){
+        /*
+        return hechos.stream().filter(hecho->hecho.getgetEstadoHecho() != EstadoHecho.NO_VISIBLE).toList()
+
+
+         */
+    //}
     /*
 
     public Coleccion(List<Origen> fuentes, String titulo, String descripcion, List<CriterioDePertenencia> criterios) throws IOException {

@@ -10,6 +10,6 @@ public class PorIDHecho extends CondicionDeFiltrado{
     }
 
     public boolean cumpleUno(Hecho unHecho) {
-        return unHecho.getId() == idBuscado;
+        return unHecho.getHecho_id() == idBuscado;
     }
 }

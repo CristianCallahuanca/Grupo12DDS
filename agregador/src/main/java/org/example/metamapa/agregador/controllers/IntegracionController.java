@@ -10,8 +10,6 @@ import java.util.List;
 @RequestMapping("agregador")
 public class IntegracionController {
 
-
-
     private final IRepositorioHechos hechosRepository;
 
     public IntegracionController( IRepositorioHechos hechosRepository) {
@@ -23,11 +21,4 @@ public class IntegracionController {
         //return hechosRepository.obtenerTodosLosHechosDelSistema();
         return hechosRepository.findAll();
     }
-
-    @PostMapping("/solicitud_eliminacion/cancelar/{id}")
-    void cancelarSolicitud(@PathVariable Long id){
-        this.serviceSolicitud.cancelarSolicitud(id);
-    }
-
-
 }

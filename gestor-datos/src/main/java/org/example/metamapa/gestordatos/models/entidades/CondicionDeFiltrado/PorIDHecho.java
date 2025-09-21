@@ -18,6 +18,6 @@ public class PorIDHecho extends CondicionDeFiltrado{
 
     @Override
     public boolean cumpleUno(Hecho unHecho) {
-        return unHecho.getId() == (idBuscado);
+        return unHecho.getHecho_id() == (idBuscado);
     }
 }

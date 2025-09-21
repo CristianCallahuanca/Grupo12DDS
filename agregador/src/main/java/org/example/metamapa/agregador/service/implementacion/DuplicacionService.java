@@ -59,7 +59,7 @@ public class DuplicacionService {
     }
 
     private boolean sonHechosDistintos(Hecho h1, Hecho h2){
-        return !(h1.getId() == h2.getId());
+        return !(h1.getHecho_id() == h2.getHecho_id());
     }
 
     private boolean ocurrieronMismoDia(Hecho h1, Hecho h2){
@@ -127,7 +127,7 @@ public class DuplicacionService {
         Set<Long> idsProcesados = new HashSet<>();
 
         for (Hecho hecho : hechosDeLosLoaders) {
-            if (idsProcesados.contains(hecho.getId())) {
+            if (idsProcesados.contains(hecho.getHecho_id())) {
                 // ya lo procesamos en algún grupo
                 continue;
             }
@@ -144,7 +144,7 @@ public class DuplicacionService {
             grupo.add(hecho);
 
             // Marcar todos como procesados ---> para no tener que volver a analizarlo
-            grupo.forEach(h -> idsProcesados.add(h.getId()));
+            grupo.forEach(h -> idsProcesados.add(h.getHecho_id()));
 
             // Elegir representante y agregar al resultado
             Hecho representante = elegirRepresentante(grupo);

@@ -29,7 +29,13 @@ public class HechosDinamicosController {
     @GetMapping("/hechos")
     public List<HechoCrudoDTO_OUT> obtenerHechos(){
 
-        return hechosService.obtenerHechos();
+         List<HechoCrudoDTO_OUT> hechos = hechosService.obtenerHechos();
+
+         System.out.println("BOCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+         System.out.println(hechos.get(0).getTitulo());
+
+         return hechos;
+
     }
 
 }

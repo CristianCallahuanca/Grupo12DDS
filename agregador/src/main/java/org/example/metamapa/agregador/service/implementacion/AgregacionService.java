@@ -1,11 +1,12 @@
 package org.example.metamapa.agregador.service.implementacion;
 
-import dinamico.models.repositorios.IRepositorioHechosCrudos;
-import org.example.metamapa.agregador.models.dtos.HechoDTO;
+import jakarta.transaction.Transactional;
+import org.example.metamapa.agregador.models.dtos.DTO_IN.HechoDTO_IN;
 import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
-import org.example.metamapa.common.HechoDTOCommon;
+import org.example.metamapa.agregador.service.INormalizacionService;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -30,9 +31,8 @@ public class AgregacionService {
         this.hechosRepository = hechosRepository;
     }
 
-
-    public List<HechoDTO> getHechosDTO3FuentesSinLimpiar() {
-        List<HechoDTO> all = new ArrayList<>();
+    public List<HechoDTO_IN> getHechosDTO3FuentesSinLimpiar() {
+        List<HechoDTO_IN> all = new ArrayList<>();
         //all.addAll(listar(estatico));
         all.addAll(listar(dinamico));
         //all.addAll(listar(proxy));
@@ -41,22 +41,18 @@ public class AgregacionService {
         return all;
     }
 
-    private List<HechoDTO> listar(RestClient c) {
+    private List<HechoDTO_IN> listar(RestClient c) {
         return c.get().uri("/hechos")
-                .retrieve().body(new ParameterizedTypeReference<List<HechoDTO>>() {});
+                .retrieve().body(new ParameterizedTypeReference<List<HechoDTO_IN>>() {});
     }
 
+    @Transactional
     public void integrarHechosFuentes(){
 
         //obtenermos todos los hechos de las fuentes los normalizamos sacamos duplicados y los almacenamos en BD
 
-        List<Hecho> hechos = normalizacionService.normalizarHechos(getHechosDTO3FuentesSinLimpiar());
+         List<Hecho> hechos = normalizacionService.normalizarHechos(this.getHechosDTO3FuentesSinLimpiar());
 
-        //hechos = duplicacionService.eliminarHechosRepetidos(hechos);
-
-        hechosRepository.saveAll(hechos);
-
+         hechosRepository.saveAll(hechos);
     }
-
-
 }
