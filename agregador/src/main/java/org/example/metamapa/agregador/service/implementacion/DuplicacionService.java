@@ -1,9 +1,11 @@
 package org.example.metamapa.agregador.service.implementacion;
 
 import org.example.metamapa.agregador.models.entidades.Hecho;
+import org.example.metamapa.agregador.models.entidades.Origen;
 import org.example.metamapa.agregador.models.entidades.filtros.FilterCondition;
 import org.example.metamapa.agregador.models.entidades.filtros.PorFechaCarga;
 import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
+import org.example.metamapa.agregador.service.IDuplicacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +19,7 @@ import java.util.stream.Collectors;
 import java.util.Comparator;
 
 @Service
-public class DuplicacionService {
-    /*
-    * Si un varios hechos ocurrieron en el mismo lugar  && fecha de acontecimiento son candidatos a ser duplicado
-    *   si además tienen el mismo (titulo && categoria) || id_contribuyente podemos asegurarlo
-    * */
-
-    @Autowired
-    private IRepositorioHechos  repositorioHechos;
+public class DuplicacionService implements IDuplicacionService {
 
     private double[] obtenerBoundingBox(Hecho unHecho) {
         return calcularBoundingBox(unHecho.getUbicacion().getLatitud(), unHecho.getUbicacion().getLongitud(), 100.0);
@@ -117,6 +112,21 @@ public class DuplicacionService {
         return hechosRepetidos;
     }
 
+    private Hecho elegirRepresentante(List<Hecho> grupo) {
+        return grupo.get(0); //tomo el primero
+    }
+
+    private void asociarTodosLosOrigenes(List<Hecho> grupo, Hecho representante){
+        // Agrego los orígenes de los otros duplicados
+        grupo.stream()
+                .filter(h -> h != representante)
+                .forEach(h -> representante.getOrigenes().addAll(h.getOrigenes()));
+
+        List<Origen> origenesFiltrados = representante.getOrigenes().stream().distinct().toList();
+        // Evitar orígenes repetidos
+        representante.setOrigenes(origenesFiltrados);
+    }
+
     //Devuelve True si se borraron con exito METODO PRINCIPAL
     // Comentario 2, fue modificado y ahora devuelve la lista sin los repetidos. Falta testear
 
@@ -155,20 +165,5 @@ public class DuplicacionService {
         return resultado;
     }
 
-    private Hecho elegirRepresentante(List<Hecho> grupo) {
-        return grupo.get(0); //tomo el primero
-    }
-
-    private void asociarTodosLosOrigenes(List<Hecho> grupo, Hecho representante){
-        // Agrego los orígenes de los otros duplicados
-        grupo.stream()
-                .filter(h -> h != representante)
-                .forEach(h -> representante.getOrigenes().addAll(h.getOrigenes()));
-
-        // Evitar orígenes repetidos
-        representante.setOrigenes(
-                representante.getOrigenes().stream().distinct().toList()
-        );
-    }
 
 }
