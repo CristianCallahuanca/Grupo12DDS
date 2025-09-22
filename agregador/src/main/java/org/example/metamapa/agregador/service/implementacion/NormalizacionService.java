@@ -1,11 +1,17 @@
 package org.example.metamapa.agregador.service.implementacion;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.metamapa.agregador.models.dtos.DTO_IN.HechoDTO_IN;
 import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.entidades.Ubicacion;
 import org.example.metamapa.agregador.service.INormalizacionService;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +20,44 @@ import java.util.List;
 
 @Service
 public class NormalizacionService implements INormalizacionService {
+
+    //Atte GPT:
+    public static String obtenerProvinciaAPI(double lat, double lon) {
+        String urlString = String.format(
+                "https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=json",
+                lat, lon
+        );
+
+        try {
+            // Hacer la request
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("User-Agent", "JavaApp"); // Nominatim requiere un User-Agent
+
+            // Leer la respuesta
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            // Parsear el JSON con Jackson
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.toString());
+
+            // Navegar hasta "address" -> "state"
+            JsonNode addressNode = root.path("address");
+            return addressNode.path("state").asText();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     private List<String> catalogoCategorias = List.of(
             "vientos fuertes",
@@ -45,7 +89,11 @@ public class NormalizacionService implements INormalizacionService {
         hechoSinNormalizar.setLatitud(latitudNormalizada);
         String longitudNormalizada = hechoSinNormalizar.getLongitud().replace(",", ".");
         hechoSinNormalizar.setLongitud(longitudNormalizada);
-        return new Ubicacion(Double.parseDouble(latitudNormalizada), Double.parseDouble(longitudNormalizada));
+
+        double latitud = Double.parseDouble(latitudNormalizada);
+        double longitud = Double.parseDouble(longitudNormalizada);
+
+        return new Ubicacion(Double.parseDouble(latitudNormalizada), Double.parseDouble(longitudNormalizada), obtenerProvinciaAPI(latitud, longitud));
     }
 
     private String categoriaEnCatalogo(String categoria){

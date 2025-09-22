@@ -56,43 +56,7 @@ public class AgregacionService implements IAgregacionService{
                 .retrieve().body(new ParameterizedTypeReference<List<HechoDTO_IN>>() {});
     }
 
-    //Atte GPT:
-    public static String obtenerProvinciaAPI(double lat, double lon) {
-        String urlString = String.format(
-                "https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=json",
-                lat, lon
-        );
 
-        try {
-            // Hacer la request
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("User-Agent", "JavaApp"); // Nominatim requiere un User-Agent
-
-            // Leer la respuesta
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            // Parsear el JSON con Jackson
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response.toString());
-
-            // Navegar hasta "address" -> "state"
-            JsonNode addressNode = root.path("address");
-            return addressNode.path("state").asText();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
 
     @Transactional
@@ -101,10 +65,8 @@ public class AgregacionService implements IAgregacionService{
         //obtenermos todos los hechos de las fuentes los normalizamos sacamos duplicados y los almacenamos en BD
 
          List<Hecho> hechos = normalizacionService.normalizarHechos(this.getHechosDTO3FuentesSinLimpiar());
-         //List<Hecho> hechos_finales = duplicacionService.eliminarHechosRepetidos(hechos);
+         List<Hecho> hechos_finales = duplicacionService.eliminarHechosRepetidos(hechos);
 
-         System.out.println("la provincia obtenida de la api es: " + obtenerProvinciaAPI(hechos.get(0).getUbicacion().getLatitud(),hechos.get(0).getUbicacion().getLongitud()));
-
-         hechosRepository.saveAll(hechos);
+         hechosRepository.saveAll(hechos_finales);
     }
 }

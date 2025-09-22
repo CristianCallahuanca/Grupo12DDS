@@ -66,50 +66,13 @@ public class DuplicacionService implements IDuplicacionService {
                 h1.getContribuyente().getId() == h2.getContribuyente().getId();
     }
 
-    private List<Hecho> obtenerHechosMismoLugar(List<Hecho> hechosDelPeriodo){
-        List<Hecho> hechosMismaUbicacion = new ArrayList<>();
-
-        for(int i=0; i <hechosDelPeriodo.size(); i++){
-            double[] boxDelHecho = obtenerBoundingBox(hechosDelPeriodo.get(i));
-            Hecho hechoDeLaIteracion = hechosDelPeriodo.get(i);
-
-            List<Hecho> hs = hechosDelPeriodo.stream()
-                    .filter(h -> estaEnBoundingBox(h, boxDelHecho)
-                            && sonHechosDistintos(h, hechoDeLaIteracion)).toList();
-            hechosMismaUbicacion.addAll(hs);
-        }
-
-        return hechosMismaUbicacion;
-    }
-
-    private List<Hecho> obtenerHechosMismaFechaAcontecimiento(List<Hecho> hechosDelPeriodo){
-        List<Hecho> hechosMismaFecha = new ArrayList<>();
-
-        for(int i=0; i <hechosDelPeriodo.size(); i++){
-            Hecho hechoDeLaIteracion = hechosDelPeriodo.get(i);
-
-            List<Hecho> hs = hechosDelPeriodo.stream()
-                    .filter(h -> ocurrieronMismoDia(h, hechoDeLaIteracion)
-                            && sonHechosDistintos(h, hechoDeLaIteracion)).toList();
-            hechosMismaFecha.addAll(hs);
-        }
-
-        return hechosMismaFecha;
-    }
-
-    private List<Hecho> obtenerHechosRepetidos(List<Hecho> hechosDelPeriodo){
-        List<Hecho> hechosRepetidos = new ArrayList<>();
-
-        for(int i=0; i <hechosDelPeriodo.size(); i++){
-            Hecho hechoDeLaIteracion = hechosDelPeriodo.get(i);
-
-            List<Hecho> hs = hechosDelPeriodo.stream()
-                    .filter(h -> estaRepetido(h, hechoDeLaIteracion)
-                            && sonHechosDistintos(h, hechoDeLaIteracion)).toList();
-            hechosRepetidos.addAll(hs);
-        }
-
-        return hechosRepetidos;
+    List<Hecho> obtenerLosDuplicadosDeUnHecho(Hecho original, List<Hecho> ListaConHechosDuplicados){
+        return ListaConHechosDuplicados.stream()
+                .filter(h -> sonHechosDistintos(h, original))
+                .filter(h -> ocurrieronMismoDia(h, original))
+                .filter(h -> estaEnBoundingBox(h, obtenerBoundingBox(original))) // 100m de radio, ajustar
+                .filter(h -> estaRepetido(h, original))
+                .collect(Collectors.toList());
     }
 
     private Hecho elegirRepresentante(List<Hecho> grupo) {
@@ -143,12 +106,7 @@ public class DuplicacionService implements IDuplicacionService {
             }
 
             // Buscar duplicados del hecho actual
-            List<Hecho> grupo = hechosDeLosLoaders.stream()
-                    .filter(h -> sonHechosDistintos(h, hecho))
-                    .filter(h -> ocurrieronMismoDia(h, hecho))
-                    .filter(h -> estaEnBoundingBox(h, obtenerBoundingBox(hecho))) // 100m de radio, ajustar
-                    .filter(h -> estaRepetido(h, hecho))
-                    .collect(Collectors.toList());
+            List<Hecho> grupo = obtenerLosDuplicadosDeUnHecho(hecho, hechosDeLosLoaders);
 
             // Agregar también el "hecho base" al grupo
             grupo.add(hecho);
@@ -157,13 +115,15 @@ public class DuplicacionService implements IDuplicacionService {
             grupo.forEach(h -> idsProcesados.add(h.getHecho_id()));
 
             // Elegir representante y agregar al resultado
-            Hecho representante = elegirRepresentante(grupo);
-            asociarTodosLosOrigenes(grupo, representante);
-            resultado.add(representante);
+            if(grupo.size() > 1){
+                Hecho representante = elegirRepresentante(grupo);
+                asociarTodosLosOrigenes(grupo, representante);
+                resultado.add(representante);
+            }
+            if(grupo.size() == 1){
+                resultado.add(grupo.get(0));
+            }
         }
-
         return resultado;
     }
-
-
 }

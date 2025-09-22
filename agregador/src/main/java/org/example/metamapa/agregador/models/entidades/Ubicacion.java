@@ -24,8 +24,12 @@ public class Ubicacion {
     @Column(name = "longitud")
     private double longitud;
 
-    public Ubicacion(double latitud, double longitud) {
+    @Column(name = "provincia")
+    private String provincia;
+
+    public Ubicacion(double latitud, double longitud, String provincia) {
         this.latitud = latitud;
         this.longitud = longitud;
+        this.provincia = provincia;
     }
 }

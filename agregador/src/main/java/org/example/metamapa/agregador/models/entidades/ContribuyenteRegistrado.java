@@ -11,6 +11,8 @@ import java.util.List;
 
 //import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 
+
+
 @Getter
 @Setter
 @NoArgsConstructor
