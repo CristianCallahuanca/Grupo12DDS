@@ -8,7 +8,9 @@ import lombok.Setter;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.conversores.AlgoritmoConsensoAttributeConverter;
 import org.example.metamapa.gestordatos.models.entidades.Consenso.AlgoritmoConsenso;
+import org.example.metamapa.gestordatos.models.entidades.ModosNavegacion.ModoNavegacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
+import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
 
 import java.util.List;
 
@@ -53,16 +55,16 @@ public class Coleccion {
     private AlgoritmoConsenso algoritmo;
 
 
-    //public void obtenerHechosConsensuados(){
-        /*
-        return hechos.stream().filter(hecho->hecho.getgetEstadoHecho() != EstadoHecho.NO_VISIBLE).toList()
+    public List<Hecho> obtenerHechosConsensuados(){
+       if(algoritmo != null){
+        return hechosColeccion.stream().filter(HechoDeColeccion::getEsConsensuado)
+                .map(HechoDeColeccion::getHecho).toList();
+    } else {
+          return obtenerHechosVisibles(); // para que devuelva todos los hechos si no tiene algoritmo de consenso
+       }
+    }
 
-
-         */
-    //}
-    /*
-
-    public Coleccion(List<Origen> fuentes, String titulo, String descripcion, List<CriterioDePertenencia> criterios) throws IOException {
+  /*  public Coleccion(List<Origen> fuentes, String titulo, String descripcion, List<CriterioDePertenencia> criterios) throws IOException {
         this.fuentes = fuentes;
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -72,18 +74,24 @@ public class Coleccion {
     }
 
     public void insertarHechos(List <Hecho> unosHechos) {this.hechos.addAll(unosHechos);}
-
+*/
     public List <Hecho> obtenerHechosPorModo(ModoNavegacion algunModo)
     {
-        return algunModo.aplicarModoDeNavegacion(this.obtenerHechosVisibles(), this.algoritmoDeConsenso);
+        return algunModo.aplicarModoDeNavegacion(this);
     }
 
 
     public List<Hecho> obtenerHechosVisibles() {
-        return hechos.stream().filter(hecho->hecho.getEstadoHecho() != EstadoHecho.NO_VISIBLE).toList();
+        return hechosColeccion.stream().filter(hechoColeccion->hechoColeccion.getHecho().getEstadoHecho() != EstadoHecho.NO_VISIBLE)
+        .map(HechoDeColeccion::getHecho).toList();
+    }
+
+    public void aplicarConsenso() {
+            this.algoritmo.consensuarHechos(this.hechosColeccion);
     }
 
 
+/*
     //Solo para tests
     public void imprimirHechos(List<Hecho> unosHechos) {
         unosHechos.forEach(unHecho -> unHecho.imprimirHecho());

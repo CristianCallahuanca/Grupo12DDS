@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface IColeccionesService {
 
+    public void aplicarConsensoATodas();
+
     List<ColeccionOutputDTO> obtenerColecciones();
 
     ColeccionOutputDTO crearColeccion(ColeccionInputDTO dto);

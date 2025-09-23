@@ -1,6 +1,7 @@
 package org.example.metamapa.agregador.models.entidades;
 
-import dinamico.models.entidades.hecho.EstadoHecho;
+
+import org.example.metamapa.agregador.models.entidades.EstadoHecho;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

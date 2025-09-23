@@ -35,6 +35,12 @@ public class SolicitudEliminacion {
     private Boolean verifico_si_es_spam;
 
 
+    public SolicitudEliminacion(Hecho hecho, String justificacion) {
+        this.hecho = hecho;
+        this.justificacion = justificacion;
+        this.estadoEliminar = EstadoEliminar.PENDIENTE;
+        this.verifico_si_es_spam = false;
+    }
     /*
     public SolicitudEliminar(Hecho hecho, String justificacion) {
         this.id_solicitud = ServicioDeIdentificacion.getInstancia().generarIDSolicitudEliminacion(); // asignación automática de ID

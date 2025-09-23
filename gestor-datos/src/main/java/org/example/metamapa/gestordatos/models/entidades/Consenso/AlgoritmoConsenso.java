@@ -14,5 +14,5 @@ public abstract class AlgoritmoConsenso {
             boolean consensuado = esConsensuado(hecho);
             hechoColeccion.setEsConsensuado(consensuado);
         }
-    } //TODO ESTO LO TIENE QUE HACER UN SCHEDULER, VER BIEN DÓNDE LO ACTUALIZA AL REPO
+    }
 }
