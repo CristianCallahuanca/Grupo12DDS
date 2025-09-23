@@ -30,6 +30,12 @@ public class ColeccionController {
         return ResponseEntity.status(201).body("coleccion creada correctamente");
     }
 
+    @PutMapping("/coleccion/{handle}")
+    public ResponseEntity<Coleccion> agregarFuente(@PathVariable String handle, @RequestBody ColeccionInputDTO datos) {
+
+        return ResponseEntity.ok(this.coleccionService.agregarFuente(datos, handle));
+    }
+
     /*@GetMapping
     public ResponseEntity<List<Coleccion>> listar() {
         return ResponseEntity.ok(service.getAll());

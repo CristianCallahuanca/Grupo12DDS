@@ -34,7 +34,7 @@ public class Coleccion {
     )
     @Column(name = "origen")
     @Enumerated(EnumType.STRING)
-    private List<Origen> fuentes;
+    private List<Origen> origenes;
 
     @Column(name = "titulo")
     private String titulo;
@@ -91,6 +91,14 @@ public class Coleccion {
 
     public List<Hecho> obtenerHechos(){
         return hechosColeccion.stream().map(HechoDeColeccion::getHecho).toList();
+    }
+
+    public void agregarNuevaFuente(Origen nuevaFuente){
+        this.origenes.add(nuevaFuente);
+    }
+
+    public void eliminarFuente(Origen fuente){
+        this.origenes.remove(fuente);
     }
 
 
