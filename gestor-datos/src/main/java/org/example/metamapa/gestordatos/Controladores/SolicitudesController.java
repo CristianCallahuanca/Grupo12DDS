@@ -17,8 +17,10 @@ public class SolicitudesController {
     }
 
     @PostMapping("/solicitud")
-    public ResponseEntity<String> create(@RequestBody SolicitudInputDTO solicitud) {
-        SolicitudOutputDTO solictud = this.solicitudesService.crearSolicitudEliminacion(solicitud);
+    public ResponseEntity<String> create(@RequestBody SolicitudInputDTO solicitudDTO) {
+
+        System.out.println("el id antes de pasarlo" + solicitudDTO.getIdhecho());
+        SolicitudOutputDTO solictud = this.solicitudesService.crearSolicitudEliminacion(solicitudDTO);
         return ResponseEntity.status(201).body("solicitud creada correctamente");
     }
 

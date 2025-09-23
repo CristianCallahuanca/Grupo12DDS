@@ -12,7 +12,7 @@ public interface IColeccionesService {
 
     //List<ColeccionOutputDTO> obtenerColecciones();
 
-    public void crearColeccion(ColeccionInputDTO coleccionDTO);
+    void crearColeccion(ColeccionInputDTO coleccionDTO);
 
     //ColeccionOutputDTO editarColeccion(Long id, ColeccionInputDTO dto);
 

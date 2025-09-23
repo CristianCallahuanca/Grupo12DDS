@@ -143,12 +143,18 @@ public class ColeccionesService implements IColeccionesService {
 
     //ColeccionOutputDTO editarColeccion(Long id, ColeccionInputDTO dto);
 
-    //void eliminarColeccion(Long id);
-
-  //  public ColeccionOutputDTO cambiarAlgoritmo(Long id, String nuevoAlgoritmo){
-    //    Coleccion coleccion = coleccionesRepository.findById(id)
-      //          .orElseThrow(() -> new Exception("Colección no encontrada"));
-   // };
+    /*void eliminarColeccion(Long id){
+         Coleccion coleccion = coleccionesRepository.findById(id);
+         coleccionesRepository.delete(coleccion);
+    }
+*/
+  /* public ColeccionOutputDTO cambiarAlgoritmo(Long id, String nuevoAlgoritmo){
+          Coleccion coleccion = coleccionesRepository.findById(id); //con null o hay que tirar error?
+          AlgoritmoConsenso algoritmo = algoritmoConsensoFactory(nuevoAlgoritmo);
+          coleccion.setAlgoritmo(algoritmo);
+          coleccionRepository.save(coleccion);
+          return coleccionToDTOOut(coleccion);
+   // }*/
 
 
     //ColeccionOutputDTO agregarFuente(Long idColeccion, FuenteInputDTO fuente);

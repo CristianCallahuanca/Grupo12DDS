@@ -21,7 +21,8 @@ public class ColeccionController {
         this.coleccionService = coleccionService;
     }
 
-    @PostMapping
+    
+    @PostMapping("/coleccion")
     public ResponseEntity<String> crear(@RequestBody ColeccionInputDTO coleccion) {
 
         coleccionService.crearColeccion(coleccion);

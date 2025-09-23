@@ -25,8 +25,18 @@ public class SolicitudesService implements ISolicitudesService {
     }
 
     private SolicitudEliminacion convertirInputDTOASolicitud(SolicitudInputDTO solicitudDTO){
-        Hecho unHecho = hechosRepository.findById(solicitudDTO.getIDhecho()).orElse(null);
+
+        /*if(solicitudDTO.getIdhecho() == null){
+            System.out.println("la id que llego es nula");
+            return null;
+        }*/
+
+        System.out.println(solicitudDTO.getIdhecho());
+        Hecho unHecho = hechosRepository.findById(solicitudDTO.getIdhecho()).orElse(null);
+        System.out.println(unHecho);
+
         if(unHecho == null){
+
             return null;
         }
         return new SolicitudEliminacion(unHecho, solicitudDTO.getJustificacion());
