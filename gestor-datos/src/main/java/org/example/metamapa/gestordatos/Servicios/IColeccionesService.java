@@ -14,6 +14,12 @@ public interface IColeccionesService {
 
     void crearColeccion(ColeccionInputDTO coleccionDTO);
 
+    ColeccionOutputDTO retrieveColeccion(String handle);
+
+    ColeccionOutputDTO updateColeccion(ColeccionInputDTO nuevaColeccionDTO, String handle);
+
+    boolean eliminarColeccion(String handle);
+
     //ColeccionOutputDTO editarColeccion(Long id, ColeccionInputDTO dto);
 
     //void eliminarColeccion(Long id);

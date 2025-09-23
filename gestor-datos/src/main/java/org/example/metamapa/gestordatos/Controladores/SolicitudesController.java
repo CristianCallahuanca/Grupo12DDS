@@ -18,8 +18,8 @@ public class SolicitudesController {
 
     @PostMapping("/solicitud")
     public ResponseEntity<String> create(@RequestBody SolicitudInputDTO solicitudDTO) {
-        SolicitudOutputDTO solictud = this.solicitudesService.crearSolicitudEliminacion(solicitudDTO);
-        if(solictud == null){
+        SolicitudOutputDTO solicitud = this.solicitudesService.crearSolicitudEliminacion(solicitudDTO);
+        if(solicitud == null){
             return ResponseEntity.status(400).body("ID del hecho no encontrado");
         }
         return ResponseEntity.status(201).body("solicitud creada correctamente");
@@ -38,7 +38,7 @@ public class SolicitudesController {
     @PostMapping("/{id}/rechazar")
     public ResponseEntity<String> rechazar(@PathVariable Long id) {
         SolicitudOutputDTO solicitud = solicitudesService.denegarSolicitud(id);
-        if(solictud == null){
+        if(solicitud == null){
             return ResponseEntity.status(400).body("ID del hecho no encontrado");
         }
 

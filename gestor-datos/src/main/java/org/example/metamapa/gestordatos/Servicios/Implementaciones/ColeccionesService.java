@@ -148,61 +148,32 @@ public class ColeccionesService implements IColeccionesService {
         };
     }
 
-    //ColeccionOutputDTO editarColeccion(Long id, ColeccionInputDTO dto);
-    void eliminarColeccion(String handle) {
+    public ColeccionOutputDTO retrieveColeccion(String handle){
         Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
-        coleccionesRepository.delete(coleccion);
-    }
-
-    public ColeccionOutputDTO cambiarAlgoritmo(String handle, String nuevoAlgoritmo) {
-        Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
-        //con null o hay que tirar error?
-        if (coleccion == null) {
-           else return null;
-        }
-        AlgoritmoConsenso algoritmo = algoritmoConsensoFactory(nuevoAlgoritmo);
-        coleccion.setAlgoritmo(algoritmo);
-        this.coleccionesRepository.save(coleccion);
-        return coleccionToDTOOut(coleccion); //así?????
-    }
-
-
-    public ColeccionOutputDTO agregarFuente(ColeccionInputDTO nuevaColeccion, String handle) {
-        List<Origen> origenes = nuevaColeccion.getOrigenes();
-
-        Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
-        if (coleccion == null) {
+        if(coleccion == null){
             return null;
         }
-        Origen nuevaFuente = origenFactory(fuente);
+        return coleccionToDTOOut(coleccion);
+    }
 
-        if (!coleccion.getOrigenes().contains(nuevaFuente)) { //para no agregarla repetida
-            coleccion.agregarNuevaFuente(nuevaFuente);
-        }
-
+    public ColeccionOutputDTO updateColeccion(ColeccionInputDTO nuevaColeccionDTO, String handle) {
+        Coleccion nuevaColeccion = dtoInToColeccion(nuevaColeccionDTO);
+        nuevaColeccion.setHandle(handle);
+        //En teoria actualiza la coleccion con el mismo handle
         coleccionesRepository.save(nuevaColeccion);
 
-        return coleccionToDTOOut(coleccion);
+        return coleccionToDTOOut(nuevaColeccion);
     }
 
-
-    public ColeccionOutputDTO quitarFuente(String handle, String fuente) {
-        Coleccion coleccion = coleccionesRepository.findById(Long.parseLong(handle)).orElse(null);
-        Origen fuenteAEliminar = origenFactory(fuente);
-
-        coleccion.eliminarFuente(fuenteAEliminar);
-
-        coleccionesRepository.save(coleccion);
-
-        return coleccionToDTOOut(coleccion);
+    public boolean eliminarColeccion(String handle) {
+        Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
+        if(coleccion == null){
+            return false;
+        }
+        coleccionesRepository.delete(coleccion);
+        return true;
     }
+
     // al final dejamos los origenes en el output?
 
-    private Origen origenFactory(String origen) {
-        try {
-            return Origen.valueOf(origen.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Origen inválido: " + origen);
-        }
-    }
 }
