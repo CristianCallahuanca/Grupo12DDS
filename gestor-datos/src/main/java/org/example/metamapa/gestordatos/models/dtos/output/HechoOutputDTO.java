@@ -5,10 +5,9 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Setter
 @Getter
-public class hechoOutPutDTO {
-
+@Setter
+public class HechoOutputDTO {
     private String titulo;
     private String descripcion;
     private String categoria;
@@ -17,5 +16,7 @@ public class hechoOutPutDTO {
     private String fechaAcontecimiento;
     private String etiqueta;
     private List<String> archivosMultimedia;
-    private String contribuyenteID;
+    private String nombre_contribuyente;
+    private String apellido_contribuyente;
 }
+
