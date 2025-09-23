@@ -1,16 +1,12 @@
 package org.example.metamapa.models.dtos;
 
-import lombok.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@Builder
-@NoArgsConstructor
-public class HechoDTO {
+@Data
+public class HechoDTO_IN {
     private String titulo;
     private String descripcion;
     private String categoria;
@@ -23,6 +19,4 @@ public class HechoDTO {
     private Boolean sinCategorizar;
     private LocalDateTime fechaAcontecimientoPosta;
 }
-
-
 //TODO: Terminar de consolidar los atributos de los hechos que ingresan y los que se envian al agregador.
