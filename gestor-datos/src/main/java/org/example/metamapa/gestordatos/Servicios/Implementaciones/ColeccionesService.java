@@ -1,6 +1,7 @@
 package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 
 import org.example.metamapa.gestordatos.Servicios.IColeccionesService;
+import org.example.metamapa.gestordatos.Servicios.IHechoService;
 import org.example.metamapa.gestordatos.models.dtos.input.ColeccionInputDTO;
 import org.example.metamapa.gestordatos.models.dtos.input.CriterioRequest;
 import org.example.metamapa.gestordatos.models.dtos.output.ColeccionOutputDTO;
@@ -10,6 +11,7 @@ import org.example.metamapa.gestordatos.models.entidades.Consenso.Absoluto;
 import org.example.metamapa.gestordatos.models.entidades.Consenso.AlgoritmoConsenso;
 import org.example.metamapa.gestordatos.models.entidades.Consenso.MayoriaSimple;
 import org.example.metamapa.gestordatos.models.entidades.Consenso.MultiplesMenciones;
+import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.entidades.HechoDeColeccion;
 import org.example.metamapa.gestordatos.models.entidades.Ubicacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
@@ -31,10 +33,11 @@ import java.util.stream.Collectors;
 public class ColeccionesService implements IColeccionesService {
 
     private final IColeccionesRepository coleccionesRepository;
-    private final IHechosRepository hechoRepository;
+    private final IHechoService hechosService;
 
-    public ColeccionesService(IColeccionesRepository coleccionesRepository) {
+    public ColeccionesService(IColeccionesRepository coleccionesRepository,IHechoService hechosService) {
         this.coleccionesRepository = coleccionesRepository;
+        this.hechosService = hechosService;
     }
 
     public void aplicarConsensoATodas() {
@@ -102,8 +105,13 @@ public class ColeccionesService implements IColeccionesService {
 
         Coleccion coleccion = dtoInToColeccion(coleccionDTO);
 
-        List<HechoDeColeccion> hechosColeccion = new ArrayList<>();
+        List<Hecho> hechosFiltrados = hechosService.filtrarHechos(coleccion.getCriterios());
 
+        hechosFiltrados.stream().forEach(Hecho::printHecho);
+
+        System.out.println("EUUUUUUUUU CREE LA COLECCION GILES");
+
+        System.out.println("Se obtubieron: " + hechosFiltrados.size() + "hechos");
 
         coleccionesRepository.save(coleccion);
 

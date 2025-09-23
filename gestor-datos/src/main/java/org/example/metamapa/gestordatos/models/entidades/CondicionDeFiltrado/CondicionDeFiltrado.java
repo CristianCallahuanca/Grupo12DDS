@@ -2,6 +2,7 @@ package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 
 import jakarta.persistence.*;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
+import org.springframework.data.jpa.domain.Specification;
 
 
 @Entity
@@ -15,4 +16,6 @@ public abstract class CondicionDeFiltrado {
     private long id;
 
     public abstract boolean cumpleUno(Hecho unHecho);
+
+    public abstract Specification<Hecho> toSpecification();
 }

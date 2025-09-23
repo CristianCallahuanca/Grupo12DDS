@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import jakarta.persistence.*;
 import java.util.Objects;
+import org.springframework.data.jpa.domain.Specification;
 
 @Entity
 @NoArgsConstructor
@@ -20,6 +21,11 @@ public class PorSinCategorizar extends CondicionDeFiltrado{
     @Override
     public boolean cumpleUno(Hecho unHecho) {
         return Objects.equals(unHecho.getSinCategorizar(), sinCategorizar);
+    }
+
+    @Override
+    public Specification<Hecho> toSpecification() {
+        return (root, query, cb) -> cb.equal(root.get("sinCategorizar"), sinCategorizar);
     }
 
 }

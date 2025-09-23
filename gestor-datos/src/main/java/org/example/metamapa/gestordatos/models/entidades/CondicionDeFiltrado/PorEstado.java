@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
 import jakarta.persistence.*;
+import org.springframework.data.jpa.domain.Specification;
 
 @Entity
 @NoArgsConstructor
@@ -20,6 +21,11 @@ public class PorEstado extends CondicionDeFiltrado {
     @Override
     public boolean cumpleUno(Hecho unHecho) {
         return  unHecho.getEstadoHecho().equals(this.unEstado);
+    }
+
+    @Override
+    public Specification<Hecho> toSpecification() {
+        return (root, query, cb) -> cb.equal(root.get("estadoHecho"), unEstado);
     }
 
 }

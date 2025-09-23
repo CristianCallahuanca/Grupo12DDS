@@ -5,6 +5,7 @@ import org.example.metamapa.gestordatos.models.entidades.Hecho;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import org.springframework.data.jpa.domain.Specification;
 
 @Entity
 @NoArgsConstructor
@@ -25,6 +26,11 @@ public class PorFechaAcontecimiento extends CondicionDeFiltrado {
     public boolean cumpleUno(Hecho unHecho) {
         return (unHecho.getFechaAcontecimiento().isAfter(desde) || unHecho.getFechaAcontecimiento().isEqual(desde)) &&
                 (unHecho.getFechaAcontecimiento().isBefore(hasta) || unHecho.getFechaAcontecimiento().isEqual(hasta));
+    }
+
+    @Override
+    public Specification<Hecho> toSpecification() {
+        return (root, query, cb) -> cb.between(root.get("fechaAcontecimiento"), desde, hasta);
     }
 
 }

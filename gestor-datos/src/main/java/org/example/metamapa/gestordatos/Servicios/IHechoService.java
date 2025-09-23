@@ -2,6 +2,7 @@ package org.example.metamapa.gestordatos.Servicios;
 
 import org.example.metamapa.gestordatos.models.dtos.input.HechoInputDTO;
 import org.example.metamapa.gestordatos.models.dtos.output.HechoOutputDTO;
+import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 
 import java.time.LocalDate;
@@ -13,4 +14,6 @@ public interface IHechoService {
                                                      LocalDate fecha_acontecimiento_desde, LocalDate fecha_acontecimiento_hasta,
                                                      Double latitud, Double longitud);
     public void guardarHecho(HechoInputDTO hechoInputDTO);
+
+    public List<Hecho> filtrarHechos(List<CondicionDeFiltrado> condiciones);
 }

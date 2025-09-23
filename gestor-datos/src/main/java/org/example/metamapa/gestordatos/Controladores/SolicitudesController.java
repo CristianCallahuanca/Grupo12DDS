@@ -28,7 +28,7 @@ public class SolicitudesController {
     @PostMapping("/{id}/aprobar")
     public ResponseEntity<String> aprobar(@PathVariable Long id) {
         SolicitudOutputDTO solicitud = this.solicitudesService.aprobarSolicitud(id);
-        if(solictud == null){
+        if(solicitud == null){
             return ResponseEntity.status(400).body("ID del hecho no encontrado");
         }
         return ResponseEntity.status(200).body("solicitud aprobada correctamente");
