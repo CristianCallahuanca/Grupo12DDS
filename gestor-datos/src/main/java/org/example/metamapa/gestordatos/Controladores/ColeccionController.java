@@ -22,14 +22,14 @@ public class ColeccionController {
     }
 
     @PostMapping
-    public ResponseEntity<ColeccionOutputDTO> crear(@RequestBody ColeccionInputDTO coleccion) {
+    public ResponseEntity<String> crear(@RequestBody ColeccionInputDTO coleccion) {
 
-        coleccionService.crearColeccion();
+        coleccionService.crearColeccion(coleccion);
 
-        return ResponseEntity.status(201).body();
+        return ResponseEntity.status(201).body("coleccion creada correctamente");
     }
 
-    @GetMapping
+    /*@GetMapping
     public ResponseEntity<List<Coleccion>> listar() {
         return ResponseEntity.ok(service.getAll());
     }
@@ -44,5 +44,5 @@ public class ColeccionController {
     public ResponseEntity<Void> eliminar(@PathVariable String handle) {
         service.delete(handle);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 }

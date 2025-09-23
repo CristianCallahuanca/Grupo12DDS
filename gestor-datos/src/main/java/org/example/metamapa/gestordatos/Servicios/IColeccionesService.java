@@ -10,17 +10,17 @@ public interface IColeccionesService {
 
     public void aplicarConsensoATodas();
 
-    List<ColeccionOutputDTO> obtenerColecciones();
+    //List<ColeccionOutputDTO> obtenerColecciones();
 
-    ColeccionOutputDTO crearColeccion(ColeccionInputDTO dto);
+    public void crearColeccion(ColeccionInputDTO coleccionDTO);
 
-    ColeccionOutputDTO editarColeccion(Long id, ColeccionInputDTO dto);
+    //ColeccionOutputDTO editarColeccion(Long id, ColeccionInputDTO dto);
 
-    void eliminarColeccion(Long id);
+    //void eliminarColeccion(Long id);
 
-    ColeccionOutputDTO cambiarAlgoritmo(Long id, String nuevoAlgoritmo);
+    //ColeccionOutputDTO cambiarAlgoritmo(Long id, String nuevoAlgoritmo);
 
-    ColeccionOutputDTO agregarFuente(Long idColeccion, FuenteInputDTO fuente);
+    //ColeccionOutputDTO agregarFuente(Long idColeccion, FuenteInputDTO fuente);
 
-    ColeccionOutputDTO quitarFuente(Long idColeccion, Long idFuente);
+    //ColeccionOutputDTO quitarFuente(Long idColeccion, Long idFuente);
 }

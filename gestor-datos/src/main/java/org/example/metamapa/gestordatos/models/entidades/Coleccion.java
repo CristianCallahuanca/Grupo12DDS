@@ -82,12 +82,15 @@ public class Coleccion {
 
 
     public List<Hecho> obtenerHechosVisibles() {
-        return hechosColeccion.stream().filter(hechoColeccion->hechoColeccion.getHecho().getEstadoHecho() != EstadoHecho.NO_VISIBLE)
-        .map(HechoDeColeccion::getHecho).toList();
+        return obtenerHechos().stream().filter(hecho->hecho.getEstadoHecho() != EstadoHecho.NO_VISIBLE).toList();
     }
 
     public void aplicarConsenso() {
             this.algoritmo.consensuarHechos(this.hechosColeccion);
+    }
+
+    public List<Hecho> obtenerHechos(){
+        return hechosColeccion.stream().map(HechoDeColeccion::getHecho).toList();
     }
 
 

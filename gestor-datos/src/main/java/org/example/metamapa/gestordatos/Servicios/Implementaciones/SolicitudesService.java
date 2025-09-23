@@ -7,6 +7,7 @@ import org.example.metamapa.gestordatos.models.entidades.DetectorDeSpamSingleton
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.entidades.SolicitudEliminacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoEliminar;
+import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 import org.example.metamapa.gestordatos.models.repositorios.ISolicitudesRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,25 +17,35 @@ import java.util.List;
 public class SolicitudesService implements ISolicitudesService {
 
     private ISolicitudesRepository solicitudRepository;
+    private IHechosRepository hechosRepository;
 
-    public SolicitudesService(ISolicitudesRepository solicitudRepository) {
+    public SolicitudesService(ISolicitudesRepository solicitudRepository, IHechosRepository hechosRepository) {
         this.solicitudRepository = solicitudRepository;
+        this.hechosRepository = hechosRepository;
     }
 
     private SolicitudEliminacion convertirInputDTOASolicitud(SolicitudInputDTO solicitudDTO){
-        //Hecho unHecho =
-        //return new SolicitudEliminacion(solicitudDTO.getIDhecho(), solicitudDTO.getJustificacion());
+        Hecho unHecho = hechosRepository.findById(solicitudDTO.getIDhecho()).orElse(null);
+        if(unHecho == null){
+            return null;
+        }
+        return new SolicitudEliminacion(unHecho, solicitudDTO.getJustificacion());
     }
 
-    private SolicitudOutputDTO convertirOutputDTOASolicitud(SolicitudEliminacion solicitud){
+    private SolicitudOutputDTO solicitudAOutpuDTO(SolicitudEliminacion solicitud){
         SolicitudOutputDTO dto = new SolicitudOutputDTO();
         dto.setEstado(solicitud.getEstadoEliminar());
         dto.setJustificacion(solicitud.getJustificacion());
+        dto.setIdHechoAsociado(solicitud.getHecho().getHecho_id());
         return dto;
     }
 
     public SolicitudOutputDTO crearSolicitudEliminacion(SolicitudInputDTO solicitudInputDTO) {
         SolicitudEliminacion solicitud = convertirInputDTOASolicitud(solicitudInputDTO);
+
+        if(solicitud == null){
+            return null;
+        }
 
         if(DetectorDeSpamSingleton.getInstance().esSpam(solicitud.getJustificacion())){
             solicitud.setEstadoEliminar(EstadoEliminar.RECHAZADA);
@@ -42,7 +53,7 @@ public class SolicitudesService implements ISolicitudesService {
         }
         solicitudRepository.save(solicitud);
 
-        return this.convertirOutputDTOASolicitud(solicitud);
+        return this.solicitudAOutpuDTO(solicitud);
     }
 
     public SolicitudOutputDTO aprobarSolicitud(Long id) {
@@ -51,11 +62,10 @@ public class SolicitudesService implements ISolicitudesService {
             return null;
         }
         solicitud.setEstadoEliminar(EstadoEliminar.APROBADA);
+        solicitudRepository.save(solicitud);
 
-        return new SolicitudOutputDTO(id, solicitud.getEstadoEliminar(), solicitud.getJustificacion(), solicitud.getHecho().getHecho_id());
+        return this.solicitudAOutpuDTO(solicitud);
     }
-
-    ;
 
     public SolicitudOutputDTO denegarSolicitud(Long id) {
         SolicitudEliminacion solicitud = solicitudRepository.findById(id).orElse(null);
@@ -63,8 +73,9 @@ public class SolicitudesService implements ISolicitudesService {
             return null;
         }
         solicitud.setEstadoEliminar(EstadoEliminar.RECHAZADA);
+        solicitudRepository.save(solicitud);
 
-        return new SolicitudOutputDTO(id, solicitud.getEstadoEliminar(), solicitud.getJustificacion(), solicitud.getHecho().getHecho_id());
+        return this.solicitudAOutpuDTO(solicitud);
     }
 
 }

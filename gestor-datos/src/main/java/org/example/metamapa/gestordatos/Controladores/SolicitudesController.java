@@ -19,16 +19,19 @@ public class SolicitudesController {
     @PostMapping("/solicitud")
     public ResponseEntity<String> create(@RequestBody SolicitudInputDTO solicitud) {
         SolicitudOutputDTO solictud = this.solicitudesService.crearSolicitudEliminacion(solicitud);
-        return ResponseEntity.ok("El hecho se subio con exito");
+        return ResponseEntity.status(201).body("solicitud creada correctamente");
     }
 
     @PostMapping("/{id}/aprobar")
-    public SolicitudOutputDTO aprobar(@PathVariable Long id) {
-        return solicitudesService.aprobarSolicitud(id);
+    public ResponseEntity<String> aprobar(@PathVariable Long id) {
+        this.solicitudesService.aprobarSolicitud(id);
+        return ResponseEntity.status(200).body("solicitud aprobada correctamente");
+
     }
 
-    @PostMapping("/{id}/denegar")
-    public SolicitudOutputDTO denegar(@PathVariable Long id) {
-        return solicitudesService.denegarSolicitud(id);
+    @PostMapping("/{id}/rechazar")
+    public ResponseEntity<String> rechazar(@PathVariable Long id) {
+        solicitudesService.denegarSolicitud(id);
+        return ResponseEntity.status(200).body("solicitud rechazada correctamente");
     }
 }

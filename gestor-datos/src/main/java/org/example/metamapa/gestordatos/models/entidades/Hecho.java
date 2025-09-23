@@ -117,7 +117,7 @@ public class Hecho {
         } else {
             throw new IllegalStateException("El hecho ya no puede ser editado.");
         }
-    }
+    } // esto no iría en un service o alguna cosa así??
 
     public boolean puedeSerEditado() {
         return this.origenes.contains("Dinamica")  && //hay que ver que sea registrado
