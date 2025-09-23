@@ -143,22 +143,25 @@ public class ColeccionesService implements IColeccionesService {
 
     //ColeccionOutputDTO editarColeccion(Long id, ColeccionInputDTO dto);
 
-    /*void eliminarColeccion(Long id){
-         Coleccion coleccion = coleccionesRepository.findById(id);
+   /* void eliminarColeccion(String handle){
+         Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
          coleccionesRepository.delete(coleccion);
     }
 */
-  /* public ColeccionOutputDTO cambiarAlgoritmo(Long id, String nuevoAlgoritmo){
-          Coleccion coleccion = coleccionesRepository.findById(id); //con null o hay que tirar error?
+  /* public ColeccionOutputDTO cambiarAlgoritmo(String handle, String nuevoAlgoritmo){
+          Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
+          //con null o hay que tirar error?
+          if(coleccion != null){
           AlgoritmoConsenso algoritmo = algoritmoConsensoFactory(nuevoAlgoritmo);
           coleccion.setAlgoritmo(algoritmo);
           coleccionRepository.save(coleccion);
           return coleccionToDTOOut(coleccion);
-   // }*/
+          } else return null; //así?????
+      }*/
 
 
     //ColeccionOutputDTO agregarFuente(Long idColeccion, FuenteInputDTO fuente);
 
-    //ColeccionOutputDTO quitarFuente(Long idColeccion, Long idFuente);
+    //ColeccionOutputDTO quitarFuente(Long idColeccion, Long idFuente); // al final dejamos los origenes en el output?
 
 }

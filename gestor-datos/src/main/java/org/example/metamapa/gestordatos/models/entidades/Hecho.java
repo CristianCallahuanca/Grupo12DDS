@@ -50,7 +50,7 @@ public class Hecho {
     @Enumerated(EnumType.STRING)
     private EstadoHecho estadoHecho;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private EstadoDeEdicion estadoEdicionHecho;
 
     @ElementCollection
@@ -123,5 +123,40 @@ public class Hecho {
         return this.origenes.contains("Dinamica")  && //hay que ver que sea registrado
                 ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
     }
+
+    public void printHecho() {
+        System.out.println("ID: " + this.hecho_id);
+        System.out.println("Título: " + this.titulo);
+        System.out.println("Descripción: " + this.descripcion);
+        System.out.println("Categoría: " + this.categoria);
+
+        if (this.ubicacion != null) {
+            System.out.println("Ubicación: " + this.ubicacion.toString());
+        }
+
+        System.out.println("Fecha de acontecimiento: " + this.fechaAcontecimiento);
+        System.out.println("Fecha de carga: " + this.fechaCarga);
+        System.out.println("Estado del hecho: " + this.estadoHecho);
+        System.out.println("Estado de edición: " + this.estadoEdicionHecho);
+
+        System.out.println("Archivos multimedia: ");
+        if (this.archivosMultimedia != null) {
+            this.archivosMultimedia.forEach(System.out::println);
+        }
+
+        System.out.println("Etiqueta: " + this.etiqueta);
+
+        if (this.contribuyente != null) {
+            System.out.println("Contribuyente: " + this.contribuyente.toString());
+        }
+
+        System.out.println("Orígenes: ");
+        if (this.origenes != null) {
+            this.origenes.forEach(System.out::println);
+        }
+
+        System.out.println("Sin categorizar: " + this.sinCategorizar);
+    }
+
 
 }
