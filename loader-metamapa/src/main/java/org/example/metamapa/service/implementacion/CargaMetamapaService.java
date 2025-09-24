@@ -1,5 +1,6 @@
 package org.example.metamapa.service.implementacion;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.example.metamapa.adapters.IAdapterMetamapa;
 import org.example.metamapa.models.dtos.HechoDTO;
@@ -22,6 +23,16 @@ public class CargaMetamapaService implements ICargaMetamapaService {
 
     @Value("${loader.id}")
     private String loaderId;
+
+
+    //TENER EN CUENTA ESTO PARA UNA POSIBLE MEJORA, comentario ABAJO
+    @PostConstruct
+    public void validarLoaderIdUnico() {
+        if (estadoRepo.existsById(loaderId)) {
+            throw new IllegalStateException("Ya existe un loader con ID " + loaderId + ". Cambia la configuración.");
+        }
+    }
+
 
     @Override
     public List<HechoDTO> obtenerHechos() {
@@ -67,3 +78,46 @@ public class CargaMetamapaService implements ICargaMetamapaService {
     }
 }
 
+
+/*El tratamiento de error al levantar una instancia para los mismos servicios de loaderMetama
+podemos mejorarlo pensando de esta forma
+
+1)
+En la entidad CLASE CONSULTA:
+   @Id
+    private String loaderId;     // ej: "metamapa-cordoba"
+
+    @Id
+    private String instanciaId;  // UUID generado al iniciar
+
+2)
+Se crea una clase para serializar la clase y mandarlo al repo
+
+import java.io.Serializable;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class EstadoConsultaPK implements Serializable {
+    private String loaderId;
+    private String instanciaId;
+}
+
+3)
+El repositorio cambia el tipo de PK
+public interface IEstadoConsultaRepositorio extends JpaRepository<EstadoConsulta, EstadoConsultaPK> {
+}
+
+4)
+Y en el service poner generar los ID de esta forma
+@Value("${loader.id}")
+private String loaderId;
+
+private final String instanciaId = UUID.randomUUID().toString();
+
+PERO dependiendo la escalabilidad del uso podemos usar el instanciaId si es que se requiere en mas instancias.
+por el momento solo nos interesa aca.
+
+
+CREERIA QUE ESTA FORMA ES LA MAS CLEAN y salva de errores de automatizacion y no sobre el control humano
+ */
