@@ -21,12 +21,40 @@ public class ColeccionController {
         this.coleccionService = coleccionService;
     }
 
-    @PostMapping
+
+    @PostMapping("/coleccion")
     public ResponseEntity<String> crear(@RequestBody ColeccionInputDTO coleccion) {
 
         coleccionService.crearColeccion(coleccion);
 
         return ResponseEntity.status(201).body("coleccion creada correctamente");
+    }
+
+    @GetMapping("/coleccion/{handle}")
+    public ResponseEntity<String> retrieve(@PathVariable String handle) {
+        ColeccionOutputDTO coleccionOutput = this.coleccionService.retrieveColeccion(handle);
+        if (coleccionOutput == null) {
+            return ResponseEntity.status(400).body("No se encontro la coleccion solicitada");
+        }
+        return ResponseEntity.status(200).body("coleccion encontrada correctamente");
+    }
+
+    @PutMapping("/coleccion/{handle}")
+    public ResponseEntity<String> update(@PathVariable String handle, @RequestBody ColeccionInputDTO datos) {
+        ColeccionOutputDTO coleccionOutput = this.coleccionService.updateColeccion(datos, handle);
+        if (coleccionOutput == null) {
+            return ResponseEntity.status(400).body("coleccion no actualizada, no se encontro la coleccion solicitada");
+        }
+        return ResponseEntity.status(200).body("coleccion actualizada correctamente");
+    }
+
+    @DeleteMapping("/coleccion/{handle}")
+    public ResponseEntity<String> deleteColeccion(@PathVariable String handle) {
+        boolean aux = this.coleccionService.eliminarColeccion(handle);
+        if (!aux) {
+            return ResponseEntity.status(400).body("coleccion no eliminada, no se encontro la coleccion solicitada");
+        }
+        return ResponseEntity.status(200).body("coleccion eliminada correctamente");
     }
 
     /*@GetMapping

@@ -17,21 +17,31 @@ public class SolicitudesController {
     }
 
     @PostMapping("/solicitud")
-    public ResponseEntity<String> create(@RequestBody SolicitudInputDTO solicitud) {
-        SolicitudOutputDTO solictud = this.solicitudesService.crearSolicitudEliminacion(solicitud);
+    public ResponseEntity<String> create(@RequestBody SolicitudInputDTO solicitudDTO) {
+        SolicitudOutputDTO solicitud = this.solicitudesService.crearSolicitudEliminacion(solicitudDTO);
+        if(solicitud == null){
+            return ResponseEntity.status(400).body("ID del hecho no encontrado");
+        }
         return ResponseEntity.status(201).body("solicitud creada correctamente");
     }
 
     @PostMapping("/{id}/aprobar")
     public ResponseEntity<String> aprobar(@PathVariable Long id) {
-        this.solicitudesService.aprobarSolicitud(id);
+        SolicitudOutputDTO solicitud = this.solicitudesService.aprobarSolicitud(id);
+        if(solicitud == null){
+            return ResponseEntity.status(400).body("ID del hecho no encontrado");
+        }
         return ResponseEntity.status(200).body("solicitud aprobada correctamente");
 
     }
 
     @PostMapping("/{id}/rechazar")
     public ResponseEntity<String> rechazar(@PathVariable Long id) {
-        solicitudesService.denegarSolicitud(id);
+        SolicitudOutputDTO solicitud = solicitudesService.denegarSolicitud(id);
+        if(solicitud == null){
+            return ResponseEntity.status(400).body("ID del hecho no encontrado");
+        }
+
         return ResponseEntity.status(200).body("solicitud rechazada correctamente");
     }
 }

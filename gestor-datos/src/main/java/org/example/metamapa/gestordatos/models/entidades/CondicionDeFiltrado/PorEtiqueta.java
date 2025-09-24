@@ -4,7 +4,7 @@ import lombok.NoArgsConstructor;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import jakarta.persistence.*;
 import java.util.Objects;
-
+import org.springframework.data.jpa.domain.Specification;
 
 @Entity
 @NoArgsConstructor
@@ -23,5 +23,9 @@ public class PorEtiqueta extends CondicionDeFiltrado {
         return Objects.equals(unHecho.getEtiqueta(), etiquetaDeseada);
     }
 
+    @Override
+    public Specification<Hecho> toSpecification() {
+        return (root, query, cb) -> cb.equal(root.get("etiqueta"), etiquetaDeseada);
+    }
 
 }

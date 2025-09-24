@@ -5,6 +5,7 @@ import org.example.metamapa.gestordatos.models.entidades.Hecho;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import org.springframework.data.jpa.domain.Specification;
 
 
 @Entity
@@ -27,6 +28,11 @@ public class PorFechaCarga extends CondicionDeFiltrado{
     public boolean cumpleUno(Hecho unHecho) {
         return (unHecho.getFechaCarga().isAfter(desde) || unHecho.getFechaCarga().isEqual(desde)) &&
                 (unHecho.getFechaCarga().isBefore(hasta) || unHecho.getFechaCarga().isEqual(hasta));
+    }
+
+    @Override
+    public Specification<Hecho> toSpecification() {
+        return (root, query, cb) -> cb.between(root.get("fechaCarga"), desde, hasta);
     }
 
 }

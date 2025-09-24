@@ -9,6 +9,6 @@ import org.example.metamapa.gestordatos.models.entidades.enums.EstadoEliminar;
 @Getter
 @Setter
 public class SolicitudInputDTO {
-    private Long IDhecho;
+    private long idhecho;
     private String justificacion;
 }

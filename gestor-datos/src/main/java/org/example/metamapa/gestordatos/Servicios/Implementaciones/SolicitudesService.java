@@ -25,10 +25,13 @@ public class SolicitudesService implements ISolicitudesService {
     }
 
     private SolicitudEliminacion convertirInputDTOASolicitud(SolicitudInputDTO solicitudDTO){
-        Hecho unHecho = hechosRepository.findById(solicitudDTO.getIDhecho()).orElse(null);
+        Hecho unHecho = hechosRepository.findById(solicitudDTO.getIdhecho()).orElse(null);
         if(unHecho == null){
             return null;
         }
+
+        unHecho.printHecho();
+
         return new SolicitudEliminacion(unHecho, solicitudDTO.getJustificacion());
     }
 
@@ -51,7 +54,7 @@ public class SolicitudesService implements ISolicitudesService {
             solicitud.setEstadoEliminar(EstadoEliminar.RECHAZADA);
             solicitud.setVerifico_si_es_spam(true);
         }
-        solicitudRepository.save(solicitud);
+        this.solicitudRepository.save(solicitud);
 
         return this.solicitudAOutpuDTO(solicitud);
     }

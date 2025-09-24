@@ -3,6 +3,7 @@ package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 import lombok.NoArgsConstructor;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import jakarta.persistence.*;
+import org.springframework.data.jpa.domain.Specification;
 
 @Entity
 @NoArgsConstructor
@@ -20,5 +21,12 @@ public class PorIdContribuyente extends CondicionDeFiltrado{
     @Override
     public boolean cumpleUno(Hecho unHecho) {
         return true/* unHecho.getContribuyente_id().equals(idBuscado)*/;
+    }
+
+    @Override
+    public Specification<Hecho> toSpecification() { //revisar TODO
+        return (root, query, cb) -> {
+            return cb.equal(root.get("contribuyenteId"), idBuscado);
+        };
     }
 }

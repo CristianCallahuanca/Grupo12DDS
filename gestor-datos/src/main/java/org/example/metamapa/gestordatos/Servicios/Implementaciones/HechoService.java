@@ -3,8 +3,10 @@ package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 import org.example.metamapa.gestordatos.Servicios.IHechoService;
 import org.example.metamapa.gestordatos.models.dtos.input.HechoInputDTO;
 import org.example.metamapa.gestordatos.models.dtos.output.HechoOutputDTO;
+import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -46,5 +48,14 @@ public class HechoService implements IHechoService {
         dto.setApellido_contribuyente(hecho.getContribuyente().getApellido());
         dto.setArchivosMultimedia(hecho.getArchivosMultimedia());
         return dto;
+    }
+
+    public List<Hecho> filtrarHechos(List<CondicionDeFiltrado> condiciones) {
+        Specification<Hecho> spec = condiciones.stream()
+                .map(CondicionDeFiltrado::toSpecification)
+                .reduce(Specification::and) // combina con AND
+                .orElse(null);
+
+        return repositorioHechos.findAll(spec);
     }
 }

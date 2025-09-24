@@ -1,6 +1,7 @@
 package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 
 import org.example.metamapa.gestordatos.Servicios.IColeccionesService;
+import org.example.metamapa.gestordatos.Servicios.IHechoService;
 import org.example.metamapa.gestordatos.models.dtos.input.ColeccionInputDTO;
 import org.example.metamapa.gestordatos.models.dtos.input.CriterioRequest;
 import org.example.metamapa.gestordatos.models.dtos.output.ColeccionOutputDTO;
@@ -10,14 +11,19 @@ import org.example.metamapa.gestordatos.models.entidades.Consenso.Absoluto;
 import org.example.metamapa.gestordatos.models.entidades.Consenso.AlgoritmoConsenso;
 import org.example.metamapa.gestordatos.models.entidades.Consenso.MayoriaSimple;
 import org.example.metamapa.gestordatos.models.entidades.Consenso.MultiplesMenciones;
+import org.example.metamapa.gestordatos.models.entidades.Hecho;
+import org.example.metamapa.gestordatos.models.entidades.HechoDeColeccion;
 import org.example.metamapa.gestordatos.models.entidades.Ubicacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
 import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 import org.example.metamapa.gestordatos.models.repositorios.IColeccionesRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
+
+import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,85 +33,23 @@ import java.util.stream.Collectors;
 public class ColeccionesService implements IColeccionesService {
 
     private final IColeccionesRepository coleccionesRepository;
+    private final IHechoService hechosService;
 
-    public ColeccionesService(IColeccionesRepository coleccionesRepository){
+    public ColeccionesService(IColeccionesRepository coleccionesRepository,IHechoService hechosService) {
         this.coleccionesRepository = coleccionesRepository;
+        this.hechosService = hechosService;
     }
 
-    public void aplicarConsensoATodas(){
+    public void aplicarConsensoATodas() {
         List<Coleccion> colecciones = coleccionesRepository.findAll();
-        for(Coleccion coleccion : colecciones){
-            if(coleccion.getAlgoritmo() != null){ //no sé si esta parte es necesaria
+        for (Coleccion coleccion : colecciones) {
+            if (coleccion.getAlgoritmo() != null) { //no sé si esta parte es necesaria
                 coleccion.aplicarConsenso();
                 coleccionesRepository.save(coleccion);
             }
         }
     }
 
-    //List<ColeccionOutputDTO> obtenerColecciones();
-
-    public void crearColeccion(ColeccionInputDTO coleccionDTO){
-
-        coleccionesRepository.save(dtoInToColeccion(coleccionDTO));
-    }
-
-    public ColeccionOutputDTO coleccionToDTOOut(Coleccion coleccion) {
-        ColeccionOutputDTO dto = new ColeccionOutputDTO();
-        //dto.setId(coleccion.getId()); // si tenés un campo id en la entidad
-        dto.setNombre(coleccion.getTitulo()); // mapeo de titulo -> nombre en DTO
-        dto.setDescripcion(coleccion.getDescripcion());
-        //dto.setAlgoritmoConsenso(coleccion.getAlgoritmo().toString());
-
-        // Ejemplo: convertir los hechos de coleccion a HechoOutputDTO
-      /* List<Hecho> hechos = coleccion.obtenerHechos()
-       List<HechoOutputDTO> hechosDTO = hechos.stream().forEach(hecho -> hechosService.hechoADTOOut(hecho)).toList(); necesitás el hechosService?
-        dto.setHechos(hechosDTO);*/
-
-        return dto;
-    }
-
-    // ✅ De lista de entidades a lista de DTOs de salida
-    public List<ColeccionOutputDTO> coleccionesToDTOOuts(List<Coleccion> colecciones) {
-        return colecciones.stream()
-                .map(this::coleccionToDTOOut)
-                .collect(Collectors.toList());
-    }
-
-    // ✅ De DTO de entrada a entidad
-
-    public Coleccion dtoInToColeccion(ColeccionInputDTO dto) {
-
-        Coleccion coleccion = new Coleccion();
-        String uuid = UUID.randomUUID().toString();
-        List<Origen> fuentes = dto.getIdsFuentes().stream().map(i -> Origen.values()[i]).toList();
-
-        coleccion.setHandle(uuid);
-        coleccion.setFuentes(fuentes);
-        coleccion.setTitulo(dto.getTitulo());
-        coleccion.setDescripcion(dto.getDescripcion());
-        coleccion.setCriterios(dto.getCriterios().stream().map(this::criterioFactory).toList());
-        coleccion.setAlgoritmo(algoritmoConsensoFactory(dto.getAlgoritmoConsenso()));
-
-        return coleccion;
-    }
-
-    // ✅ De lista de DTOs de entrada a lista de entidades
-    public List<Coleccion> dtoInsToColecciones(List<ColeccionInputDTO> dtos) {
-        return dtos.stream()
-                .map(this::dtoInToColeccion)
-                .collect(Collectors.toList());
-    }
-
-    public AlgoritmoConsenso algoritmoConsensoFactory(String algoritmo){
-
-        return switch (algoritmo.toLowerCase()) {
-            case "mayoriasimple" -> new MayoriaSimple();
-            case "absoluto" -> new Absoluto();
-            case "multiplesmenciones" -> new MultiplesMenciones();
-
-            default -> throw new IllegalArgumentException("Algoritmo de consenso no válido: " + algoritmo);
-        };
-    }
 
     public CondicionDeFiltrado criterioFactory(CriterioRequest request) {
         String tipo = request.getTipo().toLowerCase();
@@ -140,19 +84,104 @@ public class ColeccionesService implements IColeccionesService {
         };
     }
 
+    //De DTO de entrada a entidad
+    private Coleccion dtoInToColeccion(ColeccionInputDTO dto) {
 
-    //ColeccionOutputDTO editarColeccion(Long id, ColeccionInputDTO dto);
+        Coleccion coleccion = new Coleccion();
+        String uuid = UUID.randomUUID().toString();
+        List<Origen> fuentes = dto.getIdsFuentes().stream().map(i -> Origen.values()[i]).toList();
 
-    //void eliminarColeccion(Long id);
+        coleccion.setHandle(uuid);
+        coleccion.setOrigenes(fuentes);
+        coleccion.setTitulo(dto.getTitulo());
+        coleccion.setDescripcion(dto.getDescripcion());
+        coleccion.setCriterios(dto.getCriterios().stream().map(this::criterioFactory).toList());
+        coleccion.setAlgoritmo(algoritmoConsensoFactory(dto.getAlgoritmoConsenso()));
 
-  //  public ColeccionOutputDTO cambiarAlgoritmo(Long id, String nuevoAlgoritmo){
-    //    Coleccion coleccion = coleccionesRepository.findById(id)
-      //          .orElseThrow(() -> new Exception("Colección no encontrada"));
-   // };
+        return coleccion;
+    }
 
+    public void crearColeccion(ColeccionInputDTO coleccionDTO) {
 
-    //ColeccionOutputDTO agregarFuente(Long idColeccion, FuenteInputDTO fuente);
+        Coleccion coleccion = dtoInToColeccion(coleccionDTO);
 
-    //ColeccionOutputDTO quitarFuente(Long idColeccion, Long idFuente);
+        List<Hecho> hechosFiltrados = hechosService.filtrarHechos(coleccion.getCriterios());
+
+        hechosFiltrados.stream().forEach(Hecho::printHecho);
+
+        System.out.println("EUUUUUUUUU CREE LA COLECCION GILES");
+
+        System.out.println("Se obtubieron: " + hechosFiltrados.size() + "hechos");
+
+        coleccionesRepository.save(coleccion);
+
+    }
+
+    public ColeccionOutputDTO coleccionToDTOOut(Coleccion coleccion) {
+        ColeccionOutputDTO dto = new ColeccionOutputDTO();
+        //dto.setId(coleccion.getId()); // si tenés un campo id en la entidad
+        dto.setNombre(coleccion.getTitulo()); // mapeo de titulo -> nombre en DTO
+        dto.setDescripcion(coleccion.getDescripcion());
+        //dto.setAlgoritmoConsenso(coleccion.getAlgoritmo().toString());
+
+        // Ejemplo: convertir los hechos de coleccion a HechoOutputDTO
+      /* List<Hecho> hechos = coleccion.obtenerHechos()
+       List<HechoOutputDTO> hechosDTO = hechos.stream().forEach(hecho -> hechosService.hechoADTOOut(hecho)).toList(); necesitás el hechosService?
+        dto.setHechos(hechosDTO);*/
+
+        return dto;
+    }
+
+    // ✅ De lista de entidades a lista de DTOs de salida
+    public List<ColeccionOutputDTO> coleccionesToDTOOuts(List<Coleccion> colecciones) {
+        return colecciones.stream()
+                .map(this::coleccionToDTOOut)
+                .collect(Collectors.toList());
+    }
+
+    // ✅ De lista de DTOs de entrada a lista de entidades
+    public List<Coleccion> dtoInsToColecciones(List<ColeccionInputDTO> dtos) {
+        return dtos.stream()
+                .map(this::dtoInToColeccion)
+                .collect(Collectors.toList());
+    }
+
+    public AlgoritmoConsenso algoritmoConsensoFactory(String algoritmo) {
+        return switch (algoritmo.toLowerCase()) {
+            case "mayoriasimple" -> new MayoriaSimple();
+            case "absoluto" -> new Absoluto();
+            case "multiplesmenciones" -> new MultiplesMenciones();
+
+            default -> throw new IllegalArgumentException("Algoritmo de consenso no válido: " + algoritmo);
+        };
+    }
+
+    public ColeccionOutputDTO retrieveColeccion(String handle){
+        Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
+        if(coleccion == null){
+            return null;
+        }
+        return coleccionToDTOOut(coleccion);
+    }
+
+    public ColeccionOutputDTO updateColeccion(ColeccionInputDTO nuevaColeccionDTO, String handle) {
+        Coleccion nuevaColeccion = dtoInToColeccion(nuevaColeccionDTO);
+        nuevaColeccion.setHandle(handle);
+        //En teoria actualiza la coleccion con el mismo handle
+        coleccionesRepository.save(nuevaColeccion);
+
+        return coleccionToDTOOut(nuevaColeccion);
+    }
+
+    public boolean eliminarColeccion(String handle) {
+        Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
+        if(coleccion == null){
+            return false;
+        }
+        coleccionesRepository.delete(coleccion);
+        return true;
+    }
+
+    // al final dejamos los origenes en el output?
 
 }
