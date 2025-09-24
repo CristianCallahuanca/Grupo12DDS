@@ -3,4 +3,7 @@ spring:
     name: loader-demo
 server:
   port: 8700
+loaderdemo:
+  fuente:
+    url: https://conexion.fake-source.edu/api
 

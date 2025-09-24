@@ -6,5 +6,5 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface ICargaMetamapaService {
-    public ResponseEntity<List<HechoDTO>> obtenerHechos();
+    public List<HechoDTO> obtenerHechos();
 }

@@ -6,8 +6,6 @@ import org.example.metamapa.service.ICargaMetamapaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -19,6 +17,12 @@ public class HechosController {
 
     @GetMapping("/hechos")
     public ResponseEntity<List<HechoDTO>> obtenerHechos() {
-        return cargaMetamapaService.obtenerHechos();
+        List<HechoDTO> hechos = cargaMetamapaService.obtenerHechos();
+
+        if (hechos.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204
+        }
+
+        return ResponseEntity.ok(hechos); // 200
     }
 }
