@@ -4,9 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.example.metamapa.adapters.IAdapterMetamapa;
 import org.example.metamapa.models.dtos.HechoDTO;
 import org.example.metamapa.models.dtos.HechoDTO_IN;
+import org.example.metamapa.models.entidades.EstadoConsulta;
+import org.example.metamapa.models.repositorio.IEstadoConsultaRepositorio;
 import org.example.metamapa.service.ICargaMetamapaService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,14 +18,36 @@ import java.util.List;
 public class CargaMetamapaService implements ICargaMetamapaService {
 
     private final IAdapterMetamapa adapter;
+    private final IEstadoConsultaRepositorio estadoRepo;
+
+    @Value("${loader.id}")
+    private String loaderId;
 
     @Override
     public List<HechoDTO> obtenerHechos() {
-        List<HechoDTO_IN> hechosEntrantes = adapter.obtenerHechos();
+        LocalDateTime ultimaConsulta = estadoRepo.findById(loaderId)
+                .map(EstadoConsulta::getUltimaConsulta)
+                .orElse(null);
 
-        return hechosEntrantes.stream()
+        List<HechoDTO_IN> hechosEntrantes = adapter.obtenerHechos(ultimaConsulta);
+
+        List<HechoDTO> hechosListos = hechosEntrantes.stream()
                 .map(this::mapearHecho)
                 .toList();
+
+        registrarEstado(hechosListos);
+
+        return hechosListos;
+    }
+
+    private void registrarEstado(List<HechoDTO> hechosListos) {
+        EstadoConsulta estado = new EstadoConsulta(
+                loaderId,
+                LocalDateTime.now(),
+                hechosListos.size(),
+                "OK"
+        );
+        estadoRepo.save(estado);
     }
 
     private HechoDTO mapearHecho(HechoDTO_IN in) {
@@ -40,3 +66,4 @@ public class CargaMetamapaService implements ICargaMetamapaService {
                 .build();
     }
 }
+

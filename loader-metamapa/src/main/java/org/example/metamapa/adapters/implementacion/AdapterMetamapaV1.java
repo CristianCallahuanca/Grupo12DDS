@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Value;
  import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
+ import java.time.LocalDateTime;
+ import java.util.Arrays;
 import java.util.List;
 
 @Component
 @Slf4j
 public class AdapterMetamapaV1 implements IAdapterMetamapa {
-
 
     private final WebClient webClient;
 
@@ -28,16 +28,23 @@ public class AdapterMetamapaV1 implements IAdapterMetamapa {
                 .build();
     }
 
-    public List<HechoDTO_IN> obtenerHechos() {
+    public List<HechoDTO_IN> obtenerHechos(LocalDateTime fechaDesde) {
         try {
-            HechoDTO_IN[] hechos = webClient.get()
-                    .uri("/hechos")
+            WebClient.RequestHeadersSpec<?> request = webClient.get().uri(uriBuilder -> {
+                var builder = uriBuilder.path("/hechos");
+                if (fechaDesde != null) {
+                    builder.queryParam("fecha_reporte_desde", fechaDesde.toString());
+                }
+                return builder.build();
+            });
+
+            HechoDTO_IN[] hechos = request
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, this::manejarError)
                     .bodyToMono(HechoDTO_IN[].class)
                     .block();
 
-            return Arrays.asList(hechos);
+            return Arrays.asList(hechos != null ? hechos : new HechoDTO_IN[0]);
         } catch (Exception e) {
             log.error("Excepción al conectar con Metamapa", e);
             throw new ExcepcionConexionMetamapa("Fallo en la conexión o procesamiento", e);
@@ -54,7 +61,5 @@ public class AdapterMetamapaV1 implements IAdapterMetamapa {
             return Mono.error(new ExcepcionConexionMetamapa("Código HTTP desconocido", new Throwable("Código: " + statusCode)));
         }
     }
-
-
 }
 

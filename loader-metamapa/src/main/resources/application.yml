@@ -6,3 +6,5 @@ server:
 fuente:
   metamapa:
     url: http://instancia-metamapa.org/MODIFICA_URL_BASE
+loader:
+  id: metamapa-cordoba-EJEMPLO
