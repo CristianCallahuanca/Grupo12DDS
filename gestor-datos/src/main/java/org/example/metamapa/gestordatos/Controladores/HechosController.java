@@ -26,9 +26,9 @@ public class HechosController {
     }
 
     @GetMapping("/hechos")
-    public List<HechoOutputDTO> obtenerHechos(@RequestBody List<CriterioRequest> criterios){
+    public ResponseEntity<List<HechoOutputDTO>> obtenerHechos(@RequestBody List<CriterioRequest> criterios){
 
-        return hechosService.buscarTodosLosHechos(criterios);
+        return ResponseEntity.status(200).body(hechosService.buscarTodosLosHechos(criterios));
     }
 
 }

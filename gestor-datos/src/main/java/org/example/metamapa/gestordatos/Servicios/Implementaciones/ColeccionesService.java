@@ -149,6 +149,7 @@ public class ColeccionesService implements IColeccionesService {
 
     public List<HechoOutputDTO> retrieveColeccionModoNavegacion(String handle, String modoNavegacion){
         Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
+
         if (coleccion == null) {
             return null;
         }

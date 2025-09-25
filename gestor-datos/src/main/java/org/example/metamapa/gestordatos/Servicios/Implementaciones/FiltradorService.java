@@ -6,10 +6,11 @@ import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.Por
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
+@Service
 public class FiltradorService implements IFiltradorService {
 
     private final IHechosRepository hechosRepository;
