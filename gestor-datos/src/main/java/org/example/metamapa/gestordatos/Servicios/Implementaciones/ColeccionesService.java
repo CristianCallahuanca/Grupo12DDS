@@ -1,10 +1,13 @@
 package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 
 import org.example.metamapa.gestordatos.Servicios.IColeccionesService;
+import org.example.metamapa.gestordatos.Servicios.IFiltradorService;
 import org.example.metamapa.gestordatos.Servicios.IHechoService;
+import org.example.metamapa.gestordatos.conversores.StringAObjetos;
 import org.example.metamapa.gestordatos.models.dtos.input.ColeccionInputDTO;
 import org.example.metamapa.gestordatos.models.dtos.input.CriterioRequest;
 import org.example.metamapa.gestordatos.models.dtos.output.ColeccionOutputDTO;
+import org.example.metamapa.gestordatos.models.dtos.output.HechoOutputDTO;
 import org.example.metamapa.gestordatos.models.entidades.Coleccion;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.*;
 import org.example.metamapa.gestordatos.models.entidades.Consenso.Absoluto;
@@ -13,17 +16,20 @@ import org.example.metamapa.gestordatos.models.entidades.Consenso.MayoriaSimple;
 import org.example.metamapa.gestordatos.models.entidades.Consenso.MultiplesMenciones;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.entidades.HechoDeColeccion;
+import org.example.metamapa.gestordatos.models.entidades.ModosNavegacion.Curada;
+import org.example.metamapa.gestordatos.models.entidades.ModosNavegacion.Irrestricta;
+import org.example.metamapa.gestordatos.models.entidades.ModosNavegacion.ModoNavegacion;
 import org.example.metamapa.gestordatos.models.entidades.Ubicacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
 import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 import org.example.metamapa.gestordatos.models.repositorios.IColeccionesRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
-import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,10 +40,27 @@ public class ColeccionesService implements IColeccionesService {
 
     private final IColeccionesRepository coleccionesRepository;
     private final IHechoService hechosService;
+    private final IFiltradorService filtradorService;
 
-    public ColeccionesService(IColeccionesRepository coleccionesRepository,IHechoService hechosService) {
+    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechoService hechosService, IFiltradorService filtradorService) {
         this.coleccionesRepository = coleccionesRepository;
         this.hechosService = hechosService;
+        this.filtradorService = filtradorService;
+    }
+
+
+    // De lista de entidades a lista de DTOs de salida
+    public List<ColeccionOutputDTO> coleccionesToDTOOuts(List<Coleccion> colecciones) {
+        return colecciones.stream()
+                .map(this::coleccionToDTOOut)
+                .collect(Collectors.toList());
+    }
+
+    // De lista de DTOs de entrada a lista de entidades
+    public List<Coleccion> dtoInsToColecciones(List<ColeccionInputDTO> dtos) {
+        return dtos.stream()
+                .map(this::dtoInToColeccion)
+                .collect(Collectors.toList());
     }
 
     public void aplicarConsensoATodas() {
@@ -50,71 +73,8 @@ public class ColeccionesService implements IColeccionesService {
         }
     }
 
-
-    public CondicionDeFiltrado criterioFactory(CriterioRequest request) {
-        String tipo = request.getTipo().toLowerCase();
-        Map<String, String> params = request.getParams();
-
-        return switch (tipo) {
-            case "portitulo" -> new PorTitulo(params.get("tituloBuscado"));
-            case "porcategoria" -> new PorCategoria(params.get("categoriaDeseada"));
-            case "pordescripcion" -> new PorDescripcion(params.get("fraseClave"));
-            case "poretiqueta" -> new PorEtiqueta(params.get("etiquetaDeseada"));
-            case "pororigen" -> new PorOrigen(Origen.valueOf(params.get("unOrigen").toUpperCase()));
-            case "porubicacion" -> new PorUbicacion(
-                    new Ubicacion(
-                            Double.parseDouble(params.get("latitud")),
-                            Double.parseDouble(params.get("longitud"))
-                    )
-            );
-            case "porfechacarga" -> new PorFechaCarga(
-                    LocalDateTime.parse(params.get("desde")),
-                    LocalDateTime.parse(params.get("hasta"))
-            );
-            case "porfechaacontecimiento" -> new PorFechaAcontecimiento(
-                    LocalDateTime.parse(params.get("desde")),
-                    LocalDateTime.parse(params.get("hasta"))
-            );
-            case "porestado" -> new PorEstado(EstadoHecho.valueOf(params.get("estadoHecho").toUpperCase()));
-            case "porsincategorizar" -> new PorSinCategorizar(Boolean.parseBoolean(params.get("sinCategorizar")));
-            case "poridcontribuyente" -> new PorIdContribuyente(params.get("idBuscado"));
-            case "poridhecho" -> new PorIDHecho(Long.parseLong(params.get("idBuscado")));
-
-            default -> throw new IllegalArgumentException("Tipo de criterio no válido: " + tipo);
-        };
-    }
-
-    //De DTO de entrada a entidad
-    private Coleccion dtoInToColeccion(ColeccionInputDTO dto) {
-
-        Coleccion coleccion = new Coleccion();
-        String uuid = UUID.randomUUID().toString();
-        List<Origen> fuentes = dto.getIdsFuentes().stream().map(i -> Origen.values()[i]).toList();
-
-        coleccion.setHandle(uuid);
-        coleccion.setOrigenes(fuentes);
-        coleccion.setTitulo(dto.getTitulo());
-        coleccion.setDescripcion(dto.getDescripcion());
-        coleccion.setCriterios(dto.getCriterios().stream().map(this::criterioFactory).toList());
-        coleccion.setAlgoritmo(algoritmoConsensoFactory(dto.getAlgoritmoConsenso()));
-
-        return coleccion;
-    }
-
-    public void crearColeccion(ColeccionInputDTO coleccionDTO) {
-
-        Coleccion coleccion = dtoInToColeccion(coleccionDTO);
-
-        List<Hecho> hechosFiltrados = hechosService.filtrarHechos(coleccion.getCriterios());
-
-        hechosFiltrados.stream().forEach(Hecho::printHecho);
-
-        System.out.println("EUUUUUUUUU CREE LA COLECCION GILES");
-
-        System.out.println("Se obtubieron: " + hechosFiltrados.size() + "hechos");
-
-        coleccionesRepository.save(coleccion);
-
+    private List<Origen> integerToOrigen(List<Integer> origenes){
+        return origenes.stream().map(i -> Origen.values()[i]).toList();
     }
 
     public ColeccionOutputDTO coleccionToDTOOut(Coleccion coleccion) {
@@ -124,64 +84,147 @@ public class ColeccionesService implements IColeccionesService {
         dto.setDescripcion(coleccion.getDescripcion());
         //dto.setAlgoritmoConsenso(coleccion.getAlgoritmo().toString());
 
-        // Ejemplo: convertir los hechos de coleccion a HechoOutputDTO
-      /* List<Hecho> hechos = coleccion.obtenerHechos()
-       List<HechoOutputDTO> hechosDTO = hechos.stream().forEach(hecho -> hechosService.hechoADTOOut(hecho)).toList(); necesitás el hechosService?
-        dto.setHechos(hechosDTO);*/
 
         return dto;
     }
 
-    // ✅ De lista de entidades a lista de DTOs de salida
-    public List<ColeccionOutputDTO> coleccionesToDTOOuts(List<Coleccion> colecciones) {
-        return colecciones.stream()
-                .map(this::coleccionToDTOOut)
-                .collect(Collectors.toList());
+    //De DTO de entrada a entidad
+    private Coleccion dtoInToColeccion(ColeccionInputDTO dto) {
+
+        String uuid = UUID.randomUUID().toString();
+        List<Origen> fuentes = integerToOrigen(dto.getIdsFuentes());
+
+        return new Coleccion(
+                uuid, fuentes, dto.getTitulo(), dto.getDescripcion(),
+                dto.getCriterios().stream().map(c -> StringAObjetos.criterioFactory(c)).toList(),
+                StringAObjetos.algoritmoConsensoFactory(dto.getAlgoritmoConsenso())
+        );
     }
 
-    // ✅ De lista de DTOs de entrada a lista de entidades
-    public List<Coleccion> dtoInsToColecciones(List<ColeccionInputDTO> dtos) {
-        return dtos.stream()
-                .map(this::dtoInToColeccion)
-                .collect(Collectors.toList());
+    /*
+    ##########
+    ##Create##
+    ##########
+    */
+    public void crearColeccion(ColeccionInputDTO coleccionDTO) {
+
+        Coleccion coleccion = dtoInToColeccion(coleccionDTO);
+
+        List<Hecho> hechosFiltrados = hechosService.filtrarHechos(coleccion.getCriterios());
+
+        coleccion.setHechosColeccion(hechosFiltrados.stream().map(h -> new HechoDeColeccion(h, false)).toList());
+
+        coleccionesRepository.save(coleccion);
     }
+    /*
+    ##########
+    ##Create##
+    ##########
+    */
 
-    public AlgoritmoConsenso algoritmoConsensoFactory(String algoritmo) {
-        return switch (algoritmo.toLowerCase()) {
-            case "mayoriasimple" -> new MayoriaSimple();
-            case "absoluto" -> new Absoluto();
-            case "multiplesmenciones" -> new MultiplesMenciones();
+    /*
+    ############
+    ##Retrieve##
+    ############
+    */
 
-            default -> throw new IllegalArgumentException("Algoritmo de consenso no válido: " + algoritmo);
-        };
-    }
-
-    public ColeccionOutputDTO retrieveColeccion(String handle){
+    public ColeccionOutputDTO retrieveColeccion(String handle) {
         Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
-        if(coleccion == null){
+        if (coleccion == null) {
             return null;
         }
         return coleccionToDTOOut(coleccion);
     }
 
-    public ColeccionOutputDTO updateColeccion(ColeccionInputDTO nuevaColeccionDTO, String handle) {
-        Coleccion nuevaColeccion = dtoInToColeccion(nuevaColeccionDTO);
-        nuevaColeccion.setHandle(handle);
-        //En teoria actualiza la coleccion con el mismo handle
-        coleccionesRepository.save(nuevaColeccion);
+    public List<HechoOutputDTO> retrieveHechosColeccion(String handle, List<CriterioRequest> criterios) {
 
-        return coleccionToDTOOut(nuevaColeccion);
+        List<CondicionDeFiltrado> condiciones = new ArrayList<>(criterios.stream().map(c -> StringAObjetos.criterioFactory(c)).toList());
+
+        condiciones.add( new PorColeccion(handle));
+
+        return this.hechosService.hechoADTOOuts(filtradorService.filtrarHechosDataBase(condiciones));
+
     }
+
+
+    public List<HechoOutputDTO> retrieveColeccionModoNavegacion(String handle, String modoNavegacion){
+        Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
+        if (coleccion == null) {
+            return null;
+        }
+        return this.hechosService.hechoADTOOuts(coleccion.obtenerHechosPorModo(StringAObjetos.modoNavegacionFactory(modoNavegacion)));
+    }
+
+
+
+    /*
+    ############
+    ##Retrieve##
+    ############
+    */
+
+    /*
+    ##########
+    ##Update##
+    ##########
+    */
+
+    public ColeccionOutputDTO updateAlgoritmo(String handle, String nuevoAlgoritmo) {
+        AlgoritmoConsenso algoritmo = StringAObjetos.algoritmoConsensoFactory(nuevoAlgoritmo);
+        Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
+        if (coleccion == null) {
+           return null;
+        }
+        coleccion.setAlgoritmo(algoritmo);
+        this.coleccionesRepository.save(coleccion);
+        return coleccionToDTOOut(coleccion);
+    }
+
+    public ColeccionOutputDTO updateFuente(List<Integer> origenes, String handle) {
+        List<Origen> nuevoOrigen = integerToOrigen(origenes);
+        if(nuevoOrigen.isEmpty()){
+            return null;
+        }
+
+        Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
+        if (coleccion == null) {
+            return null;
+        }
+
+        //TODO Si los origenes son menos de los que tenias hay que eliminar los hechos de la coleccion
+        //TODO Si los origenes son mas de los que tenias hay que traer nuevos hechos?
+
+        coleccion.setOrigenes(nuevoOrigen);
+
+        coleccionesRepository.save(coleccion);
+
+        return coleccionToDTOOut(coleccion);
+    }
+    /*
+    ##########
+    ##Update##
+    ##########
+    */
+
+    /*
+    ##########
+    ##Delete##
+    ##########
+    */
 
     public boolean eliminarColeccion(String handle) {
         Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
-        if(coleccion == null){
+        if (coleccion == null) {
             return false;
         }
         coleccionesRepository.delete(coleccion);
         return true;
     }
 
-    // al final dejamos los origenes en el output?
+    /*
+    ##########
+    ##Delete##
+    ##########
+    */
 
 }

@@ -1,9 +1,12 @@
 package org.example.metamapa.gestordatos.Servicios;
 
 import org.example.metamapa.gestordatos.models.dtos.input.ColeccionInputDTO;
+import org.example.metamapa.gestordatos.models.dtos.input.CriterioRequest;
 import org.example.metamapa.gestordatos.models.dtos.input.FuenteInputDTO;
 import org.example.metamapa.gestordatos.models.dtos.output.ColeccionOutputDTO;
+import org.example.metamapa.gestordatos.models.dtos.output.HechoOutputDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IColeccionesService {
@@ -16,17 +19,14 @@ public interface IColeccionesService {
 
     ColeccionOutputDTO retrieveColeccion(String handle);
 
-    ColeccionOutputDTO updateColeccion(ColeccionInputDTO nuevaColeccionDTO, String handle);
-
     boolean eliminarColeccion(String handle);
 
-    //ColeccionOutputDTO editarColeccion(Long id, ColeccionInputDTO dto);
+    List<HechoOutputDTO> retrieveHechosColeccion(String handle, List<CriterioRequest> criterios);
 
-    //void eliminarColeccion(Long id);
 
-    //ColeccionOutputDTO cambiarAlgoritmo(Long id, String nuevoAlgoritmo);
+    ColeccionOutputDTO updateAlgoritmo(String handle, String nuevoAlgoritmo);
 
-    //ColeccionOutputDTO agregarFuente(Long idColeccion, FuenteInputDTO fuente);
+    ColeccionOutputDTO updateFuente(List<Integer> origenes, String handle);
 
-    //ColeccionOutputDTO quitarFuente(Long idColeccion, Long idFuente);
+    List<HechoOutputDTO> retrieveColeccionModoNavegacion(String handle, String modoNavegacion);
 }

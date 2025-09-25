@@ -1,32 +1,40 @@
 package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 
+import org.example.metamapa.gestordatos.Servicios.IFiltradorService;
 import org.example.metamapa.gestordatos.Servicios.IHechoService;
+import org.example.metamapa.gestordatos.conversores.StringAObjetos;
+import org.example.metamapa.gestordatos.models.dtos.input.CriterioRequest;
 import org.example.metamapa.gestordatos.models.dtos.input.HechoInputDTO;
 import org.example.metamapa.gestordatos.models.dtos.output.HechoOutputDTO;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
+import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.PorOrigen;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class HechoService implements IHechoService {
 
     private final IHechosRepository repositorioHechos;
+    private final IFiltradorService filtradorService;
 
-    public HechoService(IHechosRepository repositorioHechos){
+    public HechoService(IHechosRepository repositorioHechos, IFiltradorService filtradorService){
         this.repositorioHechos = repositorioHechos;
+        this.filtradorService = filtradorService;
     }
 
-    public List<HechoOutputDTO> buscarTodosLosHechos(String categoria, LocalDate fecha_reporte_desde, LocalDate fecha_reporte_hasta,
-                                                     LocalDate fecha_acontecimiento_desde, LocalDate fecha_acontecimiento_hasta,
-                                                     Double latitud, Double longitud){
+    public List<HechoOutputDTO> buscarTodosLosHechos(List<CriterioRequest> criterios){
 
-        return hechoADTOOuts(repositorioHechos.findAll()); //TODO
+        List<CondicionDeFiltrado> condiciones = new ArrayList<>(criterios.stream().map(c -> StringAObjetos.criterioFactory(c)).toList());
+
+        return hechoADTOOuts(this.filtrarHechos(condiciones));
     }
 
     public void guardarHecho(HechoInputDTO hechoInputDTO){};
@@ -50,12 +58,35 @@ public class HechoService implements IHechoService {
         return dto;
     }
 
+    //obtiene los hechos de la DB en base a las condiciones de filtrado
+
     public List<Hecho> filtrarHechos(List<CondicionDeFiltrado> condiciones) {
-        Specification<Hecho> spec = condiciones.stream()
+        return filtradorService.filtrarHechosDataBase(condiciones);
+    }
+
+    /*
+    public List<Hecho> filtrarHechos(List<CondicionDeFiltrado> condiciones) {
+    // Agrupar por tipo de criterio
+    Map<TipoCriterio, List<CondicionDeFiltrado>> agrupados =
+            condiciones.stream().collect(Collectors.groupingBy(CondicionDeFiltrado::getTipo));
+
+    Specification<Hecho> spec = Specification.where(null);
+
+    for (Map.Entry<TipoCriterio, List<CondicionDeFiltrado>> entry : agrupados.entrySet()) {
+        // Para cada tipo: OR
+        Specification<Hecho> orSpec = entry.getValue().stream()
                 .map(CondicionDeFiltrado::toSpecification)
-                .reduce(Specification::and) // combina con AND
+                .reduce(Specification::or)
                 .orElse(null);
 
-        return repositorioHechos.findAll(spec);
+        // Entre tipos: AND
+        if (orSpec != null) {
+            spec = spec.and(orSpec);
+        }
     }
+
+    return repositorioHechos.findAll(spec);
+}
+
+     */
 }

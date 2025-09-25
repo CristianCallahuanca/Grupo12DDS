@@ -1,11 +1,49 @@
 package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 
+import org.example.metamapa.gestordatos.Servicios.IFiltradorService;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
+import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.PorOrigen;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
+import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.util.List;
 
 
-public class FiltradorService {
+public class FiltradorService implements IFiltradorService {
+
+    private final IHechosRepository hechosRepository;
+
+    public FiltradorService(IHechosRepository hechosRepository) {
+        this.hechosRepository = hechosRepository;
+    }
+
+    public List<Hecho> filtrarHechosDataBase(List<CondicionDeFiltrado> condiciones) {
+
+        Specification<Hecho> origenSpec = condiciones.stream()
+                .filter(c -> c instanceof PorOrigen)
+                .map(CondicionDeFiltrado::toSpecification)
+                .reduce(Specification::or)
+                .orElse(null);
+
+        Specification<Hecho> otrasSpec = condiciones.stream()
+                .filter(c -> !(c instanceof PorOrigen))
+                .map(CondicionDeFiltrado::toSpecification)
+                .reduce(Specification::and)
+                .orElse(null);
+
+        Specification<Hecho> finalSpec;
+        if (origenSpec != null && otrasSpec != null) {
+            finalSpec = otrasSpec.and(origenSpec);
+        } else if (otrasSpec != null) {
+            finalSpec = otrasSpec;
+        } else {
+            finalSpec = origenSpec;
+        }
+
+        return hechosRepository.findAll(finalSpec);
+    }
+
     public static List<Hecho> filtrarHechos(List<Hecho> unosHechos, List<CondicionDeFiltrado> filtros) {
         return unosHechos.stream().filter(unHecho -> filtrarHecho(unHecho,filtros))
                 .toList();

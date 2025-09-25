@@ -14,17 +14,5 @@ public class Curada implements ModoNavegacion {
 
         return coleccion.obtenerHechosConsensuados();
     }
-       /* if (algoritmoConsenso instanceof AlgoritmoConsenso) {
-            return  ((AlgoritmoConsenso) algoritmoConsenso).hechosConsensuados;
-        } else {
-            throw new IllegalArgumentException("No se está navegando con un algoritmo de consenso");
-        }
 
-    @Override
-    public List<Hecho>
-    }
-    @Override
-    public List<Hecho> aplicarModoDeNavegacion(List<HechoDeColeccion> hechos, Object algoritmoConsenso){
-        return hechos.stream().map(HechoDeColeccion::getHecho).toList();
-    }*/
 }

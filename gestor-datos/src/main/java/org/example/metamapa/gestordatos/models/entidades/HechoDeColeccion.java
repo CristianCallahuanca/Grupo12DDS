@@ -31,4 +31,8 @@ public class HechoDeColeccion {
     @Column(name= "es_consensuado")
     private Boolean esConsensuado;
 
+    public HechoDeColeccion(Hecho hecho, boolean esConsensuado) {
+        this.hecho = hecho;
+        this.esConsensuado = esConsensuado;
+    }
 }

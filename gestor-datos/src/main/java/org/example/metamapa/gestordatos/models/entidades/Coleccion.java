@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.conversores.AlgoritmoConsensoAttributeConverter;
+import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.PorOrigen;
 import org.example.metamapa.gestordatos.models.entidades.Consenso.AlgoritmoConsenso;
 import org.example.metamapa.gestordatos.models.entidades.ModosNavegacion.ModoNavegacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
@@ -46,7 +47,7 @@ public class Coleccion {
     @JoinColumn(name = "coleccion_id")
     private List<CondicionDeFiltrado> criterios;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "coleccion_id") //hay que especificar como se tiene que llamar la columna de la tabla hecho que apunta a coleccion
     private List<HechoDeColeccion> hechosColeccion; //TODO habría que cambiarlo a hechos de coleccion
 
@@ -55,34 +56,38 @@ public class Coleccion {
     private AlgoritmoConsenso algoritmo;
 
 
-    public List<Hecho> obtenerHechosConsensuados(){
-       if(algoritmo != null){
-        return hechosColeccion.stream().filter(HechoDeColeccion::getEsConsensuado)
-                .map(HechoDeColeccion::getHecho).toList();
-    } else {
-          return obtenerHechosVisibles(); // para que devuelva todos los hechos si no tiene algoritmo de consenso
-       }
-    }
 
-  /*  public Coleccion(List<Origen> fuentes, String titulo, String descripcion, List<CriterioDePertenencia> criterios) throws IOException {
-        this.fuentes = fuentes;
+
+    public Coleccion(String handle, List<Origen> origenes, String titulo, String descripcion, List<CondicionDeFiltrado> criterios, AlgoritmoConsenso algoritmo) {
+        this.origenes = origenes;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.criterios = criterios;
-        this.handle = ServicioDeIdentificacion.getInstancia().generarHandle();
-        ServicioDeAgregacion.getInstancia().primeraCarga(this);
+        List <PorOrigen> origenesPorDefault = origenes.stream().map(unOrigen -> new PorOrigen(unOrigen)).toList();
+        this.criterios.add((CondicionDeFiltrado) origenesPorDefault);
+
     }
 
-    public void insertarHechos(List <Hecho> unosHechos) {this.hechos.addAll(unosHechos);}
-*/
-    public List <Hecho> obtenerHechosPorModo(ModoNavegacion algunModo)
-    {
-        return algunModo.aplicarModoDeNavegacion(this);
-    }
+    public void insertarHechos(List <HechoDeColeccion> unosHechos) {this.hechosColeccion.addAll(unosHechos);}
+
 
 
     public List<Hecho> obtenerHechosVisibles() {
         return obtenerHechos().stream().filter(hecho->hecho.getEstadoHecho() != EstadoHecho.NO_VISIBLE).toList();
+    }
+
+    public List<Hecho> obtenerHechosConsensuados(){
+        if(algoritmo != null){
+            return hechosColeccion.stream().filter(HechoDeColeccion::getEsConsensuado)
+                    .map(HechoDeColeccion::getHecho).toList();
+        } else {
+            return obtenerHechosVisibles(); // para que devuelva todos los hechos si no tiene algoritmo de consenso
+        }
+    }
+
+    public List <Hecho> obtenerHechosPorModo(ModoNavegacion algunModo)
+    {
+        return algunModo.aplicarModoDeNavegacion(this);
     }
 
     public void aplicarConsenso() {
