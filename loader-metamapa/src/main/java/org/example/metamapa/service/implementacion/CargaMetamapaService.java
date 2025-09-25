@@ -3,6 +3,7 @@ package org.example.metamapa.service.implementacion;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.example.metamapa.adapters.IAdapterMetamapa;
+import org.example.metamapa.exceptions.ExcepcionConexionMetamapa;
 import org.example.metamapa.models.dtos.HechoDTO;
 import org.example.metamapa.models.dtos.HechoDTO_IN;
 import org.example.metamapa.models.entidades.EstadoConsulta;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -37,29 +39,36 @@ public class CargaMetamapaService implements ICargaMetamapaService {
     @Override
     public List<HechoDTO> obtenerHechos() {
         LocalDateTime ultimaConsulta = estadoRepo.findById(loaderId)
+                .filter(e -> "OK".equals(e.getEstado()))
                 .map(EstadoConsulta::getUltimaConsulta)
                 .orElse(null);
 
-        List<HechoDTO_IN> hechosEntrantes = adapter.obtenerHechos(ultimaConsulta);
+        List<HechoDTO> hechosListos;
+        try {
+            List<HechoDTO_IN> hechosEntrantes = adapter.obtenerHechos(ultimaConsulta);
+            hechosListos = hechosEntrantes.stream()
+                    .map(this::mapearHecho)
+                    .toList();
+            registrarEstado(hechosListos, "OK");
+        } catch (ExcepcionConexionMetamapa e) {
+            registrarEstado(Collections.emptyList(), "ERROR");
+            throw e;
+        }
 
-        List<HechoDTO> hechosListos = hechosEntrantes.stream()
-                .map(this::mapearHecho)
-                .toList();
-
-        registrarEstado(hechosListos);
 
         return hechosListos;
     }
 
-    private void registrarEstado(List<HechoDTO> hechosListos) {
-        EstadoConsulta estado = new EstadoConsulta(
+    private void registrarEstado(List<HechoDTO> hechosListos, String estado) {
+        EstadoConsulta estadoConsulta = new EstadoConsulta(
                 loaderId,
                 LocalDateTime.now(),
                 hechosListos.size(),
-                "OK"
+                estado
         );
-        estadoRepo.save(estado);
+        estadoRepo.save(estadoConsulta);
     }
+
 
     private HechoDTO mapearHecho(HechoDTO_IN in) {
         return HechoDTO.builder()

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Mono;
 
  import java.time.LocalDateTime;
+ import java.time.format.DateTimeFormatter;
  import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class AdapterMetamapaV1 implements IAdapterMetamapa {
             WebClient.RequestHeadersSpec<?> request = webClient.get().uri(uriBuilder -> {
                 var builder = uriBuilder.path("/hechos");
                 if (fechaDesde != null) {
-                    builder.queryParam("fecha_reporte_desde", fechaDesde.toString());
+                    builder.queryParam("fecha_reporte_desde", fechaDesde.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
                 }
                 return builder.build();
             });

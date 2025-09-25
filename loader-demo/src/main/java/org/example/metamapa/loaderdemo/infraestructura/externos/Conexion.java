@@ -1,10 +1,13 @@
 package org.example.metamapa.loaderdemo.infraestructura.externos;
 
+import org.springframework.stereotype.Component;
+
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class Conexion {
     public Map<String, Object> siguienteHecho(URL url, LocalDateTime fechaUltimaConsulta) {
         // Simulación de una respuesta de ejemplo. En tu TP esto ya viene hecho.
@@ -19,5 +22,5 @@ public class Conexion {
 
         return hecho; // Podría devolver `null` si no hay hechos nuevos
     }
-}
+} //TODO: ANIDAR A LA API DE EJEMPLO DE ESCOBAR
 
