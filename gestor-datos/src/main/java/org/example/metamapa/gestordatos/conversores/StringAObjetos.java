@@ -29,6 +29,7 @@ public class StringAObjetos{
     }
 
     public static CondicionDeFiltrado criterioFactory(CriterioRequest request) {
+        System.out.println(request);
         String tipo = request.getTipo().toLowerCase();
         Map<String, String> params = request.getParams();
 

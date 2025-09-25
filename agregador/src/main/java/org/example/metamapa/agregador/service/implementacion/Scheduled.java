@@ -14,7 +14,7 @@ public class Scheduled implements IScheduled {
         this.agregacionService = agregacionService;
     }
 
-    @org.springframework.scheduling.annotation.Scheduled(initialDelay = 0, fixedRate = 1, timeUnit = TimeUnit.HOURS)
+    @org.springframework.scheduling.annotation.Scheduled(initialDelay = 0, fixedRate = 1, timeUnit = TimeUnit.SECONDS)
     public void obtenerHechosTodasLasFuentes(){
         System.out.println("LLAME A TODAS LAS FUENTES");
         agregacionService.integrarHechosFuentes();

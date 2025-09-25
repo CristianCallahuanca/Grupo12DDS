@@ -114,6 +114,8 @@ public class ColeccionesService implements IColeccionesService {
 
         coleccion.setHechosColeccion(hechosFiltrados.stream().map(h -> new HechoDeColeccion(h, false)).toList());
 
+        System.out.println("la candidad de hechos obtenida: " + hechosFiltrados.size());
+
         coleccionesRepository.save(coleccion);
     }
     /*

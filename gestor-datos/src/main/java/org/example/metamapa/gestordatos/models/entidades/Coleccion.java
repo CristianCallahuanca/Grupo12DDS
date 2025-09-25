@@ -13,6 +13,7 @@ import org.example.metamapa.gestordatos.models.entidades.ModosNavegacion.ModoNav
 import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -59,12 +60,18 @@ public class Coleccion {
 
 
     public Coleccion(String handle, List<Origen> origenes, String titulo, String descripcion, List<CondicionDeFiltrado> criterios, AlgoritmoConsenso algoritmo) {
+        this.handle = handle;
         this.origenes = origenes;
         this.titulo = titulo;
         this.descripcion = descripcion;
-        this.criterios = criterios;
-        List <PorOrigen> origenesPorDefault = origenes.stream().map(unOrigen -> new PorOrigen(unOrigen)).toList();
-        this.criterios.add((CondicionDeFiltrado) origenesPorDefault);
+        this.criterios = new ArrayList<>(criterios);
+        this.algoritmo = algoritmo;
+
+        List<PorOrigen> origenesJoaco = origenes.stream()
+                .map(unOrigen -> new PorOrigen(unOrigen))
+                .toList();
+
+        this.criterios.addAll(origenesJoaco);
 
     }
 
