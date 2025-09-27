@@ -56,6 +56,9 @@ public class HechoCrudo{
     @Column(name = "archivoMultimedia")
     private List<String> archivosMultimedia;
 
+    @Column(name = "lectura_agregador")
+    private Boolean fueLeido;
+
     public HechoCrudo(String titulo, String descripcion, String categoria, String latitud, String longitud,
                       String fechaAcontecimiento,String etiqueta, String contribuyenteID,  List<String> archivosMultimedia) {
 
@@ -68,5 +71,6 @@ public class HechoCrudo{
         this.etiqueta = etiqueta;
         this.contribuyenteID = contribuyenteID;
         this.archivosMultimedia = archivosMultimedia;
+        this.fueLeido = false;
     }
 }

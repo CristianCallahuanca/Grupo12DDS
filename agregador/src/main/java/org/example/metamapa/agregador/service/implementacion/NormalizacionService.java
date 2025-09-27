@@ -154,6 +154,8 @@ public class NormalizacionService implements INormalizacionService {
                 hechoDTO.getArchivosMultimedia()
         );
 
+        System.out.println("el origen es: " + hechoDTO.getOrigen());
+
         nuevoHecho.getOrigenes().add(normalizaOrigen(hechoDTO.getOrigen()));
 
         return nuevoHecho;

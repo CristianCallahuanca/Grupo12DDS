@@ -22,14 +22,23 @@ public class HechosService implements IHechosService {
 
     public List<HechoCrudoDTO_OUT> obtenerHechos(){
 
-        List <HechoCrudoDTO_OUT> hechos = crudoDTOOuts(repositorioHechosCrudos.findAll());
-        //repositorioHechosCrudos.deleteAll();
+        List<HechoCrudo> hechos = repositorioHechosCrudos.findByFueLeidoFalse();
 
-        return hechos;
+        List <HechoCrudoDTO_OUT> hechosDTO = crudoDTOOuts(hechos);
+
+        hechos.stream().forEach(h -> h.setFueLeido(true));
+
+        repositorioHechosCrudos.saveAll(hechos);
+
+        return hechosDTO;
     }
 
     public void cargarHecho(HechoCrudoDTO_IN hecho){
         repositorioHechosCrudos.save(dtoInAHechoCrudo(hecho));
+    }
+
+    public void vaciarDB(){
+        repositorioHechosCrudos.deleteAll();
     }
 
     public List<HechoCrudoDTO_OUT> crudoDTOOuts(List<HechoCrudo> hechos){

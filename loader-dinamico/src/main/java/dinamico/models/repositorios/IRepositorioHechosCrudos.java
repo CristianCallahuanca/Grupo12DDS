@@ -7,5 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface IRepositorioHechosCrudos extends JpaRepository<HechoCrudo, Long> {}
+public interface IRepositorioHechosCrudos extends JpaRepository<HechoCrudo, Long> {
+
+    List<HechoCrudo> findByFueLeidoFalse();
+}
 

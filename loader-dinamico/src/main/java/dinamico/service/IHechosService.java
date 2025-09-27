@@ -10,4 +10,5 @@ import java.util.List;
 public interface IHechosService {
     public void cargarHecho(HechoCrudoDTO_IN hecho);
     public List<HechoCrudoDTO_OUT> obtenerHechos();
+    public void vaciarDB();
 }
