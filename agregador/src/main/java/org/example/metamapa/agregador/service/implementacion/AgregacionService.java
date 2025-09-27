@@ -40,6 +40,11 @@ public class AgregacionService implements IAgregacionService{
         this.hechosRepository = hechosRepository;
     }
 
+    private List<HechoDTO_IN> listar(RestClient c) {
+        return c.get().uri("/hechos")
+                .retrieve().body(new ParameterizedTypeReference<List<HechoDTO_IN>>() {});
+    }
+
     public List<HechoDTO_IN> getHechosDTO3FuentesSinLimpiar() {
         List<HechoDTO_IN> all = new ArrayList<>();
         //all.addAll(listar(estatico));
@@ -50,13 +55,6 @@ public class AgregacionService implements IAgregacionService{
         return all;
     }
 
-
-    private List<HechoDTO_IN> listar(RestClient c) {
-        return c.get().uri("/hechos")
-                .retrieve().body(new ParameterizedTypeReference<List<HechoDTO_IN>>() {});
-    }
-
-
     @Transactional
     public void integrarHechosFuentes(){
 
@@ -65,6 +63,6 @@ public class AgregacionService implements IAgregacionService{
          List<Hecho> hechos = normalizacionService.normalizarHechos(this.getHechosDTO3FuentesSinLimpiar());
          List<Hecho> hechos_finales = duplicacionService.eliminarHechosRepetidos(hechos);
 
-         hechosRepository.saveAll(hechos_finales);
+         hechosRepository.saveAll(hechos);
     }
 }
