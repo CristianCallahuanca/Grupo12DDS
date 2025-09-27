@@ -30,7 +30,13 @@ public class HechoService implements IHechoService {
 
         List<CondicionDeFiltrado> condiciones = new ArrayList<>(criterios.stream().map(c -> StringAObjetos.criterioFactory(c)).toList());
 
-        return hechoADTOOuts(this.filtrarHechos(condiciones));
+        System.out.println("se crearon " + condiciones.size() + "condiciones de filtrado");
+
+        List<Hecho> hechos = this.filtrarHechos(condiciones);
+
+        System.out.println("se obtuvieron " + hechos.size() + "de la DB");
+
+        return hechoADTOOuts(hechos);
     }
 
     public void guardarHecho(HechoInputDTO hechoInputDTO){};
@@ -48,14 +54,17 @@ public class HechoService implements IHechoService {
         dto.setLongitud(String.valueOf(hecho.getUbicacion().getLongitud()));
         dto.setFechaAcontecimiento(hecho.getFechaAcontecimiento().toString());
         dto.setEtiqueta(hecho.getEtiqueta());
-        dto.setNombre_contribuyente(hecho.getContribuyente().getNombre());
-        dto.setApellido_contribuyente(hecho.getContribuyente().getApellido());
+
+        if(hecho.getContribuyente()!= null) {
+            dto.setNombre_contribuyente(hecho.getContribuyente().getNombre());
+            dto.setApellido_contribuyente(hecho.getContribuyente().getApellido());
+        }
+
         dto.setArchivosMultimedia(hecho.getArchivosMultimedia());
         return dto;
     }
 
     //obtiene los hechos de la DB en base a las condiciones de filtrado
-
     public List<Hecho> filtrarHechos(List<CondicionDeFiltrado> condiciones) {
         return filtradorService.filtrarHechosDataBase(condiciones);
     }

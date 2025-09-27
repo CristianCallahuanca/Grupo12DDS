@@ -9,5 +9,7 @@ import java.util.List;
 public class ColeccionOutputDTO {
     private String nombre;
     private String descripcion;
-    private List<HechoOutputDTO> hechos;
+    private String algoritmo;
+    //private List<HechoOutputDTO> hechos;
+
 }

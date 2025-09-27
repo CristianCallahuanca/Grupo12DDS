@@ -22,63 +22,66 @@ import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 @AllArgsConstructor
 @Entity
 @Table(name = "hecho")
-public class Hecho {
+    public class Hecho {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long hecho_id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private long hecho_id;
 
-    @Column(name = "titulo")
-    private String titulo;
+        @Column(name = "titulo")
+        private String titulo;
 
-    @Column(name = "descripcion")
-    private String descripcion;
+        @Column(name = "descripcion")
+        private String descripcion;
 
-    @Column(name = "categoria")
-    private String categoria;
+        @Column(name = "categoria")
+        private String categoria;
 
-    @OneToOne
-    @JoinColumn(name = "ubicacion_id")
-    private Ubicacion ubicacion;
+        @OneToOne
+        @JoinColumn(name = "ubicacion_id")
+        private Ubicacion ubicacion;
 
-    @Column(name = "facha_acontecimiento")
-    private LocalDateTime fechaAcontecimiento;
+        @Column(name = "facha_acontecimiento")
+        private LocalDateTime fechaAcontecimiento;
 
-    @Column(name = "fecha_carga")
-    private LocalDateTime fechaCarga;
+        @Column(name = "fecha_carga")
+        private LocalDateTime fechaCarga;
 
-    @Enumerated(EnumType.STRING)
-    private EstadoHecho estadoHecho;
+        @Enumerated(EnumType.STRING)
+        private EstadoHecho estadoHecho;
 
-    @Enumerated(EnumType.STRING)
-    private EstadoDeEdicion estadoEdicionHecho;
+        @Enumerated(EnumType.STRING)
+        private EstadoDeEdicion estadoEdicionHecho;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "hecho_multimedia",
-            joinColumns = @JoinColumn(name = "hecho_id")
-    )
-    @Column(name = "archivoMultimedia")
-    private List<String> archivosMultimedia;
+        @ElementCollection
+        @CollectionTable(
+                name = "hecho_multimedia",
+                joinColumns = @JoinColumn(name = "hecho_id")
+        )
+        @Column(name = "archivoMultimedia")
+        private List<String> archivosMultimedia;
 
-    @Column(name = "etiqueta")
-    private String etiqueta;
+        @Column(name = "etiqueta")
+        private String etiqueta;
 
-    @JoinColumn(name = "contribuyente_id")
-    @ManyToOne
-    private ContribuyenteRegistrado contribuyente;
+        @JoinColumn(name = "contribuyente_id")
+        @ManyToOne
+        private ContribuyenteRegistrado contribuyente;
 
-    @ElementCollection(targetClass = Origen.class)
-    @CollectionTable(
-            name = "hecho_origenes",
-            joinColumns = @JoinColumn(name = "hecho_id")
-    )
-    @Column(name = "origen")
-    @Enumerated(EnumType.STRING)
-    private List<Origen> origenes;
+        @ElementCollection(targetClass = Origen.class)
+        @CollectionTable(
+                name = "hecho_origenes",
+                joinColumns = @JoinColumn(name = "hecho_id")
+        )
+        @Column(name = "origen")
+        @Enumerated(EnumType.STRING)
+        private List<Origen> origenes;
 
-    @Column( name = "sin_categorizar")
-    private Boolean sinCategorizar;
+        @Column(name = "sin_categorizar")
+        private Boolean sinCategorizar;
+
+        @OneToMany(mappedBy = "hecho")
+        private List<HechoDeColeccion> hechosDeColeccion;
 
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
                  LocalDateTime fechaAcontecimiento,String etiqueta) {

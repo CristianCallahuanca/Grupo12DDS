@@ -31,6 +31,10 @@ public class HechoDeColeccion {
     @Column(name= "es_consensuado")
     private Boolean esConsensuado;
 
+    @ManyToOne
+    @JoinColumn(name = "coleccion_id")
+    private Coleccion coleccion;
+
     public HechoDeColeccion(Hecho hecho, boolean esConsensuado) {
         this.hecho = hecho;
         this.esConsensuado = esConsensuado;

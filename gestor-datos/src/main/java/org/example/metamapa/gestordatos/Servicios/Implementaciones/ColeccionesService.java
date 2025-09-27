@@ -2,6 +2,7 @@ package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 
 import org.example.metamapa.gestordatos.Servicios.IColeccionesService;
 import org.example.metamapa.gestordatos.Servicios.IFiltradorService;
+import org.example.metamapa.gestordatos.Servicios.IHechoColeccionService;
 import org.example.metamapa.gestordatos.Servicios.IHechoService;
 import org.example.metamapa.gestordatos.conversores.StringAObjetos;
 import org.example.metamapa.gestordatos.models.dtos.input.ColeccionInputDTO;
@@ -26,13 +27,11 @@ import org.example.metamapa.gestordatos.models.repositorios.IColeccionesReposito
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
+import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,11 +40,13 @@ public class ColeccionesService implements IColeccionesService {
     private final IColeccionesRepository coleccionesRepository;
     private final IHechoService hechosService;
     private final IFiltradorService filtradorService;
+    private final IHechoColeccionService hechoColeccionService;
 
-    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechoService hechosService, IFiltradorService filtradorService) {
+    public ColeccionesService(IColeccionesRepository coleccionesRepository, IHechoService hechosService, IFiltradorService filtradorService, IHechoColeccionService hechoColeccionService) {
         this.coleccionesRepository = coleccionesRepository;
         this.hechosService = hechosService;
         this.filtradorService = filtradorService;
+        this.hechoColeccionService = hechoColeccionService;
     }
 
 
@@ -79,11 +80,10 @@ public class ColeccionesService implements IColeccionesService {
 
     public ColeccionOutputDTO coleccionToDTOOut(Coleccion coleccion) {
         ColeccionOutputDTO dto = new ColeccionOutputDTO();
-        //dto.setId(coleccion.getId()); // si tenés un campo id en la entidad
         dto.setNombre(coleccion.getTitulo()); // mapeo de titulo -> nombre en DTO
         dto.setDescripcion(coleccion.getDescripcion());
-        //dto.setAlgoritmoConsenso(coleccion.getAlgoritmo().toString());
-
+        dto.setAlgoritmo(coleccion.getAlgoritmo().toString());
+        //dto.setHechos(this.hechosService.hechoADTOOuts(coleccion.obtenerHechos()));
 
         return dto;
     }
@@ -110,11 +110,25 @@ public class ColeccionesService implements IColeccionesService {
 
         Coleccion coleccion = dtoInToColeccion(coleccionDTO);
 
+        List<PorOrigen> origenes = coleccion.getOrigenes().stream()
+                .map(PorOrigen::new)
+                .toList();
+
+        List<CondicionDeFiltrado> condiciones = new ArrayList<>(coleccion.getCriterios());
+
+        condiciones.addAll(origenes);
+
+        coleccion.setCriterios(condiciones);
+
+        System.out.println("la coleccion tiene: " +  coleccion.getCriterios().size() + " criterios de filtrado");
+
         List<Hecho> hechosFiltrados = hechosService.filtrarHechos(coleccion.getCriterios());
+
+        System.out.println("la candidad de hechos obtenida: " + hechosFiltrados.size());
 
         coleccion.setHechosColeccion(hechosFiltrados.stream().map(h -> new HechoDeColeccion(h, false)).toList());
 
-        System.out.println("la candidad de hechos obtenida: " + hechosFiltrados.size());
+        System.out.println("la candidad de hechosColeccion obtenida: " + hechosFiltrados.size());
 
         coleccionesRepository.save(coleccion);
     }
@@ -142,12 +156,25 @@ public class ColeccionesService implements IColeccionesService {
 
         List<CondicionDeFiltrado> condiciones = new ArrayList<>(criterios.stream().map(c -> StringAObjetos.criterioFactory(c)).toList());
 
-        condiciones.add( new PorColeccion(handle));
+
+        Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
+
+        if (coleccion == null) {
+            return null;
+        }
+
+        System.out.println("el handle de la coleccion es:  " + coleccion.getHandle());
+
+        condiciones.add(new PorColeccion(handle));
+
+        System.out.println("se crearon " + condiciones.size() + " condiciones de filtrado");
+
+        //List<Long> idHechos = this.hechoColeccionService.obtenerIdsHechosAsociadosColeccion(coleccion.getHandle());
 
         return this.hechosService.hechoADTOOuts(filtradorService.filtrarHechosDataBase(condiciones));
 
     }
-
+//rivate static boolean filtrarHecho(Hecho unHecho,List<CondicionDeFiltrado> filtros)
 
     public List<HechoOutputDTO> retrieveColeccionModoNavegacion(String handle, String modoNavegacion){
         Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
@@ -183,9 +210,63 @@ public class ColeccionesService implements IColeccionesService {
         return coleccionToDTOOut(coleccion);
     }
 
+    // Metodo para verificar si la nueva lista tiene menos elementos y obtener los faltantes
+    private static List<Origen> obtenerOrigenesFaltantes(List<Origen> origenesViejos, List<Origen> origenesNuevos) {
+        Set<Origen> conjuntoViejo = new HashSet<>(origenesViejos); Set<Origen> conjuntoNuevo = new HashSet<>(origenesNuevos);
+
+        Set<Origen> faltantes = new HashSet<>(conjuntoViejo);
+        faltantes.removeAll(conjuntoNuevo);
+
+        return new ArrayList<>(faltantes);
+    }
+
+    // metodo para verificar si la nueva lista tiene más elementos y obtener los adicionales
+    private static List<Origen> obtenerOrigenesAdicionales(List<Origen> origenesViejos, List<Origen> origenesNuevos) {
+        Set<Origen> conjuntoViejo = new HashSet<>(origenesViejos); Set<Origen> conjuntoNuevo = new HashSet<>(origenesNuevos);
+
+        Set<Origen> adicionales = new HashSet<>(conjuntoNuevo);
+        adicionales.removeAll(conjuntoViejo);
+
+        return new ArrayList<>(adicionales);
+    }
+
+    private void agregarHechosDeFuentesFaltantes (List<Origen> origenesAdicionales, Coleccion coleccion){
+        List<CondicionDeFiltrado> quePertenezcaALosOrigenesNuevos = origenesAdicionales.stream()
+                .map(unOrigen -> new PorOrigen(unOrigen))
+                .collect(Collectors.toList());
+
+        List<Hecho> hechos = this.hechosService.filtrarHechos(quePertenezcaALosOrigenesNuevos);
+        coleccion.agregarHechos(hechos);
+        coleccionesRepository.save(coleccion);
+    }
+
+    private void quitarHechosDeFuentesFaltantes (List<Origen> origenesFaltantes, Coleccion coleccion){
+        List<Origen> origenesConLosQueMeQuedo = new ArrayList<>(Arrays.asList(Origen.DINAMICA, Origen.ESTATICA, Origen.PROXY));
+        origenesConLosQueMeQuedo.removeAll(origenesFaltantes);
+
+        List<CondicionDeFiltrado> quePertenezcaALosOrigenesRestantes = origenesConLosQueMeQuedo.stream()
+                .map(unOrigen -> new PorOrigen(unOrigen))
+                .collect(Collectors.toList());
+
+        List<Hecho> hechos = filtradorService.filtrarHechos(coleccion.obtenerHechos(), quePertenezcaALosOrigenesRestantes);
+        coleccion.reemplazarHechoDeColeccion(hechos);
+
+        coleccionesRepository.save(coleccion);
+    }
+
+    private void actualizarHechosDeOrigenes(Coleccion coleccion, List<Origen> origenesNuevos){
+        List<Origen> origenesViejos = coleccion.getOrigenes();
+
+        List<Origen> origenesFaltantes   = obtenerOrigenesFaltantes(origenesViejos, origenesNuevos);
+        List<Origen> origenesAdicionales = obtenerOrigenesAdicionales(origenesViejos, origenesNuevos);
+
+        quitarHechosDeFuentesFaltantes (origenesFaltantes, coleccion);
+        agregarHechosDeFuentesFaltantes (origenesAdicionales, coleccion);
+    }
+
     public ColeccionOutputDTO updateFuente(List<Integer> origenes, String handle) {
-        List<Origen> nuevoOrigen = integerToOrigen(origenes);
-        if(nuevoOrigen.isEmpty()){
+        List<Origen> origenesNuevos = integerToOrigen(origenes);
+        if(origenesNuevos.isEmpty()){
             return null;
         }
 
@@ -194,15 +275,12 @@ public class ColeccionesService implements IColeccionesService {
             return null;
         }
 
-        //TODO Si los origenes son menos de los que tenias hay que eliminar los hechos de la coleccion
-        //TODO Si los origenes son mas de los que tenias hay que traer nuevos hechos?
-
-        coleccion.setOrigenes(nuevoOrigen);
-
-        coleccionesRepository.save(coleccion);
+        actualizarHechosDeOrigenes(coleccion, origenesNuevos);
 
         return coleccionToDTOOut(coleccion);
     }
+
+
     /*
     ##########
     ##Update##

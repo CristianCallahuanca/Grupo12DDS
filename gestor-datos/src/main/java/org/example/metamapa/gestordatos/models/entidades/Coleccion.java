@@ -12,6 +12,7 @@ import org.example.metamapa.gestordatos.models.entidades.Consenso.AlgoritmoConse
 import org.example.metamapa.gestordatos.models.entidades.ModosNavegacion.ModoNavegacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
+import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,13 +51,11 @@ public class Coleccion {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "coleccion_id") //hay que especificar como se tiene que llamar la columna de la tabla hecho que apunta a coleccion
-    private List<HechoDeColeccion> hechosColeccion; //TODO habría que cambiarlo a hechos de coleccion
+    private List<HechoDeColeccion> hechosColeccion;
 
     @Convert(converter = AlgoritmoConsensoAttributeConverter.class)
     @Column(name = "algoritmoConsenso")
     private AlgoritmoConsenso algoritmo;
-
-
 
 
     public Coleccion(String handle, List<Origen> origenes, String titulo, String descripcion, List<CondicionDeFiltrado> criterios, AlgoritmoConsenso algoritmo) {
@@ -64,14 +63,14 @@ public class Coleccion {
         this.origenes = origenes;
         this.titulo = titulo;
         this.descripcion = descripcion;
-        this.criterios = new ArrayList<>(criterios);
+        this.criterios = criterios;
         this.algoritmo = algoritmo;
 
-        List<PorOrigen> origenesJoaco = origenes.stream()
+        /*List<PorOrigen> origenesJoaco = origenes.stream()
                 .map(unOrigen -> new PorOrigen(unOrigen))
                 .toList();
 
-        this.criterios.addAll(origenesJoaco);
+        this.criterios.addAll(origenesJoaco);*/
 
     }
 
@@ -102,7 +101,21 @@ public class Coleccion {
     }
 
     public List<Hecho> obtenerHechos(){
-        return hechosColeccion.stream().map(HechoDeColeccion::getHecho).toList();
+        return hechosColeccion.stream().map(e -> e.getHecho()).toList();
+    }
+
+    private HechoDeColeccion hechoToHechoDeColeccion(Hecho unHecho){
+        return new HechoDeColeccion(unHecho, false);
+    }
+
+    public void reemplazarHechoDeColeccion(List<Hecho> hechos){
+        List <HechoDeColeccion> paraGuardar = hechos.stream().map(h -> hechoToHechoDeColeccion(h) ).toList();
+        this.setHechosColeccion(paraGuardar);
+    }
+
+    public void agregarHechos(List<Hecho> hechos){
+        List<HechoDeColeccion> nuevosHechosDeColeccion = hechos.stream().map(h -> hechoToHechoDeColeccion(h)).toList();
+        this.hechosColeccion.addAll(nuevosHechosDeColeccion);
     }
 
     public void agregarNuevaFuente(Origen nuevaFuente){

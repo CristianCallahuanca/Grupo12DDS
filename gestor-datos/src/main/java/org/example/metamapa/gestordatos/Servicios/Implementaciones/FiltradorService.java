@@ -45,7 +45,7 @@ public class FiltradorService implements IFiltradorService {
         return hechosRepository.findAll(finalSpec);
     }
 
-    public static List<Hecho> filtrarHechos(List<Hecho> unosHechos, List<CondicionDeFiltrado> filtros) {
+    public List<Hecho> filtrarHechos(List<Hecho> unosHechos, List<CondicionDeFiltrado> filtros) {
         return unosHechos.stream().filter(unHecho -> filtrarHecho(unHecho,filtros))
                 .toList();
     }

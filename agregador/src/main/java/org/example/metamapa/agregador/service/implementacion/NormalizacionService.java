@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.metamapa.agregador.models.dtos.DTO_IN.HechoDTO_IN;
 import org.example.metamapa.agregador.models.entidades.Hecho;
+import org.example.metamapa.agregador.models.entidades.Origen;
 import org.example.metamapa.agregador.models.entidades.Ubicacion;
 import org.example.metamapa.agregador.service.INormalizacionService;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -129,8 +131,20 @@ public class NormalizacionService implements INormalizacionService {
         return parse(hechoSinNormalizar.getFechaAcontecimiento());
     }
 
+
+    private Origen normalizaOrigen(String origen) {
+        if ("DINAMICA".equals(origen)) {
+            return Origen.DINAMICA;
+        }
+        if ("ESTATICA".equals(origen)) {
+            return Origen.ESTATICA;
+        }
+        return Origen.PROXY;
+    }
+
     private Hecho normalizarHecho(HechoDTO_IN hechoDTO){
-        return new Hecho(
+
+        Hecho nuevoHecho = new Hecho(
                 hechoDTO.getTitulo(),
                 hechoDTO.getDescripcion(),
                 normalizarCategoria(hechoDTO),
@@ -139,6 +153,10 @@ public class NormalizacionService implements INormalizacionService {
                 hechoDTO.getEtiqueta(),
                 hechoDTO.getArchivosMultimedia()
         );
+
+        nuevoHecho.getOrigenes().add(normalizaOrigen(hechoDTO.getOrigen()));
+
+        return nuevoHecho;
     }
 
     public List<Hecho> normalizarHechos(List<HechoDTO_IN> hechosSinNormalizar){

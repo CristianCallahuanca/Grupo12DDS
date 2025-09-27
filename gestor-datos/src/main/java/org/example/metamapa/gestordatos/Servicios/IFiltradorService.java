@@ -9,4 +9,6 @@ import java.util.List;
 public interface IFiltradorService {
 
     public List<Hecho> filtrarHechosDataBase(List<CondicionDeFiltrado> condiciones);
+
+    public List<Hecho> filtrarHechos(List<Hecho> unosHechos, List<CondicionDeFiltrado> filtros);
 }

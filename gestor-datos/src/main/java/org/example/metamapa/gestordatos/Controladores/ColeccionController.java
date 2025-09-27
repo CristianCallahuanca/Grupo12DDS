@@ -26,6 +26,7 @@ public class ColeccionController {
         this.coleccionService = coleccionService;
     }
 
+    //ok
     @PostMapping("/colecciones")
     public ResponseEntity<String> crear(@RequestBody ColeccionInputDTO coleccion){
 
@@ -34,6 +35,7 @@ public class ColeccionController {
         return ResponseEntity.status(201).body("coleccion creada correctamente");
     }
 
+    //ok
     @GetMapping("/colecciones/{handle}")
     public ResponseEntity<ColeccionOutputDTO> retrieve(@PathVariable String handle) {
         ColeccionOutputDTO coleccionOutput = this.coleccionService.retrieveColeccion(handle);
@@ -43,14 +45,15 @@ public class ColeccionController {
         return ResponseEntity.status(200).body(coleccionOutput);
     }
 
+    //ok
     @GetMapping("/colecciones/{handle}/hechos")
-
     public ResponseEntity<List<HechoOutputDTO>> retrieveHechosColeccion (@PathVariable String handle, @RequestBody List<CriterioRequest> criterios){
 
         List<HechoOutputDTO> hechos = this.coleccionService.retrieveHechosColeccion(handle,criterios);
 
         return ResponseEntity.status(200).body(hechos);
     }
+
 
     @GetMapping("/colecciones/{handle}/modoNavegacion") //es así o al revés??
     public ResponseEntity<List<HechoOutputDTO>> retrieveModoNavegacion(@PathVariable String handle, @RequestBody Map<String, String> request) {

@@ -31,11 +31,12 @@ public class PorColeccion extends CondicionDeFiltrado{
 
     @Override
     public Specification<Hecho> toSpecification() {
+
         return (root, query, cb) -> {
-            // join con Hecho_de_coleccion
+            // Join hacia la tabla puente
             Join<Hecho, HechoDeColeccion> hechoColeccionJoin = root.join("hechosDeColeccion");
 
-            // join con Coleccion
+            // Desde ahí, join con Coleccion
             Join<HechoDeColeccion, Coleccion> coleccionJoin = hechoColeccionJoin.join("coleccion");
 
             return cb.equal(coleccionJoin.get("handle"), handle);

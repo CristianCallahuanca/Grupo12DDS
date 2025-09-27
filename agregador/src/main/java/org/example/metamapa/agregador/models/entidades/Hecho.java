@@ -64,7 +64,7 @@ public class Hecho {
     private String etiqueta;
 
     @JoinColumn(name = "contribuyente_id")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private ContribuyenteRegistrado contribuyente;
 
     @ElementCollection(targetClass = Origen.class)
@@ -93,6 +93,8 @@ public class Hecho {
         this.estadoHecho = EstadoHecho.EN_REVISION;
         this.estadoEdicionHecho = EstadoDeEdicion.NO_EDITADO;
         this.fechaCarga = LocalDateTime.now();
+        this.contribuyente = new ContribuyenteRegistrado(); //TODO
+        this.origenes = new ArrayList<Origen>();
 
         if(categoria == "Sin categoria"){
             this.setSinCategorizar(true);

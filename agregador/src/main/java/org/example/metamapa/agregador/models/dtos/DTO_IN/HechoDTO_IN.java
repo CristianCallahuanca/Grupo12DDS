@@ -18,6 +18,7 @@ public class HechoDTO_IN {
     private String etiqueta;
     private String contribuyenteID;
     private List<String> archivosMultimedia;
+    private String origen;
 }
 
 /*

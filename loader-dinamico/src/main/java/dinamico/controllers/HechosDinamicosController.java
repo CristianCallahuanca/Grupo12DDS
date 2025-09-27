@@ -31,10 +31,11 @@ public class HechosDinamicosController {
 
          List<HechoCrudoDTO_OUT> hechos = hechosService.obtenerHechos();
 
+
          System.out.println("BOCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
          System.out.println(hechos.get(0).getTitulo());
 
-         return hechos;
+         return hechos.stream().peek( e -> e.setOrigen("DINAMICA")).toList();
 
     }
 
