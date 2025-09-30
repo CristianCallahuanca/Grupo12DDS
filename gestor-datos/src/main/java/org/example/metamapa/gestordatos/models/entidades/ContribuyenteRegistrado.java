@@ -30,10 +30,10 @@ public class ContribuyenteRegistrado  {
         private String apellido;
 
         @Column(name = "dni")
-        private Number dni;
+        private Integer dni;
 
         @Column(name = "edad")
-        private Number edad;
+        private Integer edad;
 
         @OneToMany(mappedBy = "contribuyente")
         private List<Hecho> hechos;

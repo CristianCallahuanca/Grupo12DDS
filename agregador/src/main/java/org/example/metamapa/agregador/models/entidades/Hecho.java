@@ -96,6 +96,7 @@ public class Hecho {
         this.contribuyente = new ContribuyenteRegistrado(); //TODO
         this.origenes = new ArrayList<Origen>();
 
+
         if(categoria == "Sin categoria"){
             this.setSinCategorizar(true);
         }
