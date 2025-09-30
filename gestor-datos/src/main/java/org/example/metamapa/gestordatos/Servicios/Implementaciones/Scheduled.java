@@ -4,6 +4,8 @@ import org.example.metamapa.gestordatos.Servicios.IColeccionesService;
 import org.example.metamapa.gestordatos.Servicios.IScheduled;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.concurrent.TimeUnit;
+
 public class Scheduled implements IScheduled {
 
     private final IColeccionesService coleccionesService;
@@ -13,7 +15,8 @@ public class Scheduled implements IScheduled {
     }
 
     @Override
-    @org.springframework.scheduling.annotation.Scheduled(cron = "0 0 3 * * *")
+    //@org.springframework.scheduling.annotation.Scheduled(cron = "0 0 3 * * *")
+    @org.springframework.scheduling.annotation.Scheduled(initialDelay = 0, fixedRate = 1, timeUnit = TimeUnit.MINUTES)
     public void consensuarHechos(){
         System.out.println("HECHOS CONSENSUADOS");
         coleccionesService.aplicarConsensoATodas();

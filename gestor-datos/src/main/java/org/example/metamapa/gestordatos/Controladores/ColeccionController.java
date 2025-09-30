@@ -54,7 +54,7 @@ public class ColeccionController {
         return ResponseEntity.status(200).body(hechos);
     }
 
-
+    //navegar hechos de una colecion en base a un modo
     @GetMapping("/colecciones/{handle}/modoNavegacion") //es así o al revés??
     public ResponseEntity<List<HechoOutputDTO>> retrieveModoNavegacion(@PathVariable String handle, @RequestBody Map<String, String> request) {
         List<HechoOutputDTO> HechoOutputDTO = this.coleccionService.retrieveColeccionModoNavegacion(handle, request.get("modo_de_navegacion"));
