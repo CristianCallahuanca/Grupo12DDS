@@ -6,7 +6,7 @@ import org.example.metamapa.estatico.models.entidades.HechoCrudo;
 import java.util.List;
 
 @Getter
-public class HechoCrudoDTO {
+public class HechoDTO {
     private String titulo;
     private String descripcion;
     private String categoria;
@@ -20,7 +20,7 @@ public class HechoCrudoDTO {
     private String fechaCarga;
     private String id_hecho;
 
-    public HechoCrudoDTO(HechoCrudo hecho) {
+    public HechoDTO(HechoCrudo hecho) {
         this.titulo = hecho.getTitulo();
         this.descripcion = hecho.getDescripcion();
         this.categoria = hecho.getCategoria();

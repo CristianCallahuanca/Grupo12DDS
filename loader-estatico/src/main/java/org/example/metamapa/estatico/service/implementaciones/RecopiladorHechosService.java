@@ -3,7 +3,7 @@ package org.example.metamapa.estatico.service.implementaciones;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.extern.slf4j.Slf4j;
-import org.example.metamapa.estatico.models.dtos.HechoCrudoDTO;
+import org.example.metamapa.estatico.models.dtos.HechoDTO;
 import org.example.metamapa.estatico.models.entidades.ElementoCSV;
 import org.example.metamapa.estatico.models.entidades.HechoCrudo;
 import org.example.metamapa.estatico.models.repositorios.AdapterFS;
@@ -33,7 +33,7 @@ public class RecopiladorHechosService implements IRecopiladorHechos {
     //TO DO: comparar cantidadFilasALeer <= ElementoCSV.ultimaFilaLeida
 
     @Override
-    public List<HechoCrudoDTO> obtenerHechosCrudos(int cantidad) throws IOException {
+    public List<HechoDTO> obtenerHechosCrudos(int cantidad) throws IOException {
         ElementoCSV archivo = repositorio.csvALeer(fileServer);
 
         if (archivo == null) return List.of(); // No hay archivos nuevos
@@ -42,9 +42,9 @@ public class RecopiladorHechosService implements IRecopiladorHechos {
         repositorio.actualizarArchivoCSV(archivo);
 
         // Transformamos los HechoCrudo a DTO
-        List<HechoCrudoDTO> resultado = new ArrayList<>();
+        List<HechoDTO> resultado = new ArrayList<>();
         for (HechoCrudo h : hechos) {
-            resultado.add(new HechoCrudoDTO(h));
+            resultado.add(new HechoDTO(h));
         }
         return resultado;
     }
