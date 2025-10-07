@@ -1,11 +1,25 @@
 package org.example.metamapa.estatico.models.entidades;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+import java.time.LocalDateTime;
+
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class HechoCrudo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id_hecho;
+
     private String titulo;
     private String descripcion;
     private String categoria;
@@ -13,15 +27,8 @@ public class HechoCrudo {
     private String longitud;
     private String fechaAcontecimiento;
 
+    private boolean enviado;
+    private LocalDateTime fechaEnvio;
 
-    public HechoCrudo(String titulo, String descripcion, String categoria, String latitud, String longitud,
-                      String fechaAcontecimiento) {
-
-        this.titulo = titulo;
-        this.descripcion = descripcion;
-        this.categoria = categoria;
-        this.latitud = latitud;
-        this.longitud = longitud;
-        this.fechaAcontecimiento = fechaAcontecimiento;
-    }
+    // private String fuenteOrigen;
 }
