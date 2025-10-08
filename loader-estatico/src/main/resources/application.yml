@@ -12,7 +12,10 @@ loader:
     baseUrl: "http://localhost:8101"
 
 fileserver:
-  baseUrl: "http://localhost:8500"
+  tipo: local  # o "remoto"
+  basePath: "/home/user/archivos-csv"  # si es local
+  baseUrl: "http://localhost:8500"     # si es remoto
+
 
 agregador:
   baseUrl: "http://localhost:8200"

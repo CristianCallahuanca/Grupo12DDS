@@ -1,0 +1,78 @@
+package org.example.metamapa.estatico.service.implementaciones;
+
+import lombok.extern.slf4j.Slf4j;
+import org.example.metamapa.estatico.adapters.IAdapterFileServer;
+import org.example.metamapa.estatico.models.dtos.ArchivoCsv;
+import org.example.metamapa.estatico.models.entidades.CsvProcesado;
+import org.example.metamapa.estatico.models.entidades.HechoCrudo;
+import org.example.metamapa.estatico.models.repositorios.IRepositorioCSVProcesado;
+import org.example.metamapa.estatico.models.repositorios.IRepositorioHechos;
+import org.example.metamapa.estatico.service.IProcesadorCsvService;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@Slf4j
+public class ProcesadorCsvService implements IProcesadorCsvService {
+
+    private final IAdapterFileServer adapter;
+    private final IRepositorioCSVProcesado repositorioCSV;
+    private final IRepositorioHechos repositorioHechos;
+
+
+    public ProcesadorCsvService(IAdapterFileServer adapter,
+                                IRepositorioCSVProcesado repositorioCSV,
+                                IRepositorioHechos repositorioHechos) {
+        this.adapter = adapter;
+        this.repositorioCSV = repositorioCSV;
+        this.repositorioHechos = repositorioHechos;
+    }
+
+    @Override
+    public void procesarArchivosCsv() {
+        List<ArchivoCsv> archivos = adapter.obtenerArchivosDisponibles();
+
+        for (ArchivoCsv archivo : archivos) {
+            try {
+                procesarArchivo(archivo);
+            } catch (IOException e) {
+                log.error("Error leyendo el archivo {}: {}", archivo.getNombre(), e.getMessage());
+            } catch (Exception e) {
+                log.error("Error procesando el archivo {}: {}", archivo.getNombre(), e.getMessage());
+            }
+        }
+    }
+
+    private void procesarArchivo(ArchivoCsv archivo) throws IOException {
+        String nombre = archivo.getNombre();
+        byte[] contenido = archivo.leerComoBytes();
+        String hashNuevo = HashUtil.calcularSHA256(contenido);
+
+        if (!debeProcesarse(nombre, hashNuevo)) {
+            log.info("Archivo {} ya fue procesado y no cambió. Se omite.", nombre);
+            return;
+        }
+
+        log.debug("Procesando archivo {} con hash {}", nombre, hashNuevo);
+        List<HechoCrudo> hechos = adapter.leerArchivoDesdeBytes(contenido);
+        repositorioHechos.saveAll(hechos);
+        guardarOActualizarRegistro(nombre, hashNuevo);
+        log.info("Archivo {} procesado exitosamente.", nombre);
+    }
+
+    private boolean debeProcesarse(String nombreArchivo, String nuevoHash) {
+        if (!repositorioCSV.existsByNombre(nombreArchivo)) return true;
+        String hashAnterior = repositorioCSV.obtenerHashPorNombre(nombreArchivo);
+        return !nuevoHash.equals(hashAnterior);
+    }
+
+    private void guardarOActualizarRegistro(String nombreArchivo, String hash) {
+        CsvProcesado registro = new CsvProcesado(nombreArchivo, hash, LocalDateTime.now());
+        repositorioCSV.save(registro);
+    }
+
+}
+
