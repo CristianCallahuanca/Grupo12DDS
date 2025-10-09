@@ -6,10 +6,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
-public interface IMayorCategoriaFrecuente extends JpaRepository<CategoriaMasFrecuente, Long> {
+public interface ICategoriaMasFrecuente extends JpaRepository<CategoriaMasFrecuente, String> {
 
     @Query(value = """
-        SELECT 
+        SELECT
             categoria,
             COUNT(*) as cantidad
         FROM hecho

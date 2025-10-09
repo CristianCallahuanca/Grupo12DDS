@@ -101,6 +101,12 @@ public class ColeccionesService implements IColeccionesService {
         );
     }
 
+    private HechoDeColeccion crearHechoDeColeccion(Hecho h, Coleccion c){
+        HechoDeColeccion hdc = new HechoDeColeccion(h, false);
+        hdc.setColeccion(c);
+        return hdc;
+    }
+
     /*
     ##########
     ##Create##
@@ -123,10 +129,10 @@ public class ColeccionesService implements IColeccionesService {
         System.out.println("la coleccion tiene: " +  coleccion.getCriterios().size() + " criterios de filtrado");
 
         List<Hecho> hechosFiltrados = hechosService.filtrarHechos(coleccion.getCriterios());
-
         System.out.println("la candidad de hechos obtenida: " + hechosFiltrados.size());
+        System.out.println("Los hechos de la colección son: " +  hechosFiltrados);
 
-        coleccion.setHechosColeccion(hechosFiltrados.stream().map(h -> new HechoDeColeccion(h, false)).toList());
+        coleccion.setHechosColeccion(hechosFiltrados.stream().map(h -> crearHechoDeColeccion(h, coleccion)).toList());
 
         System.out.println("la candidad de hechosColeccion obtenida: " + hechosFiltrados.size());
 
