@@ -8,3 +8,10 @@ fuente:
     url: http://instancia-metamapa.org/MODIFICA_URL_BASE
 loader:
   id: metamapa-cordoba-EJEMPLO
+  self:
+    nombreFuente: "Fuente-MetaMapa"
+    tipo: "PROXY"
+    baseUrl: "http://localhost:8103"
+
+agregador:
+  baseUrl: "http://localhost:8200"

@@ -35,6 +35,11 @@ public class HechosDinamicosController {
 
     }
 
+    @GetMapping("/status")
+    public ResponseEntity<String> status() {
+        return ResponseEntity.ok("Loader Dinamico disponible");
+    }
+
 }
 
 

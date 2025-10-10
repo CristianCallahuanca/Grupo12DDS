@@ -25,4 +25,9 @@ public class HechosController {
 
         return ResponseEntity.ok(hechos); // 200
     }
+
+    @GetMapping("/status")
+    public ResponseEntity<String> status() {
+        return ResponseEntity.ok("Loader Metamapa disponible");
+    }
 }

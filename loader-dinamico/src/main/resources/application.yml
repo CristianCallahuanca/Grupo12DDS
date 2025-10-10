@@ -3,3 +3,11 @@ spring:
     name: loader-dinamico
 server:
   port: 8102
+loader:
+  self:
+    nombreFuente: "Fuente-DINAMICA"
+    tipo: "DINAMICA"
+    baseUrl: "http://localhost:8103"
+
+agregador:
+  baseUrl: "http://localhost:8200"

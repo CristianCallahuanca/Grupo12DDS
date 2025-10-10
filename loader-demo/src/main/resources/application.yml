@@ -8,4 +8,12 @@ loaderdemo:
     url: https://conexion.fake-source.edu/api
 loader:
   id: loader-demo-oficial
+  self:
+    nombreFuente: "Fuente-Demo"
+    tipo: "PROXY"
+    baseUrl: "http://localhost:8700"
+
+agregador:
+  baseUrl: "http://localhost:8200"
+
 
