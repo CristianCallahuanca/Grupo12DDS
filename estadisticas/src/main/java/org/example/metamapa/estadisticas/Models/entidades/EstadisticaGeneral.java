@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,6 +29,10 @@ public class EstadisticaGeneral {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "segunda_id")
     private CategoriaMasFrecuente segundaEstadistica;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "estadistica_id")
+    private List<ProvinciaMasFrecuentePorCategoria> terceraEstadistica;
 
     @Column(name = "fecha")
     private LocalDateTime fecha;

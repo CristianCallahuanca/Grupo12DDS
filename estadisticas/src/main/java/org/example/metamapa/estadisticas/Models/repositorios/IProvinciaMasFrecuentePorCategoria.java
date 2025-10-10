@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface IProvinciaMasFrecuentePorCategoria extends JpaRepository<ProvinciaMasFrecuentePorCategoria, Long> {
     @Query(value = """
@@ -56,6 +58,6 @@ public interface IProvinciaMasFrecuentePorCategoria extends JpaRepository<Provin
                     ORDER BY c.categoria;
             
     """, nativeQuery = true)
-    ProvinciaMasFrecuentePorCategoria findTopProvinciaPorCategoria();
+    List<ProvinciaMasFrecuentePorCategoria> findTopProvinciaPorCategoria();
 
 }

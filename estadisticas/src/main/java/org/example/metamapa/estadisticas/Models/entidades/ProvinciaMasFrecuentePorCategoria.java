@@ -18,8 +18,6 @@ public class ProvinciaMasFrecuentePorCategoria {
     @Column(name = "cantidad")
     private long cantidad;
 
-
-
     ProvinciaMasFrecuentePorCategoria(String categoria, String provincia, long cantidad){
         this.categoria = categoria;
         this.provincia = provincia;
