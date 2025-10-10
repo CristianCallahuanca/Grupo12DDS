@@ -61,7 +61,7 @@ public class AgregacionService implements IAgregacionService{
         //obtenermos todos los hechos de las fuentes los normalizamos sacamos duplicados y los almacenamos en BD
 
          List<Hecho> hechos = normalizacionService.normalizarHechos(this.getHechosDTO3FuentesSinLimpiar());
-         List<Hecho> hechos_finales = duplicacionService.eliminarHechosRepetidos(hechos); //TODO revisar si hay duplicados con la DB
+         //List<Hecho> hechos_finales = duplicacionService.eliminarHechosRepetidos(hechos); //TODO revisar si hay duplicados con la DB
 
          hechosRepository.saveAll(hechos);
     }

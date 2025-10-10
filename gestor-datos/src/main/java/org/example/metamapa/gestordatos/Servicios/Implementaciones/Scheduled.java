@@ -27,11 +27,10 @@ public class Scheduled implements IScheduled {
         coleccionesService.aplicarConsensoATodas(); //TODO: arreglar
     }
 
-    @org.springframework.scheduling.annotation.Scheduled(initialDelay = 0, fixedRate = 1, timeUnit = TimeUnit.HOURS)
+    @org.springframework.scheduling.annotation.Scheduled(initialDelay = 0, fixedRate = 10, timeUnit = TimeUnit.SECONDS)
     public void crearEstadisticas(){
         System.out.println("SE ESTAN GENERANDO NUEVAS ESTADISTICAS");
         estadisticaService.generarEstadisticas();
-
     }
 
 }
