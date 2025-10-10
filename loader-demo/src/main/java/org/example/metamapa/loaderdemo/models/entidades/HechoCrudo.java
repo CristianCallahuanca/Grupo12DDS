@@ -21,6 +21,8 @@ public class HechoCrudo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String loaderId;
+
     private String titulo;
     private String descripcion;
     private String categoria;

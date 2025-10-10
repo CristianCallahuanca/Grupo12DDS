@@ -6,4 +6,6 @@ server:
 loaderdemo:
   fuente:
     url: https://conexion.fake-source.edu/api
+loader:
+  id: loader-demo-oficial
 

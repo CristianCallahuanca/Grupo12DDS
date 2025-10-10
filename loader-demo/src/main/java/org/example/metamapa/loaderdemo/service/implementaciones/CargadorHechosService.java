@@ -5,6 +5,7 @@ import org.example.metamapa.loaderdemo.infraestructura.adapters.IAdapterFuenteDe
 import org.example.metamapa.loaderdemo.models.entidades.HechoCrudo;
 import org.example.metamapa.loaderdemo.models.repositorio.IRepositorioHechos;
 import org.example.metamapa.loaderdemo.service.ICargadorHechosService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,6 +18,9 @@ public class CargadorHechosService implements ICargadorHechosService {
     private final IAdapterFuenteDemo adapter;
     private final IRepositorioHechos repositorio;
 
+    @Value("${loader.id}")
+    private String loaderId;
+
     @Override
     public void cargarSiguienteHecho() {
         adapter.obtenerSiguienteHecho()
@@ -26,6 +30,7 @@ public class CargadorHechosService implements ICargadorHechosService {
 
     private HechoCrudo mapearADominio(Map<String, Object> datos) {
         return HechoCrudo.builder()
+                .loaderId(loaderId)
                 .titulo((String) datos.get("titulo"))
                 .descripcion((String) datos.get("descripcion"))
                 .categoria((String) datos.get("categoria"))
