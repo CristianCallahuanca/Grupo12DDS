@@ -1,5 +1,6 @@
 package org.example.metamapa.loaderdemo.service.implementaciones;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.metamapa.loaderdemo.models.dto.HechoDTO;
 import org.example.metamapa.loaderdemo.models.entidades.HechoCrudo;
@@ -18,21 +19,22 @@ public class HechosService implements IHechosService {
 
     private final IRepositorioHechos repositorio;
 
+    @Transactional
     @Override
     public List<HechoDTO> listarHechos() {
+        List<HechoCrudo> hechosNoEnviados = repositorio.findByEnviadoFalse();
 
-        List<HechoCrudo> hechosNoEnviados = StreamSupport.stream(repositorio.findAll().spliterator(), false)
-                .filter(h -> !h.isEnviado())
-                .collect(Collectors.toList());
-
+        if (hechosNoEnviados.isEmpty()) {
+            return List.of();
+        }
 
         hechosNoEnviados.forEach(h -> {
             h.setEnviado(true);
             h.setFechaEnvio(LocalDateTime.now());
-            repositorio.save(h);
         });
 
-        // 3. Retornar como DTOs
+        repositorio.saveAll(hechosNoEnviados);
+
         return hechosNoEnviados.stream()
                 .map(this::mapearADTO)
                 .collect(Collectors.toList());
