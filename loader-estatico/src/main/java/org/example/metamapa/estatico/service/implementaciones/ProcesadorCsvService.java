@@ -4,10 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.estatico.adapters.IAdapterFileServer;
 import org.example.metamapa.estatico.models.dtos.ArchivoCsv;
 import org.example.metamapa.estatico.models.entidades.CsvProcesado;
+import org.example.metamapa.estatico.models.entidades.CsvProcesadoId;
 import org.example.metamapa.estatico.models.entidades.HechoCrudo;
 import org.example.metamapa.estatico.models.repositorios.IRepositorioCSVProcesado;
 import org.example.metamapa.estatico.models.repositorios.IRepositorioHechos;
 import org.example.metamapa.estatico.service.IProcesadorCsvService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,6 +24,8 @@ public class ProcesadorCsvService implements IProcesadorCsvService {
     private final IRepositorioCSVProcesado repositorioCSV;
     private final IRepositorioHechos repositorioHechos;
 
+    @Value("${loader.self.id}")
+    private String loaderId;
 
     public ProcesadorCsvService(IAdapterFileServer adapter,
                                 IRepositorioCSVProcesado repositorioCSV,
@@ -58,20 +62,28 @@ public class ProcesadorCsvService implements IProcesadorCsvService {
 
         log.debug("Procesando archivo {} con hash {}", nombre, hashNuevo);
         List<HechoCrudo> hechos = adapter.leerArchivoDesdeBytes(contenido);
+
+        for (HechoCrudo hecho : hechos) {
+            hecho.setLoaderId(loaderId);
+        }
+
         repositorioHechos.saveAll(hechos);
         guardarOActualizarRegistro(nombre, hashNuevo);
         log.info("Archivo {} procesado exitosamente.", nombre);
     }
 
     private boolean debeProcesarse(String nombreArchivo, String nuevoHash) {
-        if (!repositorioCSV.existsByNombre(nombreArchivo)) return true;
-        String hashAnterior = repositorioCSV.obtenerHashPorNombre(nombreArchivo);
+        if (!repositorioCSV.existsById_LoaderIdAndId_NombreArchivo(loaderId, nombreArchivo)) return true;
+
+        String hashAnterior = repositorioCSV.obtenerHashPorNombre(loaderId, nombreArchivo);
         return !nuevoHash.equals(hashAnterior);
     }
 
     private void guardarOActualizarRegistro(String nombreArchivo, String hash) {
-        CsvProcesado registro = new CsvProcesado(nombreArchivo, hash, LocalDateTime.now());
+        CsvProcesadoId id = new CsvProcesadoId(loaderId, nombreArchivo);
+        CsvProcesado registro = new CsvProcesado(id, hash, LocalDateTime.now());
         repositorioCSV.save(registro);
+
     }
 
 }

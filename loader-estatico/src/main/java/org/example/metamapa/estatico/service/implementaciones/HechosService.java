@@ -6,6 +6,7 @@ import org.example.metamapa.estatico.models.entidades.HechoCrudo;
 import org.example.metamapa.estatico.models.repositorios.IRepositorioHechos;
 import org.example.metamapa.estatico.service.IHechosService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,10 +15,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-
 public class HechosService implements IHechosService {
 
     private final IRepositorioHechos repositorioHechos;
+
+    @Value("${loader.self.id}")
+    private String loaderId;
 
     @Autowired
     public HechosService(IRepositorioHechos repositorioHechos) {
@@ -27,7 +30,7 @@ public class HechosService implements IHechosService {
     @Override
     @Transactional
     public List<HechoDTO> obtenerHechos() {
-        List<HechoCrudo> hechosNoEnviados = repositorioHechos.findByEnviadoFalse();
+        List<HechoCrudo> hechosNoEnviados = repositorioHechos.findByEnviadoFalse(loaderId);
 
         if (hechosNoEnviados.isEmpty()) {
             return List.of();
