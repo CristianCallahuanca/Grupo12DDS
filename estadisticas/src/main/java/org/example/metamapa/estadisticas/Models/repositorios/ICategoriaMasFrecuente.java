@@ -1,15 +1,16 @@
-package org.example.metamapa.gestordatos.models.repositorios.consultas;
+package org.example.metamapa.estadisticas.Models.repositorios;
 
-import org.example.metamapa.gestordatos.models.entidades.consultas.CategoriaMasFrecuente;
+import org.example.metamapa.estadisticas.Models.entidades.CategoriaMasFrecuente;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
-public interface ICategoriaMasFrecuente extends JpaRepository<CategoriaMasFrecuente, String> {
+public interface ICategoriaMasFrecuente extends JpaRepository<CategoriaMasFrecuente, Long> {
 
     @Query(value = """
         SELECT
+            ROW_NUMBER() OVER() as id,
             categoria,
             COUNT(*) as cantidad
         FROM hecho
@@ -18,5 +19,6 @@ public interface ICategoriaMasFrecuente extends JpaRepository<CategoriaMasFrecue
         ORDER BY cantidad DESC
         LIMIT 1
         """, nativeQuery = true)
+
     CategoriaMasFrecuente findCategoriaMasFrecuente();
 }

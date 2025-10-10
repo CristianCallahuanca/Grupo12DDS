@@ -1,4 +1,4 @@
-package org.example.metamapa.gestordatos.models.entidades.consultas;
+package org.example.metamapa.estadisticas.Models.entidades;
 
 
 import jakarta.persistence.*;
@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -28,7 +30,7 @@ public class HechosPorProvincia {
     @Column(name = "cantidad_hechos")
     private long cantidad_hechos;
 
-    HechosPorProvincia(String titulo, String provincia, int cantidad_hechos){
+    public HechosPorProvincia(String titulo, String provincia, long cantidad_hechos){
         this.titulo = titulo;
         this.provincia = provincia;
         this.cantidad_hechos = cantidad_hechos;

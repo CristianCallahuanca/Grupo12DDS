@@ -1,8 +1,14 @@
 package org.example.metamapa.estadisticas.Servicios;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.example.metamapa.estadisticas.Models.entidades.CategoriaMasFrecuente;
+import org.example.metamapa.estadisticas.Models.entidades.HechosPorProvincia;
 
-@Repository                                          //TODO: Cambiar tipo según que se guarde
-public interface IEstadisticaService extends JpaRepository<String, String> {
+public interface IEstadisticaService {
+
+    void generarEstadisticas();
+    HechosPorProvincia generarEstadisticaMayorCantHechosProvincia();
+    CategoriaMasFrecuente generarEstadisticaMayorCantHechosCategoria();
+    //public void generarEstadisticaMayorCantCategoriaProvincia();
+    //public void generarEstadisticaHoraDelDia();
+    //public void generarEstadisticaCantidadSolicitudesSpam();
 }

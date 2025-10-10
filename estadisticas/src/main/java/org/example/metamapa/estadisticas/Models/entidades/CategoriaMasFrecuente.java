@@ -1,4 +1,4 @@
-package org.example.metamapa.gestordatos.models.entidades.consultas;
+package org.example.metamapa.estadisticas.Models.entidades;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,10 +18,8 @@ import java.util.UUID;
 public class CategoriaMasFrecuente {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "categoria")
     private String categoria;
@@ -29,9 +27,9 @@ public class CategoriaMasFrecuente {
     @Column(name = "cantidad")
     private long cantidad;
 
+
     public CategoriaMasFrecuente(String categoria, long cantidad) {
         this.categoria = categoria;
         this.cantidad = cantidad;
-        this.id = UUID.randomUUID().toString();
     }
 }

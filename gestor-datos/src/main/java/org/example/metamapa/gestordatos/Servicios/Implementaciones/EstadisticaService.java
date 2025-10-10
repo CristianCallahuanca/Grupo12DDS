@@ -5,7 +5,6 @@ import org.example.metamapa.gestordatos.Servicios.IEstadisticaService;
 import org.example.metamapa.gestordatos.models.entidades.consultas.CategoriaMasFrecuente;
 import org.example.metamapa.gestordatos.models.entidades.consultas.HechosPorProvincia;
 import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
-import org.example.metamapa.gestordatos.models.repositorios.consultas.*;
 import org.springframework.stereotype.Service;
 
 @Service
