@@ -22,27 +22,46 @@ public class EstadisticaGeneral {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "primera_id")
-    private HechosPorProvincia hechosProvincia;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "segunda_id")
-    private CategoriaMasFrecuente categoriaMasFrec;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "estadistica_id")
-    private List<ProvinciaMasFrecuentePorCategoria> provinciaPorCat;
-
     @Column(name = "fecha")
     private LocalDateTime fecha;
 
-    public EstadisticaGeneral(HechosPorProvincia hechosProvincia, CategoriaMasFrecuente categoriaMasFrec,
-                              List<ProvinciaMasFrecuentePorCategoria> frcPorCategoria){
+    @Column(name = "tipo_estadistica")
+    private String tipo_estadistica;
+
+    @Column(name = "cantidad_solicitudes_spam")
+    private String cantidad_solicitudes_spam;
+
+    @Column(name = "categoria")
+    private String categoria;
+
+    @Column(name = "provincia")
+    private String provincia;
+
+    @Column(name = "cantidad")
+    private String cantidad;
+
+    @Column(name = "titulo")
+    private String titulo;
+
+    @Column(name = "cantidad_hechos")
+    private String cantidadHechos;
+
+    @Column(name = "hora")
+    private String hora;
+
+
+    public EstadisticaGeneral(String tipo_estadistica,String cantidad_solicitudes_spam, String categoria, String provincia, String cantidad,
+                              String titulo, String cantidadHechos, String hora) {
+
         this.fecha = LocalDateTime.now();
-        this.hechosProvincia = hechosProvincia;
-        this.categoriaMasFrec = categoriaMasFrec;
-        this.provinciaPorCat = frcPorCategoria;
+        this.tipo_estadistica = tipo_estadistica;
+        this.cantidad_solicitudes_spam = cantidad_solicitudes_spam;
+        this.categoria = categoria;
+        this.provincia = provincia;
+        this.cantidad = cantidad;
+        this.titulo = titulo;
+        this.cantidadHechos = cantidadHechos;
+        this.hora = hora;
     }
 
 }

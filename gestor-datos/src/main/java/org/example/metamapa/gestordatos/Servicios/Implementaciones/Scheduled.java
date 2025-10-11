@@ -1,9 +1,7 @@
 package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 
 import org.example.metamapa.gestordatos.Servicios.IColeccionesService;
-import org.example.metamapa.gestordatos.Servicios.IEstadisticaService;
 import org.example.metamapa.gestordatos.Servicios.IScheduled;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -12,11 +10,9 @@ import java.util.concurrent.TimeUnit;
 public class Scheduled implements IScheduled {
 
     private final IColeccionesService coleccionesService;
-    private final IEstadisticaService estadisticaService;
 
-    public Scheduled(IColeccionesService coleccionesService, IEstadisticaService estadisticaService) {
+    public Scheduled(IColeccionesService coleccionesService) {
         this.coleccionesService = coleccionesService;
-        this.estadisticaService = estadisticaService;
     }
 
     @Override
@@ -25,12 +21,6 @@ public class Scheduled implements IScheduled {
     public void consensuarHechos(){
         System.out.println("HECHOS CONSENSUADOS");
         coleccionesService.aplicarConsensoATodas(); //TODO: arreglar
-    }
-
-    @org.springframework.scheduling.annotation.Scheduled(initialDelay = 0, fixedRate = 10, timeUnit = TimeUnit.SECONDS)
-    public void crearEstadisticas(){
-        System.out.println("SE ESTAN GENERANDO NUEVAS ESTADISTICAS");
-        estadisticaService.generarEstadisticas();
     }
 
 }

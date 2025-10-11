@@ -15,7 +15,7 @@ public class Schedule implements ISchedule {
         this.estadisticaService = estadisticaService;
     }
 
-    @org.springframework.scheduling.annotation.Scheduled(initialDelay = 0, fixedRate = 10, timeUnit = TimeUnit.SECONDS)
+    @org.springframework.scheduling.annotation.Scheduled(initialDelay = 0, fixedRate = 100000, timeUnit = TimeUnit.SECONDS)
     public void crearEstadisticas(){
         System.out.println("SE ESTAN GENERANDO NUEVAS ESTADISTICAS");
         System.out.println("Joaco buto");
