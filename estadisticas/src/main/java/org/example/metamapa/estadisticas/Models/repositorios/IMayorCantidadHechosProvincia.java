@@ -19,5 +19,5 @@ public interface IMayorCantidadHechosProvincia extends JpaRepository<HechosPorPr
             LIMIT 1;
     """, nativeQuery = true)
 
-    HechosPorProvincia findTopProvinciaColeccion();
+        HechosPorProvincia findTopProvinciaColeccion();
 }

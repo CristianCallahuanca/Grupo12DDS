@@ -1,7 +1,15 @@
 package org.example.metamapa.estadisticas.Models.entidades;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "ProvinciaMasFrecuentePorCategoria")
 public class ProvinciaMasFrecuentePorCategoria {
@@ -23,5 +31,4 @@ public class ProvinciaMasFrecuentePorCategoria {
         this.provincia = provincia;
         this.cantidad = cantidad;
     }
-
 }
