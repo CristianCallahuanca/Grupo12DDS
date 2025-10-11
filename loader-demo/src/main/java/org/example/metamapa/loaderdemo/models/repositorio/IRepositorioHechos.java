@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface IRepositorioHechos extends JpaRepository<HechoCrudo, Long> {
-    List<HechoCrudo> findByEnviadoFalse(String loaderId);
+    List<HechoCrudo> findByEnviadoFalseAndLoaderId(String loaderId);
 }

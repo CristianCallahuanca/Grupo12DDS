@@ -8,9 +8,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @Slf4j
-public class LoaderProxyApplication {
+public class LoaderMetamapaApplication {
     public static void main(String[] args) {
-        SpringApplication.run(LoaderProxyApplication.class, args);
-        log.info("Loader Proxy INICIADO");
+        SpringApplication.run(LoaderMetamapaApplication.class, args);
+        log.info("Loader Metamapa INICIADO");
     }
 }

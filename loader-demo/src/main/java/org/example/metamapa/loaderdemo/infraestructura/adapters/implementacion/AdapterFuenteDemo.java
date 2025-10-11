@@ -19,7 +19,7 @@ import java.util.Optional;
 public class AdapterFuenteDemo implements IAdapterFuenteDemo {
 
     private final Conexion conexion;
-    private URL url; //quizas vaya en properties
+    private URL url; //quizas vaya en
     private LocalDateTime fechaUltimaConsulta = LocalDateTime.now().minusHours(1); // ejemplo inicial
 
     @Override

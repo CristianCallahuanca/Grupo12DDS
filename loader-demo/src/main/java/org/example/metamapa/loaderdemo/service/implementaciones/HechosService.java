@@ -26,7 +26,7 @@ public class HechosService implements IHechosService {
     @Transactional
     @Override
     public List<HechoDTO> listarHechos() {
-        List<HechoCrudo> hechosNoEnviados = repositorio.findByEnviadoFalse(loaderId);
+        List<HechoCrudo> hechosNoEnviados = repositorio.findByEnviadoFalseAndLoaderId(loaderId);
 
         if (hechosNoEnviados.isEmpty()) {
             return List.of();

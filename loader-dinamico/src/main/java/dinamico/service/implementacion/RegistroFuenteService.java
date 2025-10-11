@@ -28,23 +28,24 @@ public class RegistroFuenteService {
     @PostConstruct
     public void anunciarFuenteAlAgregador() {
         FuenteDTO dto = new FuenteDTO(nombreFuente, tipoFuente, baseUrl);
-        String endpoint = urlAgregador + "/registrar";
+        String endpoint = urlAgregador + "/fuentes/registrar";
 
-        log.info("Anunciando fuente al agregador en {}", endpoint);
+        log.info("Anunciando fuente '{}' al Agregador en {}", nombreFuente, endpoint);
 
         try {
             webClient.post()
-                    .uri("/registrarse")
+                    .uri(endpoint)
                     .bodyValue(dto)
                     .retrieve()
                     .toBodilessEntity()
                     .block();
 
-            log.info("Loader registrado exitosamente en el Agregador");
+            log.info("Loader '{}' registrado exitosamente en el Agregador", nombreFuente);
         } catch (Exception e) {
             log.error("Error al registrar el loader en el Agregador", e);
             throw new IllegalStateException("Fallo al anunciarse al Agregador, abortando arranque");
         }
     }
+
 }
 
