@@ -11,7 +11,7 @@ public class ScheduledCargarHechos {
 
     private final ICargadorHechosService cargadorHechosService;
 
-    @Scheduled(cron = "0 0 * * * *") // cada hora, en punto
+    @Scheduled(cron = "*/30 * * * * *") // cada hora, en punto
     public void ejecutarCargaProgramada() {
         System.out.println("[Scheduler] Ejecutando carga de hechos desde fuente demo...");
         cargadorHechosService.cargarSiguienteHecho();

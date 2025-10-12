@@ -1,6 +1,7 @@
 package org.example.metamapa.loaderdemo.service.implementaciones;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.loaderdemo.infraestructura.adapters.IAdapterFuenteDemo;
 import org.example.metamapa.loaderdemo.models.entidades.HechoCrudo;
 import org.example.metamapa.loaderdemo.models.repositorio.IRepositorioHechos;
@@ -9,10 +10,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CargadorHechosService implements ICargadorHechosService {
 
     private final IAdapterFuenteDemo adapter;
@@ -29,6 +32,16 @@ public class CargadorHechosService implements ICargadorHechosService {
     }
 
     private HechoCrudo mapearADominio(Map<String, Object> datos) {
+        LocalDateTime fechaHecho = null;
+        try {
+
+            fechaHecho = LocalDateTime.parse(datos.get("fecha").toString(),
+                    java.time.format.DateTimeFormatter.ISO_DATE_TIME);
+        } catch (Exception e) {
+            log.error("[WARN] No se pudo parsear la fecha, usando fecha actual. Valor: {}", datos.get("fecha"));
+            fechaHecho = LocalDateTime.now();
+        }
+
         return HechoCrudo.builder()
                 .loaderId(loaderId)
                 .titulo((String) datos.get("titulo"))
@@ -37,10 +50,11 @@ public class CargadorHechosService implements ICargadorHechosService {
                 .latitud(Double.valueOf(datos.get("latitud").toString()))
                 .longitud(Double.valueOf(datos.get("longitud").toString()))
                 .etiqueta((String) datos.get("etiqueta"))
-                .fecha(LocalDate.parse((String) datos.get("fecha")))
+                .fecha(fechaHecho.toLocalDate())
                 .fuente("conexion_demo")
                 .fechaIngesta(LocalDate.now())
                 .enviado(false)
                 .build();
     }
+
 }
