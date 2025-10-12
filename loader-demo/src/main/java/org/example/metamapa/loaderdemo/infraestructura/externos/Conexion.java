@@ -1,6 +1,7 @@
 package org.example.metamapa.loaderdemo.infraestructura.externos;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -14,10 +15,13 @@ public class Conexion {
     private final WebClient webClient;
     private String token;
 
-    public Conexion(WebClient.Builder builder) {
+    public Conexion(WebClient.Builder builder, @Value("${loaderdemo.fuente.url}") String baseUrl)
+    {
         this.webClient = builder
-                .baseUrl("https://api-ddsi.disilab.ar/public")
+                .baseUrl(baseUrl)
                 .build();
+
+        log.info("Conexión inicializada con baseUrl={}", baseUrl);
     }
 
     /**

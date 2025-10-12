@@ -5,7 +5,7 @@ server:
   port: 8700
 loaderdemo:
   fuente:
-    url: https://conexion.fake-source.edu/api
+    url: https://api-ddsi.disilab.ar/public
 loader:
   id: loader-demo-oficial
   self:
