@@ -18,6 +18,8 @@ public class CsvParserUtil {
         try (Reader reader = new InputStreamReader(new ByteArrayInputStream(contenido), StandardCharsets.UTF_8)) {
             Iterable<CSVRecord> registros = CSVFormat.DEFAULT
                     .withFirstRecordAsHeader()
+                    .withTrim()
+                    .withQuote('"')
                     .parse(reader);
 
             for (CSVRecord record : registros) {

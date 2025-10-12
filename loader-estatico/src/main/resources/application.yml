@@ -14,10 +14,16 @@ loader:
 
 fileserver:
   tipo: local  # o "remoto"
-  basePath: "/home/user/archivos-csv"  # si es local
+  basePath: "D:/UTN/TERCERO/Diseño de Sistemas/Grupo12DDS/datos" # si es local
   baseUrl: "http://localhost:8500"     # si es remoto
 
 
 agregador:
   baseUrl: "http://localhost:8200"
 
+logging:
+  file:
+    name: logs/loader-estatico.log
+  level:
+    root: INFO
+    org.example.metamapa: DEBUG

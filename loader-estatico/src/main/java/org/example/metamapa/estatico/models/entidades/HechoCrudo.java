@@ -35,6 +35,7 @@ public class HechoCrudo {
     private String loaderId;
 
     private String titulo;
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
     private String categoria;
     private String latitud;

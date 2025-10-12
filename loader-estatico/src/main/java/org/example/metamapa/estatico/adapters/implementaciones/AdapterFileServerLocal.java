@@ -1,5 +1,6 @@
 package org.example.metamapa.estatico.adapters.implementaciones;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.estatico.adapters.IAdapterFileServer;
 import org.example.metamapa.estatico.models.dtos.ArchivoCsv;
 import org.example.metamapa.estatico.models.entidades.HechoCrudo;
@@ -11,9 +12,11 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @ConditionalOnProperty(name = "fileserver.tipo", havingValue = "local")
+@Slf4j
 public class AdapterFileServerLocal implements IAdapterFileServer {
 
     @Value("${fileserver.basePath}")
@@ -23,6 +26,14 @@ public class AdapterFileServerLocal implements IAdapterFileServer {
     public List<ArchivoCsv> obtenerArchivosDisponibles() {
         File carpeta = new File(basePath);
         File[] archivos = carpeta.listFiles((dir, name) -> name.endsWith(".csv"));
+        if (archivos == null || archivos.length == 0) {
+            log.warn("No se encontraron archivos CSV en {}", basePath);
+        } else {
+            log.info("Archivos detectados: {}",
+                    Arrays.stream(archivos)
+                            .map(File::getName)
+                            .collect(Collectors.joining(", ")));
+        }
 
         if (archivos == null) return List.of();
 
