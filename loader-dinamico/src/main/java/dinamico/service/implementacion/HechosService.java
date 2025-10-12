@@ -20,25 +20,33 @@ public class HechosService implements IHechosService {
         this.repositorioHechosCrudos = repositorioHechosCrudos;
     }
 
-    public List<HechoCrudoDTO_OUT> obtenerHechos(){
+    public List<HechoCrudoDTO_OUT> obtenerHechos() {
+        try {
+            List<HechoCrudo> hechos = repositorioHechosCrudos.findByFueLeidoFalse();
+            hechos.forEach(h -> h.setFueLeido(true));
+            repositorioHechosCrudos.saveAll(hechos);
 
-        List<HechoCrudo> hechos = repositorioHechosCrudos.findByFueLeidoFalse();
+            List<HechoCrudoDTO_OUT> dtos = crudoDTOOuts(hechos);
 
-        List <HechoCrudoDTO_OUT> hechosDTO = crudoDTOOuts(hechos);
+            dtos.forEach(dto -> dto.setOrigen("DINAMICA"));
 
-        hechos.stream().forEach(h -> h.setFueLeido(true));
-
-        repositorioHechosCrudos.saveAll(hechos);
-
-        return hechosDTO;
+            return dtos;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener los hechos del loader dinámico", e);
+        }
     }
 
+
     public void cargarHecho(HechoCrudoDTO_IN hecho){
+
         repositorioHechosCrudos.save(dtoInAHechoCrudo(hecho));
+
     }
 
     public void vaciarDB(){
+
         repositorioHechosCrudos.deleteAll();
+
     }
 
     public List<HechoCrudoDTO_OUT> crudoDTOOuts(List<HechoCrudo> hechos){
