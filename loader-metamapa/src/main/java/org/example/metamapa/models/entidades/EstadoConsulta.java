@@ -24,3 +24,6 @@ public class EstadoConsulta {
     @Enumerated(EnumType.STRING)
     private EstadoLoader estado;
 }
+
+
+
