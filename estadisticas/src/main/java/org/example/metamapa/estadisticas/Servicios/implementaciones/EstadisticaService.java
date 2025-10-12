@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class EstadisticaService implements IEstadisticaService {
@@ -20,11 +22,47 @@ public class EstadisticaService implements IEstadisticaService {
         this.repoEstadisticas = repoEstadisticas;
     }
 
+    public List<EstadisticaGeneral> obtenerEstadisticas(){
+
+        String url = "jdbc:mysql://localhost:3306/central";
+        String user = "root";
+        String password = "12345678";
+        List<EstadisticaGeneral> listaEstadisticas = new ArrayList<EstadisticaGeneral>();
+
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             Statement stmt = conn.createStatement()) {
+
+            String sql = """
+                SELECT * from estadistica_general
+                """;
+
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+
+                EstadisticaGeneral estadistica = new EstadisticaGeneral(rs.getString("tipo_estadistica"), String.valueOf(rs.getInt("cantidad_solicitudes_spam")),
+                        rs.getString("categoria"), rs.getString("provincia"),  String.valueOf(rs.getInt("cantidad")), rs.getString("titulo"),
+                        String.valueOf(rs.getInt("cantidad_hechos")), rs.getString("hora"));
+
+                listaEstadisticas.add(estadistica);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return listaEstadisticas;
+
+    }
+
+
     public void generarEstadisticas(){
 
         String url = "jdbc:mysql://localhost:3306/central";
         String user = "root";
         String password = "12345678";
+
+        repoEstadisticas.deleteAll();
 
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement()) {
