@@ -13,8 +13,8 @@ public interface IAdapterFileServer {
     // Lee un archivo completo desde el File Server como array de bytes
     byte[] descargarArchivo(String nombreArchivo) throws IOException;
 
-    // Lee y parsea un CSV desde bytes en memoria convierte a HechoCrudo
-    List<HechoCrudo> leerArchivoDesdeBytes(byte[] contenido) throws IOException;
+    // Lee y parsea un archivo (CSV, XLS, etc.) desde bytes en memoria
+    List<HechoCrudo> leerArchivoDesdeBytes(String nombreArchivo, byte[] contenido) throws IOException;
 
 }
 

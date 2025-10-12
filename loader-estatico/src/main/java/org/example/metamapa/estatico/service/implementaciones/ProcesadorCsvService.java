@@ -39,6 +39,11 @@ public class ProcesadorCsvService implements IProcesadorCsvService {
     public void procesarArchivosCsv() {
         List<ArchivoCsv> archivos = adapter.obtenerArchivosDisponibles();
 
+        if (archivos.isEmpty()) {
+            log.warn("No se encontraron archivos para procesar.");
+            return;
+        }
+
         for (ArchivoCsv archivo : archivos) {
             try {
                 procesarArchivo(archivo);
@@ -61,7 +66,13 @@ public class ProcesadorCsvService implements IProcesadorCsvService {
         }
 
         log.debug("Procesando archivo {} con hash {}", nombre, hashNuevo);
-        List<HechoCrudo> hechos = adapter.leerArchivoDesdeBytes(contenido);
+
+        List<HechoCrudo> hechos = adapter.leerArchivoDesdeBytes(nombre, contenido);
+
+        if (hechos.isEmpty()) {
+            log.warn("El archivo {} no generó ningún hecho válido. Se omitirá.", nombre);
+            return;
+        }
 
         for (HechoCrudo hecho : hechos) {
             hecho.setLoaderId(loaderId);
