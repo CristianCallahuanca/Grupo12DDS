@@ -5,9 +5,9 @@ server:
   port: 8103
 fuente:
   metamapa:
-    url: http://instancia-metamapa.org/MODIFICA_URL_BASE
+    url: https://telepathically-censorian-marlen.ngrok-free.dev/gestordatos
 loader:
-  id: metamapa-cordoba-EJEMPLO
+  id: metamapa-joaco
   self:
     nombreFuente: "Fuente-MetaMapa"
     tipo: "PROXY"

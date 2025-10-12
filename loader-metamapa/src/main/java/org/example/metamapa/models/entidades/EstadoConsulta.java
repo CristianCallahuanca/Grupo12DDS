@@ -1,8 +1,6 @@
 package org.example.metamapa.models.entidades;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,5 +21,6 @@ public class EstadoConsulta {
 
     private Integer cantidadHechos;
 
-    private String estado; // "OK" o "ERROR"
+    @Enumerated(EnumType.STRING)
+    private EstadoLoader estado;
 }

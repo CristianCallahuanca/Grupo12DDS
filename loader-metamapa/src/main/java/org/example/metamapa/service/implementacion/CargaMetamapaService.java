@@ -1,12 +1,15 @@
 package org.example.metamapa.service.implementacion;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.adapters.IAdapterMetamapa;
 import org.example.metamapa.exceptions.ExcepcionConexionMetamapa;
 import org.example.metamapa.models.dtos.HechoDTO;
 import org.example.metamapa.models.dtos.HechoDTO_IN;
 import org.example.metamapa.models.entidades.EstadoConsulta;
+import org.example.metamapa.models.entidades.EstadoLoader;
 import org.example.metamapa.models.repositorio.IEstadoConsultaRepositorio;
 import org.example.metamapa.service.ICargaMetamapaService;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +21,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CargaMetamapaService implements ICargaMetamapaService {
 
     private final IAdapterMetamapa adapter;
@@ -27,12 +31,17 @@ public class CargaMetamapaService implements ICargaMetamapaService {
     private String loaderId;
 
 
-    //TENER EN CUENTA ESTO PARA UNA POSIBLE MEJORA, comentario ABAJO
     @PostConstruct
     public void validarLoaderIdUnico() {
-        if (estadoRepo.existsById(loaderId)) {
-            throw new IllegalStateException("Ya existe un loader con ID " + loaderId + ". Cambia la configuración.");
-        }
+        estadoRepo.findById(loaderId).ifPresent(e -> {
+            if (e.getEstado() != EstadoLoader.FINALIZADO) {
+                throw new IllegalStateException(
+                        "Ya existe un loader activo con ID '" + loaderId + "'. " +
+                                "Detenelo antes de iniciar una nueva instancia."
+                );
+            }
+        });
+        log.info("Loader " + loaderId + " iniciado correctamente");
     }
 
 
@@ -49,9 +58,9 @@ public class CargaMetamapaService implements ICargaMetamapaService {
             hechosListos = hechosEntrantes.stream()
                     .map(this::mapearHecho)
                     .toList();
-            registrarEstado(hechosListos, "OK");
+            registrarEstado(hechosListos, EstadoLoader.OK);
         } catch (ExcepcionConexionMetamapa e) {
-            registrarEstado(Collections.emptyList(), "ERROR");
+            registrarEstado(Collections.emptyList(), EstadoLoader.ERROR);
             throw e;
         }
 
@@ -59,7 +68,7 @@ public class CargaMetamapaService implements ICargaMetamapaService {
         return hechosListos;
     }
 
-    private void registrarEstado(List<HechoDTO> hechosListos, String estado) {
+    private void registrarEstado(List<HechoDTO> hechosListos, EstadoLoader estado) {
         EstadoConsulta estadoConsulta = new EstadoConsulta(
                 loaderId,
                 LocalDateTime.now(),
@@ -69,6 +78,15 @@ public class CargaMetamapaService implements ICargaMetamapaService {
         estadoRepo.save(estadoConsulta);
     }
 
+    @PreDestroy
+    public void marcarFinalizado() {
+        estadoRepo.findById(loaderId).ifPresent(e -> {
+            e.setEstado(EstadoLoader.FINALIZADO);
+            e.setUltimaConsulta(LocalDateTime.now());
+            estadoRepo.save(e);
+            System.out.println("Loader " + loaderId + " marcado como FINALIZADO");
+        });
+    }
 
     private HechoDTO mapearHecho(HechoDTO_IN in) {
         return HechoDTO.builder()
@@ -86,47 +104,3 @@ public class CargaMetamapaService implements ICargaMetamapaService {
                 .build();
     }
 }
-
-
-/*El tratamiento de error al levantar una instancia para los mismos servicios de loaderMetama
-podemos mejorarlo pensando de esta forma
-
-1)
-En la entidad CLASE CONSULTA:
-   @Id
-    private String loaderId;     // ej: "metamapa-cordoba"
-
-    @Id
-    private String instanciaId;  // UUID generado al iniciar
-
-2)
-Se crea una clase para serializar la clase y mandarlo al repo
-
-import java.io.Serializable;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class EstadoConsultaPK implements Serializable {
-    private String loaderId;
-    private String instanciaId;
-}
-
-3)
-El repositorio cambia el tipo de PK
-public interface IEstadoConsultaRepositorio extends JpaRepository<EstadoConsulta, EstadoConsultaPK> {
-}
-
-4)
-Y en el service poner generar los ID de esta forma
-@Value("${loader.id}")
-private String loaderId;
-
-private final String instanciaId = UUID.randomUUID().toString();
-
-PERO dependiendo la escalabilidad del uso podemos usar el instanciaId si es que se requiere en mas instancias.
-por el momento solo nos interesa aca.
-
-
-CREERIA QUE ESTA FORMA ES LA MAS CLEAN y salva de errores de automatizacion y no sobre el control humano
- */
