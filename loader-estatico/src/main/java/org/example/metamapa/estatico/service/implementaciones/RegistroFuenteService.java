@@ -1,15 +1,27 @@
 package org.example.metamapa.estatico.service.implementaciones;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.estatico.models.dtos.FuenteDTO;
+import org.example.metamapa.estatico.models.entidades.EstadoInstancia;
+import org.example.metamapa.estatico.models.entidades.EstadoLoaderEstatico;
+import org.example.metamapa.estatico.models.repositorios.IEstadoLoaderEstaticoRepositorio;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.LocalDateTime;
+
 @Service
 @Slf4j
 public class RegistroFuenteService {
+
+    private final IEstadoLoaderEstaticoRepositorio estadoRepo;
+    private final WebClient webClient = WebClient.create();
+    public RegistroFuenteService(IEstadoLoaderEstaticoRepositorio estadoRepo) {
+        this.estadoRepo = estadoRepo;
+    }
 
     @Value("${loader.self.nombreFuente}")
     private String nombreFuente;
@@ -23,7 +35,43 @@ public class RegistroFuenteService {
     @Value("${agregador.baseUrl}")
     private String urlAgregador;
 
-    private final WebClient webClient = WebClient.create();
+    @Value("${loader.self.id}")
+    private String loaderId;
+
+    @PostConstruct
+    public void validarLoaderIdUnico() {
+        estadoRepo.findById(loaderId).ifPresent(e -> {
+            if (e.getEstado() == EstadoInstancia.ACTIVO) {
+                throw new IllegalStateException(
+                        "Ya existe un loader-estático activo con ID '" + loaderId + "'. " +
+                                "Detenelo antes de iniciar una nueva instancia."
+                );
+            }
+        });
+
+        estadoRepo.save(
+                EstadoLoaderEstatico.builder()
+                        .loaderId(loaderId)
+                        .fechaInicio(LocalDateTime.now())
+                        .ultimaActualizacion(LocalDateTime.now())
+                        .estado(EstadoInstancia.ACTIVO)
+                        .build()
+        );
+
+        log.info("LoaderEstático iniciado correctamente con ID '{}'", loaderId);
+    }
+
+    @PreDestroy
+    public void marcarFinalizado() {
+        estadoRepo.findById(loaderId).ifPresent(e -> {
+            e.setEstado(EstadoInstancia.FINALIZADO);
+            e.setUltimaActualizacion(LocalDateTime.now());
+            estadoRepo.save(e);
+            log.info("LoaderEstático '{}' marcado como FINALIZADO", loaderId);
+        });
+    }
+
+
 
     @PostConstruct
     public void anunciarFuenteAlAgregador() {
