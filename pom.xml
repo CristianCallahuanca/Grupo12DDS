@@ -34,6 +34,8 @@
         <module>agregador</module>
         <module>gestor-datos</module>
         <module>estadisticas</module>
+        <module>interfaz-usuario</module>
+
 
     </modules>
 
