@@ -20,7 +20,6 @@ public class HechoDTO {
     private String etiqueta;
     private String contribuyenteID;
     private List<String> archivosMultimedia;
-    private String fechaCarga;
-    private String id_hecho;
+    private String origen;
 
 }

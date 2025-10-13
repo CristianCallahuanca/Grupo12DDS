@@ -99,8 +99,8 @@ public class CargaMetamapaService implements ICargaMetamapaService {
                 .etiqueta(in.getEtiqueta())
                 .contribuyenteID(in.getContribuyenteID())
                 .archivosMultimedia(in.getArchivosMultimedia())
-                .sinCategorizar(in.getSinCategorizar())
-                .fechaAcontecimientoPosta(in.getFechaAcontecimientoPosta())
+                .origen(loaderId)
                 .build();
     }
+
 }

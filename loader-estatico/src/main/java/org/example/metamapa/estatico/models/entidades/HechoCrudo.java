@@ -45,5 +45,5 @@ public class HechoCrudo {
     private boolean enviado;
     private LocalDateTime fechaEnvio;
 
-    // private String fuenteOrigen;
+    private String fuenteOrigen;
 }

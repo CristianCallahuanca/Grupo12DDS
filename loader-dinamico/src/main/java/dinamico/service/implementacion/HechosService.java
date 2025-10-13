@@ -5,6 +5,7 @@ import dinamico.models.dtos.output.HechoCrudoDTO_OUT;
 import dinamico.models.entidades.hecho.HechoCrudo;
 import dinamico.models.repositorios.IRepositorioHechosCrudos;
 import dinamico.service.IHechosService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,6 +16,9 @@ import java.util.stream.Collectors;
 public class HechosService implements IHechosService {
 
     private final IRepositorioHechosCrudos repositorioHechosCrudos;
+
+    @Value("${loader.self.nombreFuente}")
+    private String nombreFuente;
 
     public HechosService(IRepositorioHechosCrudos repositorioHechosCrudos){
         this.repositorioHechosCrudos = repositorioHechosCrudos;
@@ -28,7 +32,7 @@ public class HechosService implements IHechosService {
 
             List<HechoCrudoDTO_OUT> dtos = crudoDTOOuts(hechos);
 
-            dtos.forEach(dto -> dto.setOrigen("DINAMICA"));
+            dtos.forEach(dto -> dto.setOrigen(nombreFuente));
 
             return dtos;
         } catch (Exception e) {

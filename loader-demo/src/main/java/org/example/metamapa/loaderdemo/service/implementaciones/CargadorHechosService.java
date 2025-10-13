@@ -38,7 +38,7 @@ public class CargadorHechosService implements ICargadorHechosService {
             fechaHecho = LocalDateTime.parse(datos.get("fecha").toString(),
                     java.time.format.DateTimeFormatter.ISO_DATE_TIME);
         } catch (Exception e) {
-            log.error("[WARN] No se pudo parsear la fecha, usando fecha actual. Valor: {}", datos.get("fecha"));
+            log.warn("No se pudo parsear la fecha '{}', usando fecha actual.", datos.get("fecha"));
             fechaHecho = LocalDateTime.now();
         }
 
@@ -51,7 +51,7 @@ public class CargadorHechosService implements ICargadorHechosService {
                 .longitud(Double.valueOf(datos.get("longitud").toString()))
                 .etiqueta((String) datos.get("etiqueta"))
                 .fecha(fechaHecho.toLocalDate())
-                .fuente("conexion_demo")
+                .origen((String) datos.get("origen"))
                 .fechaIngesta(LocalDate.now())
                 .enviado(false)
                 .build();

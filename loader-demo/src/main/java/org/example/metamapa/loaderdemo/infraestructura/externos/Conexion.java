@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -14,15 +15,20 @@ public class Conexion {
 
     private final WebClient webClient;
     private String token;
+    private String nombreFuente;
+    private String etiquetaFuente;
 
-    public Conexion(WebClient.Builder builder, @Value("${loaderdemo.fuente.url}") String baseUrl)
-    {
-        this.webClient = builder
-                .baseUrl(baseUrl)
-                .build();
+    @Value("${loaderdemo.fuente.url}")
+    private String baseUrl;
 
+    public Conexion(WebClient.Builder builder, @Value("${loaderdemo.fuente.url}") String baseUrl) {
+        this.webClient = builder.baseUrl(baseUrl).build();
+        this.nombreFuente = obtenerDominioBase(baseUrl);
+        this.etiquetaFuente = "GENERICA";
         log.info("Conexión inicializada con baseUrl={}", baseUrl);
     }
+    public String getNombreFuente() { return nombreFuente; }
+    public String getEtiquetaFuente() { return etiquetaFuente; }
 
     /**
      * Autentica contra la API de la cátedra y guarda el token obtenido.
@@ -31,31 +37,63 @@ public class Conexion {
         try {
             log.info("Iniciando autenticación...");
 
+            // --- LOGIN NORMAL ---
             Map<String, Object> response = webClient.post()
                     .uri("/api/login")
-                    .bodyValue(Map.of(
-                            "email", "ddsi@gmail.com",
-                            "password", "ddsi2025*"
-                    ))
+                    .bodyValue(Map.of("email", "ddsi@gmail.com", "password", "ddsi2025*"))
                     .retrieve()
                     .bodyToMono(Map.class)
                     .block();
 
-            if (response == null || response.get("data") == null) {
+            if (response == null || response.get("data") == null)
                 throw new RuntimeException("Respuesta nula o inválida al autenticar");
-            }
 
             Map<String, Object> data = (Map<String, Object>) response.get("data");
             this.token = (String) data.get("access_token");
-
             log.info("Token obtenido correctamente.");
 
-        } catch (WebClientResponseException e) {
-            log.error("Error API Auth {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
-            throw new RuntimeException("Fallo de autenticación: " + e.getMessage(), e);
+            // --- CAPTURAR METADATA SOLO UNA VEZ ---
+            try {
+                Map<String, Object> docs = WebClient.create()
+                        .get()
+                        .uri(baseUrl + "/docs?api-docs.json")
+                        .retrieve()
+                        .bodyToMono(Map.class)
+                        .block();
+
+                if (docs != null) {
+                    if (docs.containsKey("info")) {
+                        Map<String, Object> info = (Map<String, Object>) docs.get("info");
+                        nombreFuente = (String) info.getOrDefault("title", nombreFuente);
+                    }
+                    if (docs.containsKey("tags")) {
+                        List<Map<String, Object>> tags = (List<Map<String, Object>>) docs.get("tags");
+                        if (!tags.isEmpty()) {
+                            etiquetaFuente = tags.stream()
+                                    .filter(t -> {
+                                        String name = t.get("name").toString().toLowerCase();
+                                        return name.contains("desastre") || name.contains("natural");
+                                    })
+                                    .map(t -> t.get("name").toString().toUpperCase().replace(" ", "_"))
+                                    .findFirst()
+                                    .orElse("SIN_TAG");
+                        } else {
+                            etiquetaFuente = "SIN_TAG";
+                        }
+                    } else {
+                        etiquetaFuente = "SIN_TAG";
+                    }
+
+
+                }
+                log.info("Fuente detectada: {} ({})", nombreFuente, etiquetaFuente);
+            } catch (Exception e) {
+                log.warn("No se pudo obtener metadata de la fuente: {}", e.getMessage());
+            }
+
         } catch (Exception e) {
-            log.error("Excepción inesperada durante la autenticación", e);
-            throw new RuntimeException("Error inesperado en autenticación", e);
+            log.error("Fallo de autenticación: {}", e.getMessage());
+            throw new RuntimeException("Error durante autenticación", e);
         }
     }
 
@@ -101,6 +139,15 @@ public class Conexion {
         } catch (Exception e) {
             log.error("Excepción inesperada durante la consulta a la API", e);
             return null;
+        }
+    }
+
+    private String obtenerDominioBase(String url) {
+        try {
+            String host = new java.net.URL(url).getHost(); // api-ddsi.disilab.ar
+            return host.replace("api-", "").replace("www.", "").toUpperCase();
+        } catch (Exception e) {
+            return "FUENTE-DESCONOCIDA";
         }
     }
 }

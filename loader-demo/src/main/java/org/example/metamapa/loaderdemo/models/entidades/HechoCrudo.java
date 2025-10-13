@@ -30,7 +30,7 @@ public class HechoCrudo {
     private Double longitud;
     private String etiqueta;
     private LocalDate fecha;
-    private String fuente;
+    private String origen;
     private LocalDate fechaIngesta;
 
     private boolean enviado = false;

@@ -19,9 +19,7 @@ public class HechoDTO {
     private LocalDate fechaAcontecimiento;
     private String contribuyenteID;
     private List<String> archivosMultimedia;
-    private boolean sinCategorizar;
-    private LocalDate fechaAcontecimientoPosta;
+    private String origen;
 
 }
 
-//TODO: REOGANIZAR LOS ATRIBUTOS

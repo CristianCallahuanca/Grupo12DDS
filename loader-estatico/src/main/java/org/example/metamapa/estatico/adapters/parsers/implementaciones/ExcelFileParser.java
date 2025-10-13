@@ -11,7 +11,7 @@ import java.util.List;
 public class ExcelFileParser implements IParserDeArchivo {
 
     @Override
-    public List<HechoCrudo> parse(byte[] contenido) throws IOException {
+    public List<HechoCrudo> parse(String nombreArchivo, byte[] contenido) throws IOException {
         log.warn("Parser Excel aún no implementado. Se omite archivo.");
         return List.of();
     }

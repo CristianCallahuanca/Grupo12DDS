@@ -55,7 +55,8 @@ public class AdapterFuenteDemo implements IAdapterFuenteDemo {
         hecho.put("latitud", desastre.get("latitud"));
         hecho.put("longitud", desastre.get("longitud"));
         hecho.put("fecha", desastre.get("fecha_hecho"));
-        hecho.put("etiqueta", "DESASTRE_NATURAL");
+        hecho.put("etiqueta", conexion.getEtiquetaFuente());
+        hecho.put("origen", conexion.getNombreFuente());
 
         paginaActual++;
         guardarPaginaActual(paginaActual);

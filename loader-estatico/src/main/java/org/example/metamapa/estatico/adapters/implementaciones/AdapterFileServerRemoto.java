@@ -75,6 +75,6 @@ public class AdapterFileServerRemoto implements IAdapterFileServer {
     public List<HechoCrudo> leerArchivoDesdeBytes(String nombreArchivo, byte[] contenido) throws IOException {
         IParserDeArchivo parser = parserFactory.obtenerParser(nombreArchivo);
         log.debug("Usando parser {} para archivo remoto {}", parser.getClass().getSimpleName(), nombreArchivo);
-        return parser.parse(contenido);
+        return parser.parse(nombreArchivo, contenido);
     }
 }

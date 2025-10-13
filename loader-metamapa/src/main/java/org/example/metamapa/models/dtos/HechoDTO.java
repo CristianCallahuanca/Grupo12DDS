@@ -20,9 +20,5 @@ public class HechoDTO {
     private String etiqueta;
     private String contribuyenteID;
     private List<String> archivosMultimedia;
-    private Boolean sinCategorizar;
-    private LocalDateTime fechaAcontecimientoPosta;
+    private String origen;
 }
-
-
-//TODO: Terminar de consolidar los atributos de los hechos que ingresan y los que se envian al agregador.

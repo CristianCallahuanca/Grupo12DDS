@@ -16,7 +16,7 @@ import java.util.List;
 public class CsvFileParser implements IParserDeArchivo {
 
     @Override
-    public List<HechoCrudo> parse(byte[] contenido) throws IOException {
+    public List<HechoCrudo> parse(String nombreArchivo, byte[] contenido) throws IOException {
         List<HechoCrudo> hechos = new ArrayList<>();
         int filasValidas = 0;
         int filasInvalidas = 0;
@@ -52,6 +52,7 @@ public class CsvFileParser implements IParserDeArchivo {
                             limpiarCampo(record.get("Longitud")),
                             limpiarCampo(record.get("Fecha del hecho"))
                     );
+                    hecho.setFuenteOrigen(nombreArchivo);
                     hechos.add(hecho);
                     filasValidas++;
 

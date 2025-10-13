@@ -55,8 +55,7 @@ public class HechosService implements IHechosService {
                 h.getFecha(),
                 null,
                 List.of(),
-                false,
-                h.getFecha()
+                h.getOrigen()
         );
     }
 }
