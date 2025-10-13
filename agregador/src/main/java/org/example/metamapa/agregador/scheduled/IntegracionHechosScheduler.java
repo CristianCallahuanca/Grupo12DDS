@@ -17,7 +17,7 @@ public class IntegracionHechosScheduler {
         this.agregacionService = agregacionService;
     }
 
-    @Scheduled(initialDelay = 0, fixedRate = 1, timeUnit = TimeUnit.HOURS)
+    @Scheduled(cron = "0 */5 * * * *")
     public void obtenerHechosTodasLasFuentes() {
         log.info("Iniciando integración de hechos desde todas las fuentes registradas...");
         agregacionService.integrarHechosFuentes();

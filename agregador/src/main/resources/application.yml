@@ -3,3 +3,6 @@ spring:
     name: agregador
 server:
   port: 8200
+agregador:
+  timeout:
+    segundos: 30

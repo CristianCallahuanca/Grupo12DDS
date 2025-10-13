@@ -10,7 +10,7 @@ loader:
     id: "loader-estatico-hogar"
     nombreFuente: "Fuente-CSV-HogarComunitario"
     tipo: "ESTATICA"
-    baseUrl: "http://localhost:8101"
+    baseUrl: "http://localhost:8101/fuenteEstatica"
 
 fileserver:
   tipo: local  # o "remoto" o "drive"
@@ -18,7 +18,7 @@ fileserver:
       folderId: 1MiPkqnRna43N7NZr3fL37IByscLwI_0B
       credentialsPath: # D:\UTN\TERCERO\Diseño de Sistemas\Grupo12DDS\loader-estatico\src\main\resources\credi
   basePath: "D:/UTN/TERCERO/Diseño de Sistemas/Grupo12DDS/datos" # si es local
-  baseUrl: "http://localhost:8500"     # si es remoto
+  baseUrl: "http://localhost:8500/"     # si es remoto
 
 
 agregador:

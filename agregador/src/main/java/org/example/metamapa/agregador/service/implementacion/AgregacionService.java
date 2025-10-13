@@ -10,6 +10,7 @@ import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
 import org.example.metamapa.agregador.service.IAgregacionService;
 import org.example.metamapa.agregador.service.IDuplicacionService;
 import org.example.metamapa.agregador.service.INormalizacionService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -38,6 +39,9 @@ public class AgregacionService implements IAgregacionService{
     private final IRepositorioHechos hechosRepository;
     private final IFuenteRepository fuenteRepository;
     private final WebClient webClient;
+
+    @Value("${agregador.timeout.segundos}")
+    private int timeoutSegundos;
 
     public AgregacionService(
             INormalizacionService normalizacionService,
@@ -89,7 +93,7 @@ public class AgregacionService implements IAgregacionService{
                 .retrieve()
                 .bodyToFlux(HechoDTO_IN.class)
                 .collectList()
-                .timeout(Duration.ofSeconds(10)) // hardcodeado
+                .timeout(Duration.ofSeconds(timeoutSegundos)) // hardcodeado
                 .doOnSuccess(list -> log.info("Exito! {} -> {} hechos", fuente.getNombre(), list.size()))
                 .doOnError(e -> log.error("Falló {}: {}", fuente.getNombre(), e.getMessage()));
     }

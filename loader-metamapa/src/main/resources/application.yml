@@ -11,7 +11,7 @@ loader:
   self:
     nombreFuente: "Fuente-MetaMapa"
     tipo: "PROXY"
-    baseUrl: "http://localhost:8103"
+    baseUrl: "http://localhost:8103/fuenteMetamapa"
 
 agregador:
   baseUrl: "http://localhost:8200"

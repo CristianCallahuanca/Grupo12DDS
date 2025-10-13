@@ -25,41 +25,44 @@ public class NormalizacionService implements INormalizacionService {
 
     //Atte GPT:
     public static String obtenerProvinciaAPI(double lat, double lon) {
-        String urlString = String.format(
-                "https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=json",
-                lat, lon
-        );
-
         try {
-            // Hacer la request
+            // Forzamos formato US: punto decimal, no coma
+            String latStr = String.format(java.util.Locale.US, "%.6f", lat);
+            String lonStr = String.format(java.util.Locale.US, "%.6f", lon);
+
+            String urlString = String.format(
+                    "https://nominatim.openstreetmap.org/reverse?lat=%s&lon=%s&format=json",
+                    latStr, lonStr
+            );
+
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setRequestProperty("User-Agent", "JavaApp"); // Nominatim requiere un User-Agent
+            conn.setRequestProperty("User-Agent", "MetaMapa-Agregador/1.0 (UTN)");
 
-            // Leer la respuesta
+            if (conn.getResponseCode() != 200) {
+                System.err.println("Nominatim respondió HTTP " + conn.getResponseCode() + " para lat=" + latStr + ", lon=" + lonStr);
+                return null;
+            }
+
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String inputLine;
             StringBuilder response = new StringBuilder();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+            String line;
+            while ((line = in.readLine()) != null) {
+                response.append(line);
             }
             in.close();
 
-            // Parsear el JSON con Jackson
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response.toString());
-
-            // Navegar hasta "address" -> "state"
+            JsonNode root = new ObjectMapper().readTree(response.toString());
             JsonNode addressNode = root.path("address");
-            return addressNode.path("state").asText();
+            return addressNode.path("state").asText(null); // null si no existe
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error en obtenerProvinciaAPI: " + e.getMessage());
             return null;
         }
     }
+
 
     private List<String> catalogoCategorias = List.of(
             "vientos fuertes",
@@ -86,17 +89,21 @@ public class NormalizacionService implements INormalizacionService {
             DateTimeFormatter.ofPattern("yyyy-MM-dd") // ojo: solo fecha
     );
 
-    private Ubicacion normalizarUbicacion(HechoDTO_IN hechoSinNormalizar){
-        String latitudNormalizada = hechoSinNormalizar.getLatitud().replace(",", ".");
-        hechoSinNormalizar.setLatitud(latitudNormalizada);
-        String longitudNormalizada = hechoSinNormalizar.getLongitud().replace(",", ".");
-        hechoSinNormalizar.setLongitud(longitudNormalizada);
+    private Ubicacion normalizarUbicacion(HechoDTO_IN hechoSinNormalizar) {
+        try {
+            String latitudNormalizada = hechoSinNormalizar.getLatitud().replace(",", ".");
+            String longitudNormalizada = hechoSinNormalizar.getLongitud().replace(",", ".");
+            double lat = Double.parseDouble(latitudNormalizada);
+            double lon = Double.parseDouble(longitudNormalizada);
 
-        double latitud = Double.parseDouble(latitudNormalizada);
-        double longitud = Double.parseDouble(longitudNormalizada);
-
-        return new Ubicacion(Double.parseDouble(latitudNormalizada), Double.parseDouble(longitudNormalizada), obtenerProvinciaAPI(latitud, longitud));
+            String provincia = obtenerProvinciaAPI(lat, lon);
+            return new Ubicacion(lat, lon, provincia != null ? provincia : "Desconocida");
+        } catch (Exception e) {
+            System.err.println("Coordenadas inválidas en hecho: " + hechoSinNormalizar.getTitulo());
+            return new Ubicacion(0.0, 0.0, "Desconocida");
+        }
     }
+
 
     private String categoriaEnCatalogo(String categoria){
         return catalogoCategorias.stream()

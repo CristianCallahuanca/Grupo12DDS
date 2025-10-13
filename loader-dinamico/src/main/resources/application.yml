@@ -7,7 +7,7 @@ loader:
   self:
     nombreFuente: "Fuente-DINAMICA"
     tipo: "DINAMICA"
-    baseUrl: "http://localhost:8102"
+    baseUrl: "http://localhost:8102/fuenteDinamica"
 
 agregador:
   baseUrl: "http://localhost:8200"

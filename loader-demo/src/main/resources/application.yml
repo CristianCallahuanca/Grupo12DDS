@@ -11,7 +11,7 @@ loader:
   self:
     nombreFuente: "Fuente-Demo"
     tipo: "PROXY"
-    baseUrl: "http://localhost:8700"
+    baseUrl: "http://localhost:8700/fuenteDemo"
 
 agregador:
   baseUrl: "http://localhost:8200"
