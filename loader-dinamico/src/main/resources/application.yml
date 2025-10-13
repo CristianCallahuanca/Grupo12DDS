@@ -11,3 +11,9 @@ loader:
 
 agregador:
   baseUrl: "http://localhost:8200"
+logging:
+  file:
+    name: logs/dinamico/${loader.self.nombreFuente}.log
+  level:
+    root: INFO
+    dinamico: DEBUG

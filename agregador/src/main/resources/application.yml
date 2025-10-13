@@ -6,3 +6,9 @@ server:
 agregador:
   timeout:
     segundos: 30
+logging:
+  file:
+    name: logs/agregador/agregador.log
+  level:
+    root: INFO
+    org.example.metamapa: DEBUG

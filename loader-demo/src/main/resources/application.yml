@@ -15,5 +15,11 @@ loader:
 
 agregador:
   baseUrl: "http://localhost:8200"
+logging:
+  file:
+    name: logs/demo/${loader.id}.log
+  level:
+    root: INFO
+    org.example.metamapa: DEBUG
 
 
