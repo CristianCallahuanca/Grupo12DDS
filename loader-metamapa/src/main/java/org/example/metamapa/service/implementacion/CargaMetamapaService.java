@@ -30,21 +30,6 @@ public class CargaMetamapaService implements ICargaMetamapaService {
     @Value("${loader.id}")
     private String loaderId;
 
-
-    @PostConstruct
-    public void validarLoaderIdUnico() {
-        estadoRepo.findById(loaderId).ifPresent(e -> {
-            if (e.getEstado() != EstadoLoader.FINALIZADO) {
-                throw new IllegalStateException(
-                        "Ya existe un loader activo con ID '" + loaderId + "'. " +
-                                "Detenelo antes de iniciar una nueva instancia."
-                );
-            }
-        });
-        log.info("Loader " + loaderId + " iniciado correctamente");
-    }
-
-
     @Override
     public List<HechoDTO> obtenerHechos() {
         LocalDateTime ultimaConsulta = estadoRepo.findById(loaderId)
@@ -78,15 +63,7 @@ public class CargaMetamapaService implements ICargaMetamapaService {
         estadoRepo.save(estadoConsulta);
     }
 
-    @PreDestroy
-    public void marcarFinalizado() {
-        estadoRepo.findById(loaderId).ifPresent(e -> {
-            e.setEstado(EstadoLoader.FINALIZADO);
-            e.setUltimaConsulta(LocalDateTime.now());
-            estadoRepo.save(e);
-            System.out.println("Loader " + loaderId + " marcado como FINALIZADO");
-        });
-    }
+
 
     private HechoDTO mapearHecho(HechoDTO_IN in) {
         return HechoDTO.builder()
