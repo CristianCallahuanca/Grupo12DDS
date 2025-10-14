@@ -1,129 +1,91 @@
 package org.example.metamapa.agregador.service.implementacion;
 
 import org.example.metamapa.agregador.models.entidades.Hecho;
-import org.example.metamapa.agregador.models.entidades.Origen;
-import org.example.metamapa.agregador.models.entidades.filtros.FilterCondition;
-import org.example.metamapa.agregador.models.entidades.filtros.PorFechaCarga;
-import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
 import org.example.metamapa.agregador.service.IDuplicacionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Collection;
-import java.util.stream.Collectors;
-import java.util.Comparator;
 
 @Service
 public class DuplicacionService implements IDuplicacionService {
 
-    private double[] obtenerBoundingBox(Hecho unHecho) {
-        return calcularBoundingBox(unHecho.getUbicacion().getLatitud(), unHecho.getUbicacion().getLongitud(), 100.0);
-    }
+    private static final double RADIO_CERCANO_METROS = 30.0;
+    private static final double RADIO_RAZONABLE_METROS = 100.0;
 
-    private double[] calcularBoundingBox(double lat, double lon, double radioMetros) {
-        double metrosPorGradoLat = 111320.0;
-        double metrosPorGradoLon = 111320.0 * Math.cos(Math.toRadians(lat));
+    @Override
+    public List<Hecho> eliminarHechosRepetidos(List<Hecho> hechos) {
+        if (hechos == null || hechos.isEmpty()) return List.of();
 
-        double deltaLat = radioMetros / metrosPorGradoLat;
-        double deltaLon = radioMetros / metrosPorGradoLon;
-
-        double minLat = lat - deltaLat;
-        double maxLat = lat + deltaLat;
-        double minLon = lon - deltaLon;
-        double maxLon = lon + deltaLon;
-
-        return new double[]{minLat, maxLat, minLon, maxLon};
-    }
-
-    private boolean between(double var, double min, double max) {
-        return min <= var && var <= max;
-    }
-
-    private boolean hechoEnBoundingBox(double latitud, double longitud, double[] box){
-        return between(latitud, box[0], box[1]) &&
-                between(longitud, box[2], box[3]);
-    }
-
-    private boolean estaEnBoundingBox(Hecho unHecho, double[] box){
-        return hechoEnBoundingBox(unHecho.getUbicacion().getLatitud(), unHecho.getUbicacion().getLongitud(), box);
-    }
-
-    private boolean sonHechosDistintos(Hecho h1, Hecho h2){
-        return !(h1.getHecho_id() == h2.getHecho_id());
-    }
-
-    private boolean ocurrieronMismoDia(Hecho h1, Hecho h2){
-        return h1.getFechaAcontecimiento().toLocalDate().equals(h2.getFechaAcontecimiento().toLocalDate());
-    }
-
-    private boolean estaRepetido(Hecho h1, Hecho h2){
-        return (h1.getTitulo().equals(h2.getTitulo()) && h1.getCategoria().equals(h2.getCategoria())) &&
-                h1.getContribuyente().getId() == h2.getContribuyente().getId();
-    }
-
-    List<Hecho> obtenerLosDuplicadosDeUnHecho(Hecho original, List<Hecho> ListaConHechosDuplicados){
-        return ListaConHechosDuplicados.stream()
-                .filter(h -> sonHechosDistintos(h, original))
-                .filter(h -> ocurrieronMismoDia(h, original))
-                .filter(h -> estaEnBoundingBox(h, obtenerBoundingBox(original))) // 100m de radio, ajustar
-                .filter(h -> estaRepetido(h, original))
-                .collect(Collectors.toList());
-    }
-
-    private Hecho elegirRepresentante(List<Hecho> grupo) {
-        return grupo.get(0); //tomo el primero
-    }
-
-    private void asociarTodosLosOrigenes(List<Hecho> grupo, Hecho representante){
-        // Agrego los orígenes de los otros duplicados
-        grupo.stream()
-                .filter(h -> h != representante)
-                .forEach(h -> representante.getOrigenes().addAll(h.getOrigenes()));
-
-        List<Origen> origenesFiltrados = representante.getOrigenes().stream().distinct().toList();
-        // Evitar orígenes repetidos
-        representante.setOrigenes(origenesFiltrados);
-    }
-
-    //Devuelve True si se borraron con exito METODO PRINCIPAL
-    // Comentario 2, fue modificado y ahora devuelve la lista sin los repetidos. Falta testear
-
-    // es medio una porquería esto pero no sabía cómo hacer ---> agrupa según duplicados
-    // y se queda con un representante de cada grupo, sino se estaban borrando TODOS los hechos
-    public List<Hecho> eliminarHechosRepetidos(List<Hecho> hechosDeLosLoaders) {
         List<Hecho> resultado = new ArrayList<>();
-        Set<Long> idsProcesados = new HashSet<>();
+        Set<Integer> indicesDuplicados = new HashSet<>();
 
-        for (Hecho hecho : hechosDeLosLoaders) {
-            if (idsProcesados.contains(hecho.getHecho_id())) {
-                // ya lo procesamos en algún grupo
-                continue;
+        for (int i = 0; i < hechos.size(); i++) {
+            if (indicesDuplicados.contains(i)) continue;
+            Hecho base = hechos.get(i);
+
+            for (int j = i + 1; j < hechos.size(); j++) {
+                if (sonPosiblesDuplicados(base, hechos.get(j))) {
+                    indicesDuplicados.add(j);
+                }
             }
 
-            // Buscar duplicados del hecho actual
-            List<Hecho> grupo = obtenerLosDuplicadosDeUnHecho(hecho, hechosDeLosLoaders);
+            resultado.add(base);
+        }
 
-            // Agregar también el "hecho base" al grupo
-            grupo.add(hecho);
+        return resultado;
+    }
 
-            // Marcar todos como procesados ---> para no tener que volver a analizarlo
-            grupo.forEach(h -> idsProcesados.add(h.getHecho_id()));
-
-            // Elegir representante y agregar al resultado
-            if(grupo.size() > 1){
-                Hecho representante = elegirRepresentante(grupo);
-                asociarTodosLosOrigenes(grupo, representante);
-                resultado.add(representante);
-            }
-            if(grupo.size() == 1){
-                resultado.add(grupo.get(0));
+    private boolean sonPosiblesDuplicados(Hecho h1, Hecho h2) {
+        //No deduplicar si son de distintos contribuyentes registrados
+        if (h1.getContribuyente() != null && h2.getContribuyente() != null) {
+            if (h1.getContribuyente().getId() != h2.getContribuyente().getId()) {
+                return false;
             }
         }
-        return resultado;
+
+        //Misma fecha (día)
+        LocalDate f1 = h1.getFechaAcontecimiento().toLocalDate();
+        LocalDate f2 = h2.getFechaAcontecimiento().toLocalDate();
+        if (!f1.equals(f2)) return false;
+
+        //Calcular distancia
+        double distancia = distanciaMetros(h1, h2);
+
+        // Caso 1: misma fecha y distancia muy corta (<30 m)
+        if (distancia < RADIO_CERCANO_METROS) return true;
+
+        // Caso 2: misma fecha, misma categoría y distancia razonable (<100 m)
+        if (distancia < RADIO_RAZONABLE_METROS &&
+                h1.getCategoria() != null && h2.getCategoria() != null &&
+                h1.getCategoria().equalsIgnoreCase(h2.getCategoria())) return true;
+
+        // Caso 3: misma fecha, distancia <100 m y mismo título
+        if (distancia < RADIO_RAZONABLE_METROS &&
+                h1.getTitulo() != null && h2.getTitulo() != null &&
+                h1.getTitulo().equalsIgnoreCase(h2.getTitulo())) return true;
+
+        return false;
+    }
+
+    private double distanciaMetros(Hecho h1, Hecho h2) {
+        double lat1 = h1.getUbicacion().getLatitud();
+        double lon1 = h1.getUbicacion().getLongitud();
+        double lat2 = h2.getUbicacion().getLatitud();
+        double lon2 = h2.getUbicacion().getLongitud();
+
+        double R = 6371000; // Radio de la Tierra en metros
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 }

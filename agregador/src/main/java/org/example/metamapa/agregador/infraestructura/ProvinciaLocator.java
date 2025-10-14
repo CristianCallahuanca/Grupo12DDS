@@ -58,11 +58,17 @@ public class ProvinciaLocator {
      */
     public static String obtenerProvincia(double lat, double lon) {
         Point punto = geometryFactory.createPoint(new Coordinate(lon, lat));
+
         for (Map.Entry<String, Geometry> entry : provincias.entrySet()) {
-            if (entry.getValue().contains(punto)) {
+            Geometry provinciaGeom = entry.getValue();
+
+            //ampliamos levemente el polígono (1 km)
+            if (provinciaGeom.buffer(0.01).contains(punto)) {
                 return entry.getKey();
             }
         }
+        log.debug("No se encontró provincia para lat={}, lon={}", lat, lon);
         return null;
     }
+
 }

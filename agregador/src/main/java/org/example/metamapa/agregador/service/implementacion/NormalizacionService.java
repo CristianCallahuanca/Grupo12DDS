@@ -21,10 +21,20 @@ import java.util.*;
 public class NormalizacionService implements INormalizacionService {
 
 
-    private static final List<String> catalogoCategorias = List.of(
-            "vientos fuertes", "inundaciones", "granizo", "nevadas", "calor extremo",
-            "sequía", "derrumbes", "actividad volcánica", "incendios", "contaminación",
-            "evento sanitario", "derrame", "intoxicación masiva"
+    private static final Map<String, List<String>> catalogoCategorias = Map.ofEntries(
+            Map.entry("vientos fuertes", List.of("viento", "temporal", "tormenta", "ráfaga", "vendaval")),
+            Map.entry("inundaciones", List.of("inundación", "anegamiento", "crecida", "desborde", "lluvia")),
+            Map.entry("granizo", List.of("granizo", "piedra")),
+            Map.entry("nevadas", List.of("nieve", "nevada")),
+            Map.entry("calor extremo", List.of("calor", "ola de calor", "temperatura alta", "térmico")),
+            Map.entry("sequía", List.of("sequía", "falta de agua", "escasez hídrica", "árido")),
+            Map.entry("derrumbes", List.of("derrumbe", "deslizamiento", "alud", "corte de ruta")),
+            Map.entry("actividad volcánica", List.of("volcán", "erupción")),
+            Map.entry("incendios", List.of("incendio", "fuego", "quema", "forestal")),
+            Map.entry("contaminación", List.of("contaminación", "vertido", "basura", "residuos")),
+            Map.entry("evento sanitario", List.of("enfermedad", "brote", "epidemia", "pandemia", "virus")),
+            Map.entry("derrame", List.of("derrame", "petróleo", "químico", "aceite")),
+            Map.entry("intoxicación masiva", List.of("intoxicación", "alimento", "veneno"))
     );
 
     private static final List<DateTimeFormatter> FORMATTERS = List.of(
@@ -52,10 +62,29 @@ public class NormalizacionService implements INormalizacionService {
 
 
     private String normalizarCategoria(HechoDTO_IN dto) {
-        return catalogoCategorias.stream()
-                .filter(cat -> dto.getCategoria().toLowerCase().contains(cat.toLowerCase()))
-                .findFirst().orElse("Sin categoria");
+        String textoBase = (dto.getCategoria() + " " + dto.getDescripcion());
+        return detectarCategoria(textoBase);
     }
+
+
+    public String normalizarCategoriaDesdeTexto(String titulo, String descripcion) {
+        String textoBase = (titulo == null ? "" : titulo) + " " + (descripcion == null ? "" : descripcion);
+        return detectarCategoria(textoBase);
+    }
+
+
+    private String detectarCategoria(String textoBase) {
+        if (textoBase == null || textoBase.isBlank()) return "Sin categoria";
+
+        String texto = textoBase.toLowerCase().replaceAll("[^a-záéíóúñü ]", "");
+
+        return catalogoCategorias.entrySet().stream()
+                .filter(entry -> entry.getValue().stream().anyMatch(texto::contains))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse("Sin categoria");
+    }
+
 
     private static LocalDateTime parse(String dateStr) {
         for (DateTimeFormatter f : FORMATTERS) {

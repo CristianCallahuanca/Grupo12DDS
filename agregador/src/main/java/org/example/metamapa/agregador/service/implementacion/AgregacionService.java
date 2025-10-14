@@ -19,6 +19,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -55,50 +56,36 @@ public class AgregacionService implements IAgregacionService{
         int total = hechosDTO.size();
         log.info("Se recibieron {} hechos desde las fuentes registradas.", total);
 
-        int batchSize = 5000;
-        int procesados = 0;
-        List<Hecho> acumulador = new ArrayList<>();
+        List<Hecho> hechosNormalizados =
+                (hechosDTO.size() > 5000 ? hechosDTO.parallelStream() : hechosDTO.stream())
+                        .map(dto -> {
+                            try {
+                                return normalizacionService.normalizarHecho(dto);
+                            } catch (Exception e) {
+                                log.warn("Error normalizando '{}': {}", dto.getTitulo(), e.getMessage());
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .toList();
 
-        log.info("Iniciando normalización y guardado en lotes de {} elementos.", batchSize);
+        List<Hecho> hechosFiltrados = duplicacionService.eliminarHechosRepetidos(hechosNormalizados);
+        int eliminados = hechosNormalizados.size() - hechosFiltrados.size();
+        log.info("Filtrados {} hechos duplicados entre fuentes.", eliminados);
 
-        for (int i = 0; i < total; i++) {
-            HechoDTO_IN dto = hechosDTO.get(i);
-            try {
-                Hecho h = normalizacionService.normalizarHecho(dto);
-                acumulador.add(h);
-            } catch (Exception e) {
-                log.warn("Error normalizando '{}': {}", dto.getTitulo(), e.getMessage());
-            }
-
-            // Cada 500 hechos, loguea el avance general
-            if (i % 500 == 0 && i > 0) {
-                log.info("→ Procesando hecho {} de {}", i, total);
-            }
-
-            // Guardar por lote
-            if ((i + 1) % batchSize == 0) {
-                log.info("Guardando lote de {} hechos (hasta índice {})...", acumulador.size(), i);
-                hechosRepository.saveAll(acumulador);
-                hechosRepository.flush();
-                procesados += acumulador.size();
-                acumulador.clear();
-                log.info("Lote guardado. Total acumulado: {} / {}", procesados, total);
-            }
-        }
-
-        // Guardar el último lote si quedó algo
-        if (!acumulador.isEmpty()) {
-            log.info("Guardando lote final de {} hechos...", acumulador.size());
-            hechosRepository.saveAll(acumulador);
-            hechosRepository.flush();
-            procesados += acumulador.size();
-            log.info("Lote final guardado. Total procesados: {}", procesados);
+        try {
+            hechosRepository.saveAll(hechosFiltrados);
+            log.info("Guardados {} hechos nuevos.", hechosFiltrados.size());
+        } catch (Exception e) {
+            log.error("Error al guardar hechos: {}", e.getMessage());
         }
 
         long fin = System.currentTimeMillis();
-        log.info("Integración completada. {} hechos almacenados en {} ms.", procesados, (fin - inicio));
+        log.info("Integración completada: {} hechos almacenados en {} ms (~{} min).",
+                hechosNormalizados.size(),
+                (fin - inicio),
+                String.format("%.2f", (fin - inicio) / 60000.0));
     }
-
 
 
 
