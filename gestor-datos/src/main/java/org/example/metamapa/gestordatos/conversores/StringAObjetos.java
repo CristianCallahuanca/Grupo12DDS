@@ -55,6 +55,12 @@ public class StringAObjetos{
             case "porsincategorizar" -> new PorSinCategorizar(Boolean.parseBoolean(params.get("sinCategorizar")));
             case "poridcontribuyente" -> new PorIdContribuyente(params.get("idBuscado"));
             case "poridhecho" -> new PorIDHecho(Long.parseLong(params.get("idBuscado")));
+            case "porareavisible" -> new PorAreaVisible(
+                    Double.parseDouble(params.get("norte")),
+                    Double.parseDouble(params.get("sur")),
+                    Double.parseDouble(params.get("este")),
+                    Double.parseDouble(params.get("oeste"))
+            );
 
             default -> throw new IllegalArgumentException("Tipo de criterio no válido: " + tipo);
         };
