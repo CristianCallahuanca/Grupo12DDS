@@ -30,11 +30,11 @@ public class HechoService implements IHechoService {
 
         List<CondicionDeFiltrado> condiciones = new ArrayList<>(criterios.stream().map(c -> StringAObjetos.criterioFactory(c)).toList());
 
-        System.out.println("se crearon " + condiciones.size() + "condiciones de filtrado");
+        System.out.println("se crearon " + condiciones.size() + " condiciones de filtrado");
 
         List<Hecho> hechos = this.filtrarHechos(condiciones);
 
-        System.out.println("se obtuvieron " + hechos.size() + "de la DB");
+        System.out.println("se obtuvieron " + hechos.size() + " hechos de la DB");
 
         return hechoADTOOuts(hechos);
     }

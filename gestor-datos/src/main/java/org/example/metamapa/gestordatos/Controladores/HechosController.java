@@ -26,7 +26,6 @@ public class HechosController {
         this.hechosService = hechosService;
     }
 
-    //ok
     @GetMapping("/hechos")
     public ResponseEntity<List<HechoOutputDTO>> obtenerHechos(
             @RequestParam(required = false) String tituloBuscado,
@@ -56,7 +55,7 @@ public class HechosController {
                 estadoHecho, sinCategorizar, idContribuyente, idHecho, norte, sur, este, oeste
         );
 
-        System.out.println("obtuve del query params " + criterios.size() + " criterios");
+        System.out.println("obtuve del query params " + criterios.size());
 
         return ResponseEntity.status(200).body(hechosService.buscarTodosLosHechos(criterios));
     }
