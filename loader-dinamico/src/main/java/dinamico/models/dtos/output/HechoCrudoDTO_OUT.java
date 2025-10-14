@@ -20,4 +20,5 @@ public class HechoCrudoDTO_OUT {
     private String contribuyenteID;
     private List<String> archivosMultimedia;
     private String origen;
+    private String tipoFuente;
 }

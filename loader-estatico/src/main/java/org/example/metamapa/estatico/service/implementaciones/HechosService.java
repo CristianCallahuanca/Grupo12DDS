@@ -59,7 +59,8 @@ public class HechosService implements IHechosService {
                 null,
                 null,
                 Collections.emptyList(),
-                hecho.getFuenteOrigen()
+                hecho.getFuenteOrigen(),
+                "ESTATICA"
 
         );
     }

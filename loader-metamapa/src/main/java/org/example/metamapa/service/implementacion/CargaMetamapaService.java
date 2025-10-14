@@ -77,6 +77,7 @@ public class CargaMetamapaService implements ICargaMetamapaService {
                 .contribuyenteID(in.getContribuyenteID())
                 .archivosMultimedia(in.getArchivosMultimedia())
                 .origen(loaderId)
+                .tipoFuente("PROXY")
                 .build();
     }
 

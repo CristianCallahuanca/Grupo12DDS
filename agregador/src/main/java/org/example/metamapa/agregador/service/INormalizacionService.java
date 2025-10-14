@@ -9,4 +9,5 @@ import java.util.List;
 @Service
 public interface INormalizacionService {
     List<Hecho> normalizarHechos(List<HechoDTO_IN> hechosSinNormalizar);
+    public  Hecho normalizarHecho(HechoDTO_IN dto);
 }

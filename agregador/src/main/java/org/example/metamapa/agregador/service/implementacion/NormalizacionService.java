@@ -1,7 +1,7 @@
 package org.example.metamapa.agregador.service.implementacion;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.example.metamapa.agregador.infraestructura.ProvinciaLocator;
 import org.example.metamapa.agregador.models.dtos.DTO_IN.HechoDTO_IN;
 import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.entidades.Origen;
@@ -9,75 +9,22 @@ import org.example.metamapa.agregador.models.entidades.Ubicacion;
 import org.example.metamapa.agregador.service.INormalizacionService;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 
 @Service
+@Slf4j
 public class NormalizacionService implements INormalizacionService {
 
-    //Atte GPT:
-    public static String obtenerProvinciaAPI(double lat, double lon) {
-        try {
-            // Forzamos formato US: punto decimal, no coma
-            String latStr = String.format(java.util.Locale.US, "%.6f", lat);
-            String lonStr = String.format(java.util.Locale.US, "%.6f", lon);
 
-            String urlString = String.format(
-                    "https://nominatim.openstreetmap.org/reverse?lat=%s&lon=%s&format=json",
-                    latStr, lonStr
-            );
-
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("User-Agent", "MetaMapa-Agregador/1.0 (UTN)");
-
-            if (conn.getResponseCode() != 200) {
-                System.err.println("Nominatim respondió HTTP " + conn.getResponseCode() + " para lat=" + latStr + ", lon=" + lonStr);
-                return null;
-            }
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = in.readLine()) != null) {
-                response.append(line);
-            }
-            in.close();
-
-            JsonNode root = new ObjectMapper().readTree(response.toString());
-            JsonNode addressNode = root.path("address");
-            return addressNode.path("state").asText(null); // null si no existe
-
-        } catch (Exception e) {
-            System.err.println("Error en obtenerProvinciaAPI: " + e.getMessage());
-            return null;
-        }
-    }
-
-
-    private List<String> catalogoCategorias = List.of(
-            "vientos fuertes",
-            "inundaciones",
-            "granizo",
-            "nevadas",
-            "calor extremo",
-            "sequía",
-            "derrumbes",
-            "actividad volcánica",
-            "incendios",
-            "contaminación",
-            "evento sanitario",
-            "derrame",
-            "intoxicación masiva"
+    private static final List<String> catalogoCategorias = List.of(
+            "vientos fuertes", "inundaciones", "granizo", "nevadas", "calor extremo",
+            "sequía", "derrumbes", "actividad volcánica", "incendios", "contaminación",
+            "evento sanitario", "derrame", "intoxicación masiva"
     );
 
     private static final List<DateTimeFormatter> FORMATTERS = List.of(
@@ -86,89 +33,93 @@ public class NormalizacionService implements INormalizacionService {
             DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"),
             DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"),
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"),
-            DateTimeFormatter.ofPattern("yyyy-MM-dd") // ojo: solo fecha
+            DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+            DateTimeFormatter.ofPattern("dd/MM/yyyy")
     );
 
-    private Ubicacion normalizarUbicacion(HechoDTO_IN hechoSinNormalizar) {
-        try {
-            String latitudNormalizada = hechoSinNormalizar.getLatitud().replace(",", ".");
-            String longitudNormalizada = hechoSinNormalizar.getLongitud().replace(",", ".");
-            double lat = Double.parseDouble(latitudNormalizada);
-            double lon = Double.parseDouble(longitudNormalizada);
 
-            String provincia = obtenerProvinciaAPI(lat, lon);
-            return new Ubicacion(lat, lon, provincia != null ? provincia : "Desconocida");
+    private Ubicacion normalizarUbicacion(HechoDTO_IN dto) {
+        try {
+            double lat = Double.parseDouble(dto.getLatitud().replace(",", "."));
+            double lon = Double.parseDouble(dto.getLongitud().replace(",", "."));
+            String provincia = ProvinciaLocator.obtenerProvincia(lat, lon);
+            return new Ubicacion(lat, lon, provincia);
         } catch (Exception e) {
-            System.err.println("Coordenadas inválidas en hecho: " + hechoSinNormalizar.getTitulo());
-            return new Ubicacion(0.0, 0.0, "Desconocida");
+            log.warn("Coordenadas inválidas en hecho '{}'", dto.getTitulo());
+            return new Ubicacion(0.0, 0.0, null);
         }
     }
 
 
-    private String categoriaEnCatalogo(String categoria){
+    private String normalizarCategoria(HechoDTO_IN dto) {
         return catalogoCategorias.stream()
-                .filter(cat -> categoria.toLowerCase()
-                        .contains(cat.toLowerCase()))
+                .filter(cat -> dto.getCategoria().toLowerCase().contains(cat.toLowerCase()))
                 .findFirst().orElse("Sin categoria");
     }
 
-    private String normalizarCategoria(HechoDTO_IN hechoSinNormalizar){
-        return categoriaEnCatalogo(hechoSinNormalizar.getCategoria());
-    }
-
     private static LocalDateTime parse(String dateStr) {
-        for (DateTimeFormatter formatter : FORMATTERS) {
+        for (DateTimeFormatter f : FORMATTERS) {
             try {
-                if (formatter.toString().contains("H")) {
-                    // formato con hora
-                    return LocalDateTime.parse(dateStr, formatter);
-                } else {
-                    // formato solo fecha → convertir a LocalDate y luego a LocalDateTime
-                    LocalDate d = LocalDate.parse(dateStr, formatter);
-                    return d.atStartOfDay();
-                }
-            } catch (DateTimeParseException e) {
-                // intento fallido, sigo al siguiente
-            }
+                return dateStr.contains(":")
+                        ? LocalDateTime.parse(dateStr, f)
+                        : LocalDate.parse(dateStr, f).atStartOfDay();
+            } catch (DateTimeParseException ignored) {}
         }
-        throw new IllegalArgumentException("Formato de fecha no soportado: " + dateStr);
+        log.warn("Formato de fecha no soportado: {}", dateStr);
+        return LocalDateTime.now();
     }
 
-    private LocalDateTime normalizarFecha(HechoDTO_IN hechoSinNormalizar){
-        return parse(hechoSinNormalizar.getFechaAcontecimiento());
+    private LocalDateTime normalizarFecha(HechoDTO_IN dto) {
+        return parse(dto.getFechaAcontecimiento());
     }
 
-
-    private Origen normalizaOrigen(String origen) {
-        if ("DINAMICA".equals(origen)) {
-            return Origen.DINAMICA;
-        }
-        if ("ESTATICA".equals(origen)) {
-            return Origen.ESTATICA;
-        }
+    private Origen normalizaOrigen(String tipoFuente) {
+        if ("DINAMICA".equalsIgnoreCase(tipoFuente)) return Origen.DINAMICA;
+        if ("ESTATICA".equalsIgnoreCase(tipoFuente)) return Origen.ESTATICA;
         return Origen.PROXY;
     }
 
-    private Hecho normalizarHecho(HechoDTO_IN hechoDTO){
 
-        Hecho nuevoHecho = new Hecho(
-                hechoDTO.getTitulo(),
-                hechoDTO.getDescripcion(),
-                normalizarCategoria(hechoDTO),
-                normalizarUbicacion(hechoDTO),
-                normalizarFecha(hechoDTO),
-                hechoDTO.getEtiqueta(),
-                hechoDTO.getArchivosMultimedia()
+    public Hecho normalizarHecho(HechoDTO_IN dto) {
+
+        Hecho h = new Hecho(
+                dto.getTitulo(),
+                dto.getDescripcion(),
+                normalizarCategoria(dto),
+                normalizarUbicacion(dto),
+                normalizarFecha(dto),
+                dto.getEtiqueta(),
+                dto.getArchivosMultimedia()
         );
+        h.getOrigenes().add(normalizaOrigen(dto.getTipoFuente()));
+        h.setOrigenReal(dto.getOrigen());
 
-        System.out.println("el origen es: " + hechoDTO.getOrigen());
-
-        nuevoHecho.getOrigenes().add(normalizaOrigen(hechoDTO.getOrigen()));
-
-        return nuevoHecho;
+        return h;
     }
 
-    public List<Hecho> normalizarHechos(List<HechoDTO_IN> hechosSinNormalizar){
-        return hechosSinNormalizar.stream().map(this::normalizarHecho).toList();
+
+    public List<Hecho> normalizarHechos(List<HechoDTO_IN> hechos) {
+        List<Hecho> lista = new ArrayList<>();
+        int total = hechos.size();
+        log.info("Iniciando normalización de {} hechos...", total);
+
+        for (int i = 0; i < total; i++) {
+            HechoDTO_IN dto = hechos.get(i);
+            try {
+                lista.add(normalizarHecho(dto));
+            } catch (Exception e) {
+                log.warn("Error normalizando '{}': {}", dto.getTitulo(), e.getMessage());
+            }
+
+            // Log de progreso cada 1000 hechos
+            if ((i + 1) % 1000 == 0) {
+                log.info("→ Progreso: {} / {} hechos normalizados", (i + 1), total);
+            }
+        }
+
+        log.info("Normalización completada. Total procesados: {}", lista.size());
+        return lista;
     }
+
+
 }
