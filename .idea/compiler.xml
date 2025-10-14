@@ -13,6 +13,7 @@
         <module name="common" />
         <module name="loader-dinamico" />
         <module name="gestor-datos" />
+        <module name="interfaz-usuario" />
         <module name="loader-estatico" />
         <module name="loader-metamapa" />
       </profile>
@@ -33,6 +34,7 @@
       <module name="common" options="-parameters" />
       <module name="estadisticas" options="-parameters" />
       <module name="gestor-datos" options="-parameters" />
+      <module name="interfaz-usuario" options="-parameters" />
       <module name="loader-demo" options="-parameters" />
       <module name="loader-dinamico" options="-parameters" />
       <module name="loader-estatico" options="-parameters" />

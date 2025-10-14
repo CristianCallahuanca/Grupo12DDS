@@ -30,7 +30,7 @@ public class Hecho {
     @Column(name = "titulo")
     private String titulo;
 
-    @Column(name = "descripcion")
+    @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
 
     @Column(name = "categoria")
@@ -79,6 +79,8 @@ public class Hecho {
     @Column( name = "sin_categorizar")
     private Boolean sinCategorizar;
 
+    @Column(name = "origen_real")
+    private String origenReal;
 
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
                  LocalDateTime fechaAcontecimiento,String etiqueta,List<String> archivosMultimedia) {
@@ -95,9 +97,9 @@ public class Hecho {
         this.fechaCarga = LocalDateTime.now();
         this.contribuyente = new ContribuyenteRegistrado(); //TODO
         this.origenes = new ArrayList<Origen>();
+        this.origenReal = "";
 
-
-        if(categoria == "Sin categoria"){
+        if("Sin categoria".equals(categoria)){
             this.setSinCategorizar(true);
         }
     }
@@ -134,7 +136,7 @@ public class Hecho {
     }
 
     public boolean puedeSerEditado() {
-        return this.origenes.contains("Dinamica")  && //hay que ver que sea registrado
+        return this.origenes.contains(Origen.DINAMICA)  && //hay que ver que sea registrado
                 ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
     }
 

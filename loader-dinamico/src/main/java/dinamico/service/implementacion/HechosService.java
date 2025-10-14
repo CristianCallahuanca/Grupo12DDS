@@ -69,6 +69,7 @@ public class HechosService implements IHechosService {
         dto.setEtiqueta(hecho.getEtiqueta());
         dto.setContribuyenteID("1"); //TODO HARDCODEADO TEMPORAL
         dto.setArchivosMultimedia(hecho.getArchivosMultimedia());
+        dto.setTipoFuente("DINAMICA");
         return dto;
     }
 

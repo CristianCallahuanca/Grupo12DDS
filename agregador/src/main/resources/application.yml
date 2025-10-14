@@ -4,8 +4,10 @@ spring:
 server:
   port: 8200
 agregador:
+  cron: "0 */5 * * * *"
   timeout:
     segundos: 30
+
 logging:
   file:
     name: logs/agregador/agregador.log

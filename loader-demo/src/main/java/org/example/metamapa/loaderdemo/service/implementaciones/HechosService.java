@@ -55,7 +55,8 @@ public class HechosService implements IHechosService {
                 h.getFecha(),
                 null,
                 List.of(),
-                h.getOrigen()
+                h.getOrigen(),
+                "PROXY"
         );
     }
 }
