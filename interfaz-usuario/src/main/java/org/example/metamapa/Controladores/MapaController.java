@@ -10,10 +10,4 @@ public class MapaController {
     public String mostrarMapa() {
         return "mapa"; // Esto mostrará el archivo mapa.html
     }
-
-    // Si quieres que el mapa sea la página principal:
-    @GetMapping("/")
-    public String paginaPrincipal() {
-        return "mapa"; // También muestra el mapa en la raíz
-    }
 }
