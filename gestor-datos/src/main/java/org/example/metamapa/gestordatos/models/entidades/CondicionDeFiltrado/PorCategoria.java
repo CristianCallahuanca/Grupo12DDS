@@ -26,7 +26,8 @@ public class PorCategoria extends CondicionDeFiltrado {
 
     @Override
     public Specification<Hecho> toSpecification() {
-        return (root, query, cb) -> cb.equal(root.get("categoria"), categoriaDeseada);
-    }
+        return (root, query, cb) ->
+                cb.like(cb.lower(root.get("categoria")), "%" + categoriaDeseada.toLowerCase() + "%");
+    } //no se que tan correcto es pero va a funcionar
 
 }

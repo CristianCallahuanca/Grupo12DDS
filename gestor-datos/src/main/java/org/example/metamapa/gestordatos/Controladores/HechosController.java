@@ -28,11 +28,12 @@ public class HechosController {
 
     @GetMapping("/hechos")
     public ResponseEntity<List<HechoOutputDTO>> obtenerHechos(
-            @RequestParam(required = false) String tituloBuscado,
-            @RequestParam(required = false) String categoriaDeseada,
-            @RequestParam(required = false) String fraseClave,
-            @RequestParam(required = false) String etiquetaDeseada,
-            @RequestParam(required = false) String unOrigen,
+            @RequestParam(required = false) String titulo, //
+            @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) String descripcion, //funca
+            @RequestParam(required = false) String etiqueta,
+            @RequestParam(required = false) String origen,
+            @RequestParam(required = false) Boolean contieneMultimedia,
             @RequestParam(required = false) Double latitud,
             @RequestParam(required = false) Double longitud,
             @RequestParam(required = false) String desdeCarga,
@@ -50,9 +51,9 @@ public class HechosController {
             {
 
         List<CriterioRequest> criterios = construirCriteriosDesdeQueryParams(
-                tituloBuscado, categoriaDeseada, fraseClave, etiquetaDeseada, unOrigen,
+                titulo, categoria, descripcion, etiqueta, origen,
                 latitud, longitud, desdeCarga, hastaCarga, desdeAcontecimiento, hastaAcontecimiento,
-                estadoHecho, sinCategorizar, idContribuyente, idHecho, norte, sur, este, oeste
+                estadoHecho, sinCategorizar, idContribuyente, idHecho, norte, sur, este, oeste, contieneMultimedia
         );
 
         System.out.println("obtuve del query params " + criterios.size());
@@ -65,9 +66,18 @@ public class HechosController {
             String etiquetaDeseada, String unOrigen, Double latitud, Double longitud,
             String desdeCarga, String hastaCarga, String desdeAcontecimiento,
             String hastaAcontecimiento, String estadoHecho, Boolean sinCategorizar,
-            String idContribuyente, Long idHecho, Double norte, Double sur, Double este, Double oeste) {
+            String idContribuyente, Long idHecho, Double norte, Double sur, Double este, Double oeste, Boolean contieneMultimedia) {
 
         List<CriterioRequest> criterios = new ArrayList<>();
+
+        //contiene multimedia
+
+        if(contieneMultimedia != null){
+            CriterioRequest criterio = new CriterioRequest();
+            criterio.setTipo("contieneMultimedia");
+            criterio.setParams(Map.of("multimedia", contieneMultimedia.toString()));
+            criterios.add(criterio);
+        }
 
         //por area de un cuadrado
         if (norte != null && sur != null && este != null && oeste != null) {

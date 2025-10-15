@@ -79,9 +79,6 @@ public class Hecho {
     @Column( name = "sin_categorizar")
     private Boolean sinCategorizar;
 
-    @Column(name = "origen_real")
-    private String origenReal;
-
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
                  LocalDateTime fechaAcontecimiento,String etiqueta,List<String> archivosMultimedia) {
 
@@ -97,7 +94,6 @@ public class Hecho {
         this.fechaCarga = LocalDateTime.now();
         this.contribuyente = new ContribuyenteRegistrado(); //TODO
         this.origenes = new ArrayList<Origen>();
-        this.origenReal = "";
 
         if("Sin categoria".equals(categoria)){
             this.setSinCategorizar(true);
