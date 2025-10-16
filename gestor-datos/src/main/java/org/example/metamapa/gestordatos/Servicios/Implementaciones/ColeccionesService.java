@@ -156,6 +156,12 @@ public class ColeccionesService implements IColeccionesService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<ColeccionOutputDTO> retrieveColecciones(){
+        return coleccionesToDTOOuts(coleccionesRepository.findAll());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public ColeccionOutputDTO retrieveColeccion(String handle) {
         return coleccionesRepository.findById(handle)
                 .map(this::toOutputDTO)
@@ -203,10 +209,17 @@ public class ColeccionesService implements IColeccionesService {
        ============   HELPERS / CONVERSORES   ===============
      */
 
+    public List<ColeccionOutputDTO> coleccionesToDTOOuts(List<Coleccion> colecciones) {
+        return colecciones.stream()
+                .map(this::toOutputDTO)
+                .collect(Collectors.toList());
+    }
+
     private ColeccionOutputDTO toOutputDTO(Coleccion coleccion) {
         ColeccionOutputDTO dto = new ColeccionOutputDTO();
         dto.setNombre(coleccion.getTitulo());
         dto.setDescripcion(coleccion.getDescripcion());
+        dto.setHandle(coleccion.getHandle());
         dto.setAlgoritmo(coleccion.getAlgoritmo() != null ? coleccion.getAlgoritmo().toString() : "NINGUNO");
 
         return dto;

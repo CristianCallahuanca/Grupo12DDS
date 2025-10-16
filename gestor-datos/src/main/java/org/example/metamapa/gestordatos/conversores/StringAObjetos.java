@@ -33,7 +33,10 @@ public class StringAObjetos{
         String tipo = request.getTipo().toLowerCase();
         Map<String, String> params = request.getParams();
 
+
         return switch (tipo) {
+            
+            case "porcoleccion" -> new PorColeccion(params.get("coleccionBuscada"));
             case "portitulo" -> new PorTitulo(params.get("tituloBuscado"));
             case "porcategoria" -> new PorCategoria(params.get("categoriaDeseada"));
             case "pordescripcion" -> new PorDescripcion(params.get("fraseClave"));

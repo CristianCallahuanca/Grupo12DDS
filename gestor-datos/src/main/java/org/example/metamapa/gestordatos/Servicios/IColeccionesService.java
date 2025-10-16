@@ -13,6 +13,8 @@ public interface IColeccionesService {
     /* ==== ADMIN ==== */
     void crearColeccion(ColeccionInputDTO coleccionDTO);
 
+    List<ColeccionOutputDTO> retrieveColecciones();
+
     List<ColeccionOutputDTO> listarColecciones();
 
     boolean actualizarColeccion(String handle, Map<String, String> cambios);

@@ -28,6 +28,18 @@ public class ColeccionesPublicasController {
         return ResponseEntity.ok(coleccion);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ColeccionOutputDTO>> obtenerColecciones(){
+
+        List<ColeccionOutputDTO> coleccionesOutput = this.coleccionService.retrieveColecciones();
+
+        if (coleccionesOutput == null) {
+            return ResponseEntity.status(400).body(null);
+        }
+        return ResponseEntity.status(200).body(coleccionesOutput);
+
+    }
+
     @GetMapping("/{handle}/hechos")
     public ResponseEntity<List<HechoOutputDTO>> getHechosPorCriterio(@PathVariable String handle,
                                                                      @RequestBody(required = false)
@@ -45,7 +57,10 @@ public class ColeccionesPublicasController {
     @GetMapping("/{handle}/modoNavegacion")
     public ResponseEntity<List<HechoOutputDTO>> navegarPorModo(@PathVariable String handle,
                                                                @RequestParam("modo") String modo) {
+
+        System.out.println("le pegue al endpoint");
         List<HechoOutputDTO> hechos = coleccionService.retrieveColeccionModoNavegacion(handle, modo);
+
         if (hechos == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(hechos);
     }

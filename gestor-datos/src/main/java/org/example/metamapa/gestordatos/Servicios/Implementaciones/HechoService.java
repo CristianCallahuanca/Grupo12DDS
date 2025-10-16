@@ -145,6 +145,7 @@ public class HechoService implements IHechoService {
     @Override
     public List<CriterioRequest> convertirQueryParamsACriterios(Map<String, String> queryParams) {
         List<CriterioRequest> criterios = new ArrayList<>();
+        Set<String> criteriosProcesados = new HashSet<>(); // Para evitar duplicados
 
         for (var entry : queryParams.entrySet()) {
             String clave = entry.getKey();
@@ -154,13 +155,21 @@ public class HechoService implements IHechoService {
             CriterioRequest criterio = new CriterioRequest();
 
             switch (clave) {
-                case "tituloBuscado" -> {
+                case "coleccionId" -> {
+                    criterio.setTipo("porColeccion");
+                    criterio.setParams(Map.of("coleccionBuscada", valor));
+                }
+                case "titulo" -> {
                     criterio.setTipo("porTitulo");
                     criterio.setParams(Map.of("tituloBuscado", valor));
                 }
-                case "categoriaDeseada" -> {
+                case "categoria" -> {
                     criterio.setTipo("porCategoria");
                     criterio.setParams(Map.of("categoriaDeseada", valor));
+                }
+                case "descripcion" -> { // Agregué este caso que te faltaba
+                    criterio.setTipo("porDescripcion");
+                    criterio.setParams(Map.of("fraseClave", valor));
                 }
                 case "fraseClave" -> {
                     criterio.setTipo("porDescripcion");
@@ -170,7 +179,7 @@ public class HechoService implements IHechoService {
                     criterio.setTipo("porEtiqueta");
                     criterio.setParams(Map.of("etiquetaDeseada", valor));
                 }
-                case "origenDeseado" -> {
+                case "origen" -> {
                     criterio.setTipo("porOrigen");
                     criterio.setParams(Map.of("origenDeseado", valor.toUpperCase()));
                 }
@@ -186,35 +195,65 @@ public class HechoService implements IHechoService {
                     criterio.setTipo("porIDHecho");
                     criterio.setParams(Map.of("idBuscado", valor));
                 }
-                case "latitud", "longitud" -> {
-                    // se manejan juntos si están ambos presentes
-                    if (queryParams.containsKey("latitud") && queryParams.containsKey("longitud")) {
-                        criterio.setTipo("porUbicacion");
-                        criterio.setParams(Map.of(
-                                "latitud", queryParams.get("latitud"),
-                                "longitud", queryParams.get("longitud")
-                        ));
-                    }
+                case "contieneMultimedia" -> { // Agregué este caso que te faltaba
+                    criterio.setTipo("contieneMultimedia");
+                    criterio.setParams(Map.of("multimedia", valor));
                 }
                 case "desdeCarga" -> {
                     criterio.setTipo("porFechaCargaDesde");
                     criterio.setParams(Map.of("desde", valor));
+                    System.out.println("desdeCarga: " + valor);
                 }
                 case "hastaCarga" -> {
                     criterio.setTipo("porFechaCargaHasta");
                     criterio.setParams(Map.of("hasta", valor));
+                    System.out.println("hastaCarga: " + valor);
                 }
                 case "desdeAcontecimiento" -> {
                     criterio.setTipo("porFechaAcontecimientoDesde");
                     criterio.setParams(Map.of("desde", valor));
+                    System.out.println("desdeAcontecimiento: " + valor);
                 }
                 case "hastaAcontecimiento" -> {
                     criterio.setTipo("porFechaAcontecimientoHasta");
                     criterio.setParams(Map.of("hasta", valor));
+                    System.out.println("hastaAcontecimiento: " + valor);
                 }
+
             }
 
-            if (criterio.getTipo() != null) criterios.add(criterio);
+            if (criterio.getTipo() != null && !criteriosProcesados.contains(criterio.getTipo())) {
+                criterios.add(criterio);
+                criteriosProcesados.add(criterio.getTipo());
+            }
+        }
+
+        // MANEJAR CRITERIOS COMPUESTOS FUERA DEL LOOP
+
+        // 1. PorAreaVisible (solo una vez)
+        if (queryParams.containsKey("norte") && queryParams.containsKey("sur") &&
+                queryParams.containsKey("este") && queryParams.containsKey("oeste")) {
+
+            String norte = queryParams.get("norte");
+            String sur = queryParams.get("sur");
+            String este = queryParams.get("este");
+            String oeste = queryParams.get("oeste");
+
+            if (norte != null && !norte.trim().isEmpty() &&
+                    sur != null && !sur.trim().isEmpty() &&
+                    este != null && !este.trim().isEmpty() &&
+                    oeste != null && !oeste.trim().isEmpty()) {
+
+                CriterioRequest criterioArea = new CriterioRequest();
+                criterioArea.setTipo("porAreaVisible");
+                criterioArea.setParams(Map.of(
+                        "norte", norte,
+                        "sur", sur,
+                        "este", este,
+                        "oeste", oeste
+                ));
+                criterios.add(criterioArea);
+            }
         }
 
         log.debug("→ Generados {} criterios desde query params", criterios.size());
