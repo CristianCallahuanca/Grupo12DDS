@@ -14,29 +14,23 @@ import lombok.Setter;
 @Table(name = "hecho_de_coleccion")
 public class HechoDeColeccion {
 
-    /*HechoDeColeccion(Hecho hecho, Boolean esConsensuado){
-        this.hecho = hecho;
-        this.esConsensuado = esConsensuado;
-    }*/
-
-    //estoy probando no más
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @JoinColumn(name = "hecho_id")
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "hecho_id", nullable = false)
     private Hecho hecho;
 
-    @Column(name= "es_consensuado")
-    private Boolean esConsensuado;
+    @Column(name= "consensuado", nullable = false)
+    private boolean consensuado;
 
-    @ManyToOne
-    @JoinColumn(name = "coleccion_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "coleccion_id", nullable = false)
     private Coleccion coleccion;
 
     public HechoDeColeccion(Hecho hecho, boolean esConsensuado) {
         this.hecho = hecho;
-        this.esConsensuado = esConsensuado;
+        this.consensuado = esConsensuado;
     }
 }

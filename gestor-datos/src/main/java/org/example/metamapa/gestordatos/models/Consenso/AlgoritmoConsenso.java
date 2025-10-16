@@ -1,4 +1,4 @@
-package org.example.metamapa.gestordatos.models.entidades.Consenso;
+package org.example.metamapa.gestordatos.models.Consenso;
 
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.entidades.HechoDeColeccion;
@@ -12,7 +12,7 @@ public abstract class AlgoritmoConsenso {
         for (HechoDeColeccion hechoColeccion : hechosDeColeccion) {
             Hecho hecho = hechoColeccion.getHecho(); //no me andan los getters
             boolean consensuado = esConsensuado(hecho);
-            hechoColeccion.setEsConsensuado(consensuado);
+            hechoColeccion.setConsensuado(consensuado);
         }
     }
 }

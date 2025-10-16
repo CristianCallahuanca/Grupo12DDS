@@ -1,9 +1,7 @@
-package org.example.metamapa.gestordatos.models.entidades.ModosNavegacion;
+package org.example.metamapa.gestordatos.models.ModosNavegacion;
 
 import org.example.metamapa.gestordatos.models.entidades.Coleccion;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
-import org.example.metamapa.gestordatos.models.entidades.HechoDeColeccion;
-import org.example.metamapa.gestordatos.models.entidades.Consenso.AlgoritmoConsenso;
 
 import java.util.List;
 

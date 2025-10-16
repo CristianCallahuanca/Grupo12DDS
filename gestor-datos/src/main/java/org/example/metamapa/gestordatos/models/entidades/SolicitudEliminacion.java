@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoEliminar;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -21,54 +22,28 @@ public class SolicitudEliminacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne
-    @JoinColumn(name = "hecho_id")
+    @ManyToOne(optional = false) // o @OneToOne si busco que sea exclusivo
+    @JoinColumn(name = "hecho_id", nullable = false)
     private Hecho hecho;
 
-    @Column(name = "justificacion")
+    @Column(name = "justificacion", nullable = false, length = 500)
     private String justificacion;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "estado_eliminar", nullable = false)
     private EstadoEliminar estadoEliminar;
 
-    @Column(name = "verifico_si_es_spam")
-    private Boolean verifico_si_es_spam;
+    @Column(name = "verifico_si_es_spam", nullable = false)
+    private boolean verificoSiEsSpam;
+
+    @Column(name = "fecha_creacion")
+    private LocalDateTime fechaCreacion = LocalDateTime.now();
 
 
     public SolicitudEliminacion(Hecho hecho, String justificacion) {
         this.hecho = hecho;
         this.justificacion = justificacion;
         this.estadoEliminar = EstadoEliminar.PENDIENTE;
-        this.verifico_si_es_spam = false;
+        this.verificoSiEsSpam = false;
     }
-    /*
-    public SolicitudEliminar(Hecho hecho, String justificacion) {
-        this.id_solicitud = ServicioDeIdentificacion.getInstancia().generarIDSolicitudEliminacion(); // asignación automática de ID
-        this.id_hecho = hecho.getId_hecho(); //creo
-        this.justificacion = justificacion;
-
-        if (DetectorDeSpamSingleton.getInstance().esSpam(justificacion)) {
-            this.rechazar();
-        } else {
-            this.estadoEliminar = EstadoEliminar.PENDIENTE;
-            this.cargarSolicitud();
-        }
-    }
-
-
-    public void aceptar() throws IOException {
-        this.estadoEliminar = EstadoEliminar.APROBADA;
-        ServicioIdentificadorDeObjetos.getInstancia().obtenerHechoPorID(id_hecho).marcarComoNoVisible();
-    }
-
-    public void rechazar() {
-        if (this.estadoEliminar != EstadoEliminar.RECHAZADA) {
-            this.estadoEliminar = EstadoEliminar.RECHAZADA;
-            SolicitudRepositorio.getInstancia().eliminarSolicitud(this);
-        }
-    }
-
-
-
-    public void cargarSolicitud() { SolicitudRepositorio.getInstancia().guardar(this); }*/
 }

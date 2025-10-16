@@ -24,9 +24,7 @@ public class PorIDHecho extends CondicionDeFiltrado{
 
     @Override
     public Specification<Hecho> toSpecification() { //revisar TODO
-        return (root, query, cb) -> {
+        return (root, query, cb) -> cb.equal(root.get("hecho_id"), idBuscado);
 
-            return cb.equal(root.get("id"), idBuscado);
-        };
     }
 }

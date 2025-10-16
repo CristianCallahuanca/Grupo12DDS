@@ -20,8 +20,6 @@ public class HechoColeccionService implements IHechoColeccionService {
     public List<Long> obtenerIdsHechosAsociadosColeccion(String handle){
         List<Long> idHechos = new ArrayList<>();//= hechosColeccionRepository.findIdsHechosByColeccionHandle(handle);
 
-        //System.out.println("el primer hecho encontrado: " + idHechos.get(0));
-
         return idHechos;
     }
 }

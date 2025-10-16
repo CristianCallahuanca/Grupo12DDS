@@ -20,7 +20,7 @@ public class PorFechaCargaHasta extends CondicionDeFiltrado{
 
     @Override
     public boolean cumpleUno(Hecho unHecho) {
-        return (unHecho.getFechaAcontecimiento().isBefore(hasta) || unHecho.getFechaAcontecimiento().isEqual(hasta));
+        return (unHecho.getFechaCarga().isBefore(hasta) || unHecho.getFechaCarga().isEqual(hasta));
     }
 
     @Override

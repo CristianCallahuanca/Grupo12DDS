@@ -3,3 +3,10 @@ spring:
     name: gestor-datos
 server:
   port: 8500
+logging:
+  file:
+    name: logs/gestor-datos/gestor-datos.log
+  level:
+    root: INFO
+    org.example.metamapa: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

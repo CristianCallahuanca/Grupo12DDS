@@ -37,4 +37,9 @@ public class Ubicacion {
         this.longitud = longitud;
     }
 
+    public String getCoordenadas() {
+        return latitud + ", " + longitud;
+    }
+
 }
+// PREGUNTAR A JOACO EL EMBEBBED

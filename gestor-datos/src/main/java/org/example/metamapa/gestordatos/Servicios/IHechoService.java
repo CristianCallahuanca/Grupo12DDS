@@ -14,9 +14,13 @@ public interface IHechoService {
 
     public List<HechoOutputDTO> buscarTodosLosHechos(List<CriterioRequest> criterios);
 
-    public void guardarHecho(HechoInputDTO hechoInputDTO);
 
     List<HechoOutputDTO> hechoADTOOuts(List<Hecho> hechos);
 
     public List<Hecho> filtrarHechos(List<CondicionDeFiltrado> condiciones);
+
+    List<CriterioRequest> convertirQueryParamsACriterios(Map<String, String> queryParams);
+
+    boolean editarHechoContribuyente(Long id, Map<String, Object> cambios);
+    long contarTodos();
 }

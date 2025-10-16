@@ -27,7 +27,11 @@ public class PorTitulo extends CondicionDeFiltrado{
 
     @Override
     public Specification<Hecho> toSpecification() {
-        return (root, query, cb) -> cb.equal(root.get("titulo"), tituloBuscado);
+        return (root, query, cb) -> cb.like(
+                cb.lower(root.get("titulo")),
+                "%" + tituloBuscado.toLowerCase() + "%"
+        );
     }
+
 
 }

@@ -5,18 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.conversores.AlgoritmoConsensoAttributeConverter;
-import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.PorOrigen;
-import org.example.metamapa.gestordatos.models.entidades.Consenso.AlgoritmoConsenso;
-import org.example.metamapa.gestordatos.models.entidades.ModosNavegacion.ModoNavegacion;
-import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
+import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
+import org.example.metamapa.gestordatos.models.Consenso.AlgoritmoConsenso;
+import org.example.metamapa.gestordatos.models.ModosNavegacion.ModoNavegacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
-import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
+import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Getter
 @Setter
@@ -31,13 +28,10 @@ public class Coleccion {
     private String handle;
 
     @ElementCollection(targetClass = Origen.class)
-    @CollectionTable(
-            name = "coleccion_origenes",
-            joinColumns = @JoinColumn(name = "coleccion_id")
-    )
+    @CollectionTable(name = "coleccion_origenes", joinColumns = @JoinColumn(name = "coleccion_id"))
     @Column(name = "origen")
     @Enumerated(EnumType.STRING)
-    private List<Origen> origenes;
+    private List<Origen> origenes = new ArrayList<>();
 
     @Column(name = "titulo")
     private String titulo;
@@ -45,98 +39,85 @@ public class Coleccion {
     @Column(name = "descripcion")
     private String descripcion;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY) //a chequear esto
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "coleccion_id")
-    private List<CondicionDeFiltrado> criterios;
+    private List<CondicionDeFiltrado> criterios = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "coleccion_id") //hay que especificar como se tiene que llamar la columna de la tabla hecho que apunta a coleccion
-    private List<HechoDeColeccion> hechosColeccion;
+    @OneToMany(mappedBy = "coleccion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HechoDeColeccion> hechosColeccion = new ArrayList<>();
 
     @Convert(converter = AlgoritmoConsensoAttributeConverter.class)
     @Column(name = "algoritmoConsenso")
     private AlgoritmoConsenso algoritmo;
 
-
-    public Coleccion(String handle, List<Origen> origenes, String titulo, String descripcion, List<CondicionDeFiltrado> criterios, AlgoritmoConsenso algoritmo) {
+    public Coleccion(String handle,
+                     List<Origen> origenes,
+                     String titulo,
+                     String descripcion,
+                     List<CondicionDeFiltrado> criterios,
+                     AlgoritmoConsenso algoritmo) {
         this.handle = handle;
-        this.origenes = origenes;
+        this.origenes = (origenes != null) ? new ArrayList<>(origenes) : new ArrayList<>();
         this.titulo = titulo;
         this.descripcion = descripcion;
-        this.criterios = criterios;
+        this.criterios = (criterios != null) ? new ArrayList<>(criterios) : new ArrayList<>();
         this.algoritmo = algoritmo;
-
-        /*List<PorOrigen> origenesJoaco = origenes.stream()
-                .map(unOrigen -> new PorOrigen(unOrigen))
-                .toList();
-
-        this.criterios.addAll(origenesJoaco);*/
-
     }
 
-    public void insertarHechos(List <HechoDeColeccion> unosHechos) {this.hechosColeccion.addAll(unosHechos);}
 
-
+    public List<Hecho> obtenerHechos() {
+        return hechosColeccion.stream().map(HechoDeColeccion::getHecho).toList();
+    }
 
     public List<Hecho> obtenerHechosVisibles() {
-        return obtenerHechos().stream().filter(hecho->hecho.getEstadoHecho() != EstadoHecho.NO_VISIBLE).toList();
+        return obtenerHechos().stream()
+                .filter(h -> h.getEstadoHecho() != EstadoHecho.NO_VISIBLE)
+                .toList();
     }
 
-    public List<Hecho> obtenerHechosConsensuados(){
-        if(algoritmo != null){
-            return hechosColeccion.stream().filter(HechoDeColeccion::getEsConsensuado)
-                    .map(HechoDeColeccion::getHecho).toList();
-        } else {
-            return obtenerHechosVisibles(); // para que devuelva todos los hechos si no tiene algoritmo de consenso
+    public List<Hecho> obtenerHechosConsensuados() {
+        if (algoritmo != null) {
+            return hechosColeccion.stream()
+                    .filter(HechoDeColeccion::isConsensuado)
+                    .map(HechoDeColeccion::getHecho)
+                    .toList();
         }
+        return obtenerHechosVisibles();
     }
 
-    public List <Hecho> obtenerHechosPorModo(ModoNavegacion algunModo)
-    {
-        return algunModo.aplicarModoDeNavegacion(this);
+    public List<Hecho> obtenerHechosPorModo(ModoNavegacion modo) {
+        return modo.aplicarModoDeNavegacion(this);
     }
 
     public void aplicarConsenso() {
-            this.algoritmo.consensuarHechos(this.hechosColeccion);
-    }
-
-    public List<Hecho> obtenerHechos(){
-        return hechosColeccion.stream().map(e -> e.getHecho()).toList();
-    }
-
-    private HechoDeColeccion hechoToHechoDeColeccion(Hecho unHecho){
-        return new HechoDeColeccion(unHecho, false);
-    }
-
-    public void reemplazarHechoDeColeccion(List<Hecho> hechos){
-        List <HechoDeColeccion> paraGuardar = hechos.stream().map(h -> hechoToHechoDeColeccion(h) ).toList();
-        this.setHechosColeccion(paraGuardar);
-    }
-
-    public void agregarHechos(List<Hecho> hechos){
-        List<HechoDeColeccion> nuevosHechosDeColeccion = hechos.stream().map(h -> hechoToHechoDeColeccion(h)).toList();
-        this.hechosColeccion.addAll(nuevosHechosDeColeccion);
-    }
-
-    public void agregarNuevaFuente(Origen nuevaFuente){
-        this.origenes.add(nuevaFuente);
-    }
-
-    public void eliminarFuente(Origen fuente){
-        this.origenes.remove(fuente);
+        if (algoritmo != null) algoritmo.consensuarHechos(this.hechosColeccion);
     }
 
 
-/*
-    //Solo para tests
-    public void imprimirHechos(List<Hecho> unosHechos) {
-        unosHechos.forEach(unHecho -> unHecho.imprimirHecho());
+    private HechoDeColeccion wrap(Hecho h) {
+        return new HechoDeColeccion(h, false);
     }
 
-    //Para que los usuarios puedan navegar en la colección
-    private List<Hecho> obtenerHechosFiltrados(List<CriterioDePertenencia> filtros) throws IOException {
-        return ServicioFiltradorDeHechos.filtrarHechos(this.hechos ,filtros);
-    }*/
+    public void reemplazarHechoDeColeccion(List<Hecho> hechos) {
+        List<HechoDeColeccion> nuevos = hechos.stream().map(this::wrap).toList();
+        this.hechosColeccion.clear();
+        this.hechosColeccion.addAll(nuevos);
+    }
+
+    public void agregarHechos(List<Hecho> hechos) {
+        List<HechoDeColeccion> nuevos = hechos.stream().map(this::wrap).toList();
+        this.hechosColeccion.addAll(nuevos);
+    }
+
+    public void agregarNuevaFuente(Origen nuevaFuente) {
+        if (nuevaFuente == null) return;
+        if (this.origenes == null) this.origenes = new ArrayList<>();
+        if (!this.origenes.contains(nuevaFuente)) this.origenes.add(nuevaFuente);
+    }
+
+    public void eliminarFuente(Origen fuente) {
+        if (this.origenes != null) this.origenes.remove(fuente);
+    }
 
 
 }

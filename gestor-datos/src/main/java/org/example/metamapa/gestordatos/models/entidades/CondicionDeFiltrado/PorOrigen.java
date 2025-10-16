@@ -1,5 +1,8 @@
 package org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado;
 
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import lombok.NoArgsConstructor;
 import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
@@ -26,6 +29,20 @@ public class PorOrigen extends CondicionDeFiltrado {
 
     @Override
     public Specification<Hecho> toSpecification() {
-        return (root, query, cb) -> cb.isMember(unOrigen, root.get("origenes"));
+        return (root, query, cb) -> {
+            System.out.println(" Ejecutando filtro explícito con FETCH JOIN sobre origenes: " + unOrigen);
+
+            root.fetch("origenes", JoinType.INNER);
+            Join<Object, Object> join = root.join("origenes", JoinType.INNER);
+
+
+            System.out.println("JOIN creado correctamente con unOrigen=" + unOrigen);
+
+            return cb.equal(join, unOrigen);
+        };
     }
+
+
+
+
 }

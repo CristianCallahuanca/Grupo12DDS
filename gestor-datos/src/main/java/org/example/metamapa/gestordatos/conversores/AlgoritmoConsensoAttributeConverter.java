@@ -3,11 +3,10 @@ package org.example.metamapa.gestordatos.conversores;
 import jakarta.persistence.AttributeConverter;
 
 import jakarta.persistence.Converter;
-import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.PorCategoria;
-import org.example.metamapa.gestordatos.models.entidades.Consenso.Absoluto;
-import org.example.metamapa.gestordatos.models.entidades.Consenso.AlgoritmoConsenso;
-import org.example.metamapa.gestordatos.models.entidades.Consenso.MayoriaSimple;
-import org.example.metamapa.gestordatos.models.entidades.Consenso.MultiplesMenciones;
+import org.example.metamapa.gestordatos.models.Consenso.Absoluto;
+import org.example.metamapa.gestordatos.models.Consenso.AlgoritmoConsenso;
+import org.example.metamapa.gestordatos.models.Consenso.MayoriaSimple;
+import org.example.metamapa.gestordatos.models.Consenso.MultiplesMenciones;
 
 @Converter(autoApply = true)
 public class AlgoritmoConsensoAttributeConverter implements AttributeConverter<AlgoritmoConsenso, String> {
