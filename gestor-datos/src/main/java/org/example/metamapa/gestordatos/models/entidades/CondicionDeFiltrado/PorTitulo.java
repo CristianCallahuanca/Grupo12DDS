@@ -20,9 +20,9 @@ public class PorTitulo extends CondicionDeFiltrado{
         this.tituloBuscado = titulo;
     }
 
-    @Override
     public boolean cumpleUno(Hecho unHecho) {
-        return  Objects.equals(unHecho.getTitulo(), tituloBuscado);
+        return  unHecho.getTitulo().toLowerCase()
+                .contains(this.tituloBuscado.toLowerCase());
     }
 
     @Override
