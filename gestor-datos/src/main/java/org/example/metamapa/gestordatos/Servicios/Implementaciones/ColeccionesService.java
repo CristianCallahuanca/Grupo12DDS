@@ -144,6 +144,7 @@ public class ColeccionesService implements IColeccionesService {
             if (c.getAlgoritmo() != null) {
                 c.aplicarConsenso();
                 coleccionesRepository.save(c);
+                hechoColeccionService.actualizarHechosDeColeccion(c.getHechosColeccion());
                 log.debug("Consenso aplicado en colección {}", c.getHandle());
             }
         });
