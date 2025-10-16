@@ -11,9 +11,10 @@ import org.springframework.data.jpa.domain.Specification;
 public class PorIdContribuyente extends CondicionDeFiltrado{
 
     @Column(name = "id_buscado")
-    private String idBuscado;
+    private Long idBuscado;
 
-    public PorIdContribuyente(String idBuscado) {
+
+    public PorIdContribuyente(Long idBuscado) {
         this.idBuscado = idBuscado;
     }
 

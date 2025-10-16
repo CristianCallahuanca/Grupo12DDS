@@ -3,6 +3,7 @@ package org.example.metamapa.agregador.service.implementacion;
 import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.agregador.infraestructura.ProvinciaLocator;
 import org.example.metamapa.agregador.models.dtos.DTO_IN.HechoDTO_IN;
+import org.example.metamapa.agregador.models.entidades.ContribuyenteRegistrado;
 import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.entidades.Origen;
 import org.example.metamapa.agregador.models.entidades.Ubicacion;
@@ -87,16 +88,20 @@ public class NormalizacionService implements INormalizacionService {
 
 
     private static LocalDateTime parse(String dateStr) {
+        if (dateStr == null || dateStr.isBlank()) return null;
+
         for (DateTimeFormatter f : FORMATTERS) {
             try {
                 return dateStr.contains(":")
-                        ? LocalDateTime.parse(dateStr, f)
-                        : LocalDate.parse(dateStr, f).atStartOfDay();
+                        ? LocalDateTime.parse(dateStr.trim(), f)
+                        : LocalDate.parse(dateStr.trim(), f).atStartOfDay();
             } catch (DateTimeParseException ignored) {}
         }
+
         log.warn("Formato de fecha no soportado: {}", dateStr);
-        return LocalDateTime.now();
+        return null;
     }
+
 
     private LocalDateTime normalizarFecha(HechoDTO_IN dto) {
         return parse(dto.getFechaAcontecimiento());
@@ -120,8 +125,17 @@ public class NormalizacionService implements INormalizacionService {
                 dto.getEtiqueta(),
                 dto.getArchivosMultimedia()
         );
-        h.getOrigenes().add(normalizaOrigen(dto.getTipoFuente()));
 
+        if (dto.getContribuyenteID() != null && !dto.getContribuyenteID().isBlank()) {
+            ContribuyenteRegistrado c = new ContribuyenteRegistrado();
+            c.setId(Long.valueOf(dto.getContribuyenteID()));  // solo referencia, sin persistir
+            h.setContribuyente(c);
+        } else {
+            h.setContribuyente(null);
+        }
+
+        h.getOrigenes().add(normalizaOrigen(dto.getTipoFuente()));
+        h.setOrigenReal(dto.getOrigen());
         return h;
     }
 

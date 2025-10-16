@@ -30,17 +30,11 @@ public class PorOrigen extends CondicionDeFiltrado {
     @Override
     public Specification<Hecho> toSpecification() {
         return (root, query, cb) -> {
-            System.out.println(" Ejecutando filtro explícito con FETCH JOIN sobre origenes: " + unOrigen);
-
-            root.fetch("origenes", JoinType.INNER);
-            Join<Object, Object> join = root.join("origenes", JoinType.INNER);
-
-
-            System.out.println("JOIN creado correctamente con unOrigen=" + unOrigen);
-
+            Join<Hecho, Origen> join = root.join("origenes");
             return cb.equal(join, unOrigen);
         };
     }
+
 
 
 

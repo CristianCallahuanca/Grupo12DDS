@@ -181,11 +181,11 @@ public class HechoService implements IHechoService {
                 }
                 case "origen" -> {
                     criterio.setTipo("porOrigen");
-                    criterio.setParams(Map.of("origenDeseado", valor.toUpperCase()));
+                    criterio.setParams(Map.of("unOrigen", valor.toUpperCase()));
                 }
                 case "estadoDeseado" -> {
                     criterio.setTipo("porEstado");
-                    criterio.setParams(Map.of("estadoDeseado", valor.toUpperCase()));
+                    criterio.setParams(Map.of("estadoHecho", valor.toUpperCase()));
                 }
                 case "sinCategorizar" -> {
                     criterio.setTipo("porSinCategorizar");
