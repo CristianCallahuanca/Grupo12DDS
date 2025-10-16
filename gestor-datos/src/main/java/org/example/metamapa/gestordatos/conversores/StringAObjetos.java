@@ -45,6 +45,9 @@ public class StringAObjetos{
                             Double.parseDouble(params.get("longitud"))
                     )
             );
+            case "contienemultimedia" -> new ContieneMultimedia(
+                    Boolean.parseBoolean(params.get("multimedia"))
+            );
             case "porfechacargadesde" -> new PorFechaCargaDesde(LocalDateTime.parse(params.get("desde")));
             case "porfechacargahasta" -> new PorFechaCargaHasta(LocalDateTime.parse(params.get("hasta")));
 

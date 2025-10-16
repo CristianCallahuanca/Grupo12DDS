@@ -121,7 +121,6 @@ public class NormalizacionService implements INormalizacionService {
                 dto.getArchivosMultimedia()
         );
         h.getOrigenes().add(normalizaOrigen(dto.getTipoFuente()));
-        h.setOrigenReal(dto.getOrigen());
 
         return h;
     }
