@@ -23,4 +23,29 @@ public class Usuario {
     public void setNombreDeUsuario(String nombre) {
         this.nombre = nombre;
     }
+
+    public String getNombreDeUsuario() {
+        return this.nombre;
+    }
+
+    public void setRol(Rol rol) {
+        switch (rol) {
+            case ADMINISTRADOR:
+                this.rol = Rol.ADMINISTRADOR;
+                this.agregarPermiso(Permiso.CONFIGURAR_FUENTES);
+                this.agregarPermiso(Permiso.CONFIGURAR_CRITERIOS);
+                this.agregarPermiso(Permiso.CREAR_COLECCION);
+                this.agregarPermiso(Permiso.CREAR_HECHO);
+                break;
+            case CONTRIBUYENTE:
+                this.rol = Rol.CONTRIBUYENTE;
+                this.agregarPermiso(Permiso.CREAR_HECHO);
+                this.agregarPermiso(Permiso.CREAR_SOLICITUD_ELIMINACION);
+                break;
+            default:
+                this.rol = Rol.CONTRIBUYENTE;
+                break;
+        }
+
+    }
 }

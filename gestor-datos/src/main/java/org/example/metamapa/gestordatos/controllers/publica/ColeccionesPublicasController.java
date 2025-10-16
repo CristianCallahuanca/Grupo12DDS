@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/gestordatos/publica/colecciones")
@@ -56,10 +57,11 @@ public class ColeccionesPublicasController {
 
     @GetMapping("/{handle}/modoNavegacion")
     public ResponseEntity<List<HechoOutputDTO>> navegarPorModo(@PathVariable String handle,
-                                                               @RequestParam("modo") String modo) {
+                                                               @RequestParam("modo") String modo,
+                                                               @RequestParam Map<String, String> queryParams) {
 
         System.out.println("le pegue al endpoint");
-        List<HechoOutputDTO> hechos = coleccionService.retrieveColeccionModoNavegacion(handle, modo);
+        List<HechoOutputDTO> hechos = coleccionService.retrieveColeccionModoNavegacion(handle, modo, queryParams);
 
         if (hechos == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(hechos);

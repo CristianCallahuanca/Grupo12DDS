@@ -144,6 +144,7 @@ public class ColeccionesService implements IColeccionesService {
             if (c.getAlgoritmo() != null) {
                 c.aplicarConsenso();
                 coleccionesRepository.save(c);
+                hechoColeccionService.actualizarHechosDeColeccion(c.getHechosColeccion());
                 log.debug("Consenso aplicado en colección {}", c.getHandle());
             }
         });
@@ -195,14 +196,30 @@ public class ColeccionesService implements IColeccionesService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HechoOutputDTO> retrieveColeccionModoNavegacion(String handle, String modoNavegacion) {
-        return coleccionesRepository.findById(handle)
-                .map(c -> {
-                    var modo = StringAObjetos.modoNavegacionFactory(modoNavegacion);
-                    List<Hecho> hechos = c.obtenerHechosPorModo(modo);
-                    return hechoService.hechoADTOOuts(hechos);
-                })
-                .orElse(null);
+    public List<HechoOutputDTO> retrieveColeccionModoNavegacion(String handle, String modoNavegacion, Map<String, String> queryParams) {
+        Coleccion coleccion = coleccionesRepository.findById(handle).orElse(null);
+
+        if (coleccion != null) {
+            List<CriterioRequest> criterios = hechoService.convertirQueryParamsACriterios(queryParams);
+
+            List<CondicionDeFiltrado> condiciones = new ArrayList<>();
+            for (CriterioRequest criterio : criterios) {
+                condiciones.add(StringAObjetos.criterioFactory(criterio));
+            }
+
+            var modo = StringAObjetos.modoNavegacionFactory(modoNavegacion);
+            List<Hecho> hechos = coleccion.obtenerHechosPorModo(modo);
+
+            // Filtrar hechos que cumplan TODAS las condiciones
+            List<Hecho> hechosFiltrados = hechos.stream()
+                    .filter(hecho -> condiciones.stream().allMatch(condicion -> condicion.cumpleUno(hecho)))
+                    .toList();
+
+            return hechoService.hechoADTOOuts(hechosFiltrados);
+
+        } else {
+            return null;
+        }
     }
 
     /*

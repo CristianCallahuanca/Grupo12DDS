@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UsuariosRepository {
@@ -27,9 +28,6 @@ public class UsuariosRepository {
         usuario1.setNombreDeUsuario("admin");
         usuario1.setContrasenia(encoder.encode("1234"));
         usuario1.setRol(Rol.ADMINISTRADOR);
-        usuario1.agregarPermiso(Permiso.CONFIGURAR_FUENTES_Y_CRITERIOS);
-        usuario1.agregarPermiso(Permiso.CREAR_COLECCION);
-        usuario1.agregarPermiso(Permiso.CREAR_HECHO);
 
         var usuario2 = new Usuario();
         usuario2.setNombre("Marlene");
@@ -39,5 +37,17 @@ public class UsuariosRepository {
 
         this.usuarios.add(usuario1);
         this.usuarios.add(usuario2);
+    }
+
+    public void save(Usuario usuario) {
+        this.usuarios.add(usuario);
+    }
+
+    public List<Usuario> getUsuarios() {
+        return this.usuarios;
+    }
+
+    public Optional<Usuario> findByNombreDeUsuario(String nombreDeUsuario) {
+        return this.usuarios.stream().filter(usuario -> usuario.getNombreDeUsuario().equals(nombreDeUsuario)).findFirst();
     }
 }

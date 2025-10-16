@@ -32,5 +32,5 @@ public interface IColeccionesService {
 
     List<HechoOutputDTO> retrieveHechosColeccion(String handle, List<CriterioRequest> criterios);
 
-    List<HechoOutputDTO> retrieveColeccionModoNavegacion(String handle, String modoNavegacion);
+    List<HechoOutputDTO> retrieveColeccionModoNavegacion(String handle, String modoNavegacion, Map<String, String> queryParams);
 }
