@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.metamapa.models.dto.HechoDTO;
 import org.example.metamapa.services.HechoService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,7 @@ public class HechosController {
 
 
     @GetMapping("/nuevo")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('CONTRIBUYENTE')")
     public String mostrarFormularioCrear(Model model) {
         // La lista de categorías predefinidas para el desplegable
         List<String> categorias = Arrays.asList("vientos fuertes",

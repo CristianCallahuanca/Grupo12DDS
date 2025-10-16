@@ -10,4 +10,9 @@ public class MapaController {
     public String mostrarMapa() {
         return "mapa"; // Esto mostrará el archivo mapa.html
     }
+
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/mapa";
+    }
 }
