@@ -28,10 +28,6 @@ public class UsuariosRepository {
         usuario1.setNombreDeUsuario("admin");
         usuario1.setContrasenia(encoder.encode("1234"));
         usuario1.setRol(Rol.ADMINISTRADOR);
-        usuario1.agregarPermiso(Permiso.CONFIGURAR_FUENTES);
-        usuario1.agregarPermiso(Permiso.CONFIGURAR_CRITERIOS);
-        usuario1.agregarPermiso(Permiso.CREAR_COLECCION);
-        usuario1.agregarPermiso(Permiso.CREAR_HECHO);
 
         var usuario2 = new Usuario();
         usuario2.setNombre("Marlene");
