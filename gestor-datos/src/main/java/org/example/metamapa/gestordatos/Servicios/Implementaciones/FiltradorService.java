@@ -1,7 +1,6 @@
 package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.metamapa.gestordatos.Servicios.IFiltradorService;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.PorOrigen;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class FiltradorService implements IFiltradorService {
+public class FiltradorService {
 
     private final IHechosRepository hechosRepository;
 
@@ -23,7 +22,6 @@ public class FiltradorService implements IFiltradorService {
         this.hechosRepository = hechosRepository;
     }
 
-    @Override
     public List<Hecho> filtrarHechosDataBase(List<CondicionDeFiltrado> condiciones) {
 
 

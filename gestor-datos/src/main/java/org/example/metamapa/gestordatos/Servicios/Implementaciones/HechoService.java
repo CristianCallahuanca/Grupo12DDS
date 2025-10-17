@@ -1,7 +1,7 @@
 package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 
 import lombok.RequiredArgsConstructor;
-import org.example.metamapa.gestordatos.Servicios.IFiltradorService;
+import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.gestordatos.Servicios.IHechoService;
 import org.example.metamapa.gestordatos.conversores.StringAObjetos;
 import org.example.metamapa.gestordatos.models.dtos.input.CriterioRequest;
@@ -11,8 +11,6 @@ import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.Con
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,12 +22,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class HechoService implements IHechoService {
 
-    private static final Logger log = LoggerFactory.getLogger(HechoService.class);
-
     private final IHechosRepository repositorioHechos;
-    private final IFiltradorService filtradorService;
+    private final FiltradorService filtradorService;
 
     /*
        ================ BÚSQUEDA Y FILTRADO ======================

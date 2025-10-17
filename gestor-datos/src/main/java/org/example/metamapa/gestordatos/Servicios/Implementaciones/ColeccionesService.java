@@ -1,7 +1,8 @@
 package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.gestordatos.Servicios.IColeccionesService;
-import org.example.metamapa.gestordatos.Servicios.IFiltradorService;
 import org.example.metamapa.gestordatos.Servicios.IHechoColeccionService;
 import org.example.metamapa.gestordatos.Servicios.IHechoService;
 import org.example.metamapa.gestordatos.conversores.StringAObjetos;
@@ -15,8 +16,6 @@ import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.Por
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.PorOrigen;
 import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
 import org.example.metamapa.gestordatos.models.repositorios.IColeccionesRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,24 +24,14 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@Slf4j
+@RequiredArgsConstructor
 public class ColeccionesService implements IColeccionesService {
-
-    private static final Logger log = LoggerFactory.getLogger(ColeccionesService.class);
 
     private final IColeccionesRepository coleccionesRepository;
     private final IHechoService hechoService;
-    private final IFiltradorService filtradorService;
+    private final FiltradorService filtradorService;
     private final IHechoColeccionService hechoColeccionService; // (por si lo usás luego)
-
-    public ColeccionesService(IColeccionesRepository coleccionesRepository,
-                              IHechoService hechoService,
-                              IFiltradorService filtradorService,
-                              IHechoColeccionService hechoColeccionService) {
-        this.coleccionesRepository = coleccionesRepository;
-        this.hechoService = hechoService;
-        this.filtradorService = filtradorService;
-        this.hechoColeccionService = hechoColeccionService;
-    }
 
     /*
        ===============   ADMINISTRATIVOS   ==================

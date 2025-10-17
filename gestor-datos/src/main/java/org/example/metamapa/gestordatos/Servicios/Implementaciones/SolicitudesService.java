@@ -1,6 +1,8 @@
 package org.example.metamapa.gestordatos.Servicios.Implementaciones;
 
-import org.example.metamapa.gestordatos.Servicios.DetectorDeSpam;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.metamapa.gestordatos.infraestructura.IDetectorDeSpam;
 import org.example.metamapa.gestordatos.Servicios.ISolicitudesService;
 import org.example.metamapa.gestordatos.models.dtos.input.SolicitudInputDTO;
 import org.example.metamapa.gestordatos.models.dtos.output.SolicitudOutputDTO;
@@ -14,20 +16,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class SolicitudesService implements ISolicitudesService {
 
     private final ISolicitudesRepository solicitudRepository;
     private final IHechosRepository hechosRepository;
-    private final DetectorDeSpam detectorDeSpam;
+    private final IDetectorDeSpam DetectorDeSpam;
 
-    public SolicitudesService(ISolicitudesRepository solicitudRepository,
-                              IHechosRepository hechosRepository,
-                              DetectorDeSpam detectorDeSpam) {
-
-        this.solicitudRepository = solicitudRepository;
-        this.hechosRepository = hechosRepository;
-        this.detectorDeSpam = detectorDeSpam;
-    }
 
     @Override
     public SolicitudOutputDTO crearSolicitudEliminacion(SolicitudInputDTO dto) {
@@ -37,7 +33,7 @@ public class SolicitudesService implements ISolicitudesService {
         SolicitudEliminacion solicitud = new SolicitudEliminacion(hecho, dto.getJustificacion());
 
         // Detección de spam
-        if (detectorDeSpam.esSpam(solicitud.getJustificacion())) {
+        if (DetectorDeSpam.esSpam(solicitud.getJustificacion())) {
             solicitud.setEstadoEliminar(EstadoEliminar.RECHAZADA);
             solicitud.setVerificoSiEsSpam(true);
         }
