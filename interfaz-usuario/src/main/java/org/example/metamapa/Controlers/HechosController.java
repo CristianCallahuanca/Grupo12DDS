@@ -47,7 +47,7 @@ public class HechosController {
         model.addAttribute("listaCategorias", categorias); // Mandamos la lista a la vista
         model.addAttribute("titulo", "Reportar Nuevo Hecho");
 
-        return "hechos/crear";
+        return "hechos/nuevo";
     }
 
     @PostMapping("/crear")
@@ -68,7 +68,7 @@ public class HechosController {
             List<String> categorias = Arrays.asList("Robo", "Accidente de Tránsito", "Incendio", "Acto Vandálico");
             model.addAttribute("listaCategorias", categorias); // Volvemos a mandar la lista
             model.addAttribute("titulo", "Reportar Nuevo Hecho");
-            return "hechos/crear";
+            return "nuevo";
         }
 
         try {
@@ -83,6 +83,8 @@ public class HechosController {
 
             // Aquí llamarías a tu servicio para guardar el hecho
              HechoDTO hechoCreado = hechoService.crearHecho(hechoForm);
+
+            hechoService.persistirHecho(hechoCreado);
 
             // Simulación de un hecho creado para la redirección
             long idHechoCreado = 123L;

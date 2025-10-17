@@ -28,6 +28,14 @@
             </div>
           </form>
 
+          <!-- Sección de registro -->
+          <div class="text-center mt-4 pt-3 border-top">
+            <p class="mb-2">¿No tenés cuenta?</p>
+            <a th:href="@{/register}" class="btn btn-outline-success btn-sm">
+              Crear cuenta nueva
+            </a>
+          </div>
+
           <!-- mensajes -->
           <div th:if="${param.error}" class="alert alert-danger mt-3">
             Usuario o contraseña incorrectos

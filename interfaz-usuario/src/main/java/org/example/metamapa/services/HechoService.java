@@ -100,4 +100,10 @@ public class HechoService {
         dto.setOrigen("DINAMICA");
         return dto;
     }
+
+    public void persistirHecho(HechoDTO hecho) {
+
+
+    }
+
 }

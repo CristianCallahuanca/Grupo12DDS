@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header text-center">
+                    <h5 class="mb-0">Crear Cuenta</h5>
+                </div>
+                <div class="card-body">
+
+                    <!-- Formulario SIMPLE -->
+                    <form action="/register" method="post">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre</label>
+                                    <input type="text" id="nombre" name="nombre" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="apellido" class="form-label">Apellido</label>
+                                    <input type="text" id="apellido" name="apellido" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="dni" class="form-label">DNI</label>
+                            <input type="number" id="dni" name="dni" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edad" class="form-label">Edad</label>
+                            <input type="number" id="edad" name="edad" class="form-control" min="1" max="120" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Usuario</label>
+                            <input type="text" id="username" name="username" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Crear Cuenta</button>
+                        </div>
+                    </form>
+
+                    <!-- Volver al login -->
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <p class="mb-2">¿Ya tenés cuenta?</p>
+                        <a href="/login" class="btn btn-outline-primary btn-sm">
+                            Iniciar Sesión
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
