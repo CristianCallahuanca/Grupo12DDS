@@ -26,7 +26,8 @@ public class ContieneMultimedia extends CondicionDeFiltrado {
     @Override
     public Specification<Hecho> toSpecification() {
         return (root, query, cb) -> contieneMultimedia ?
-                cb.isNotEmpty(root.get("hechoMultimedia")) :
-                cb.isEmpty(root.get("hechoMultimedia"));
+                cb.isNotEmpty(root.get("archivosMultimedia")) :
+                cb.isEmpty(root.get("archivosMultimedia"));
+
     }
 }

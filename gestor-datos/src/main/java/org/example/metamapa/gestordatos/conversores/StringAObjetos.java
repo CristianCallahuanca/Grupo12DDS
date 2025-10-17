@@ -59,7 +59,7 @@ public class StringAObjetos{
 
             case "porestado" -> new PorEstado(EstadoHecho.valueOf(params.get("estadoHecho").toUpperCase()));
             case "porsincategorizar" -> new PorSinCategorizar(Boolean.parseBoolean(params.get("sinCategorizar")));
-            case "poridcontribuyente" -> new PorIdContribuyente(params.get("idBuscado"));
+            case "poridcontribuyente" -> new PorIdContribuyente(Long.parseLong(params.get("idBuscado")));
             case "poridhecho" -> new PorIDHecho(Long.parseLong(params.get("idBuscado")));
             case "porareavisible" -> new PorAreaVisible(
                     Double.parseDouble(params.get("norte")),

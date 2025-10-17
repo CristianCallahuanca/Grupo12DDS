@@ -27,6 +27,10 @@ public class PorUbicacion extends CondicionDeFiltrado{
 
     @Override
     public Specification<Hecho> toSpecification() {
-        return (root, query, cb) -> cb.equal(root.get("ubicacion"), ubicacionBuscada);
+        return (root, query, cb) -> cb.and(
+                cb.equal(root.get("ubicacion").get("latitud"), ubicacionBuscada.getLatitud()),
+                cb.equal(root.get("ubicacion").get("longitud"), ubicacionBuscada.getLongitud())
+        );
     }
+
 }

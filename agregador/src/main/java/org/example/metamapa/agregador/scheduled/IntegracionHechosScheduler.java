@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class IntegracionHechosScheduler {
 
     private final IAgregacionService agregacionService;
+    private boolean ejecutando = false;
 
     public IntegracionHechosScheduler(IAgregacionService agregacionService) {
         this.agregacionService = agregacionService;
@@ -19,9 +20,19 @@ public class IntegracionHechosScheduler {
 
     @Scheduled(cron = "${agregador.cron}")
     public void obtenerHechosTodasLasFuentes() {
-        log.info("Iniciando integración de hechos desde todas las fuentes registradas...");
-        agregacionService.integrarHechosFuentes();
-        log.info("Integración completada correctamente.");
+        if (ejecutando) {
+            log.warn("La integración anterior aún no finalizó. Se omite esta ejecución.");
+            return;
+        }
+        try{
+            log.info("Iniciando integración de hechos desde todas las fuentes registradas...");
+            ejecutando = true;
+            agregacionService.integrarHechosFuentes();
+            log.info("Integración completada correctamente.");
+
+        } finally {
+            ejecutando = false;
+        }
     }
 }
 

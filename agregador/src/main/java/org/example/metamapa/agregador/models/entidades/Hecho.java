@@ -40,7 +40,7 @@ public class Hecho {
     @JoinColumn(name = "ubicacion_id")
     private Ubicacion ubicacion;
 
-    @Column(name = "facha_acontecimiento")
+    @Column(name = "fecha_acontecimiento")
     private LocalDateTime fechaAcontecimiento;
 
     @Column(name = "fecha_carga")
@@ -64,7 +64,7 @@ public class Hecho {
     private String etiqueta;
 
     @JoinColumn(name = "contribuyente_id")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private ContribuyenteRegistrado contribuyente;
 
     @ElementCollection(targetClass = Origen.class)
