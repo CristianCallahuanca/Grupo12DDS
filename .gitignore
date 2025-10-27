@@ -9,7 +9,11 @@ out/
 *.iml
 
 # Logs
+logs/
+**/logs/
 *.log
+*.log.gz
+
 
 # Archivos del SO
 .DS_Store
