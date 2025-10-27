@@ -1,7 +1,9 @@
 package org.example.metamapa.gestordatos.controllers.publica;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.example.metamapa.gestordatos.Servicios.IColeccionesService;
+import org.example.metamapa.gestordatos.conversores.StringAObjetos;
 import org.example.metamapa.gestordatos.models.dtos.input.CriterioRequest;
 import org.example.metamapa.gestordatos.models.dtos.output.ColeccionOutputDTO;
 import org.example.metamapa.gestordatos.models.dtos.output.HechoOutputDTO;
@@ -14,56 +16,59 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/gestordatos/publica/colecciones")
+@RequiredArgsConstructor
 public class ColeccionesPublicasController {
 
     private final IColeccionesService coleccionService;
 
-    public ColeccionesPublicasController(IColeccionesService coleccionService) {
-        this.coleccionService = coleccionService;
+    @GetMapping
+    public ResponseEntity<?> obtenerColecciones() {
+        List<ColeccionOutputDTO> coleccionesOutput = this.coleccionService.retrieveColecciones();
+        return ResponseEntity.ok(Map.of("estado", "ok", "colecciones", coleccionesOutput));
     }
 
     @GetMapping("/{handle}")
-    public ResponseEntity<ColeccionOutputDTO> getColeccion(@PathVariable String handle) {
+    public ResponseEntity<?> getColeccion(@PathVariable String handle) {
         ColeccionOutputDTO coleccion = coleccionService.retrieveColeccion(handle);
-        if (coleccion == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(coleccion);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ColeccionOutputDTO>> obtenerColecciones(){
-
-        List<ColeccionOutputDTO> coleccionesOutput = this.coleccionService.retrieveColecciones();
-
-        if (coleccionesOutput == null) {
-            return ResponseEntity.status(400).body(null);
-        }
-        return ResponseEntity.status(200).body(coleccionesOutput);
-
+        if (coleccion == null)
+            return ResponseEntity.status(404)
+                    .body(Map.of("mensaje", "Colección no encontrada", "estado", "error"));
+        return ResponseEntity.ok(Map.of("estado", "ok", "coleccion", coleccion));
     }
 
     @GetMapping("/{handle}/hechos")
-    public ResponseEntity<List<HechoOutputDTO>> getHechosPorCriterio(@PathVariable String handle,
-                                                                     @RequestBody(required = false)
-                                                                     @Valid List<CriterioRequest> criterios,
-                                                                     @RequestParam(name = "page", required = false) Integer page,
-                                                                     @RequestParam(name = "size", required = false) Integer size,
-                                                                     @RequestParam(name = "sort", required = false) String sort) {
-        // Por ahora ignoramos page/size/sort en el service; quedan listos en el contrato.
-        List<CriterioRequest> safe = (criterios == null) ? Collections.emptyList() : criterios;
-        List<HechoOutputDTO> hechos = coleccionService.retrieveHechosColeccion(handle, safe);
-        if (hechos == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(hechos);
+    public ResponseEntity<?> getHechosPorCriterio(@PathVariable String handle,
+                                                  @RequestParam Map<String, String> queryParams) {
+
+        List<HechoOutputDTO> hechos = coleccionService.retrieveHechosColeccion(handle, queryParams);
+
+        if (hechos == null)
+            return ResponseEntity.status(404)
+                    .body(Map.of("mensaje", "Colección no encontrada", "estado", "error"));
+
+        return ResponseEntity.ok(Map.of("estado", "ok", "hechos", hechos));
     }
+
+
+
 
     @GetMapping("/{handle}/modoNavegacion")
-    public ResponseEntity<List<HechoOutputDTO>> navegarPorModo(@PathVariable String handle,
-                                                               @RequestParam("modo") String modo,
-                                                               @RequestParam Map<String, String> queryParams) {
+    public ResponseEntity<?> navegarPorModo(@PathVariable String handle,
+                                            @RequestParam Map<String, String> queryParams) {
 
-        System.out.println("le pegue al endpoint");
-        List<HechoOutputDTO> hechos = coleccionService.retrieveColeccionModoNavegacion(handle, modo, queryParams);
+        List<HechoOutputDTO> hechos = coleccionService.retrieveColeccionModoNavegacion(handle, queryParams);
 
-        if (hechos == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(hechos);
+        if (hechos == null)
+            return ResponseEntity.status(404)
+                    .body(Map.of("mensaje", "Colección no encontrada", "estado", "error"));
+
+        String modo = queryParams.getOrDefault("modo", "curada");
+
+        return ResponseEntity.ok(Map.of(
+                "estado", "ok",
+                "modo", modo,
+                "hechos", hechos
+        ));
     }
+
 }

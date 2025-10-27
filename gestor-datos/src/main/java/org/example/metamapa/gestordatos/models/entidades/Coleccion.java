@@ -10,7 +10,7 @@ import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.Con
 import org.example.metamapa.gestordatos.models.Consenso.AlgoritmoConsenso;
 import org.example.metamapa.gestordatos.models.ModosNavegacion.ModoNavegacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
-import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
+import org.example.metamapa.gestordatos.models.entidades.enums.TipoFuente;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +27,14 @@ public class Coleccion {
     @Column(name = "handle", nullable = false, unique = true)
     private String handle;
 
-    @ElementCollection(targetClass = Origen.class)
-    @CollectionTable(name = "coleccion_origenes", joinColumns = @JoinColumn(name = "coleccion_id"))
-    @Column(name = "origen")
+    @ElementCollection
+    @CollectionTable(name = "coleccion_origenes_reales", joinColumns = @JoinColumn(name = "coleccion_id"))
+    @Column(name = "origen_real")
+    private List<String> origenesReales = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
-    private List<Origen> origenes = new ArrayList<>();
+    @Column(name = "tipo_fuente", nullable = true)
+    private TipoFuente tipoFuente;
 
     @Column(name = "titulo")
     private String titulo;
@@ -51,13 +54,15 @@ public class Coleccion {
     private AlgoritmoConsenso algoritmo;
 
     public Coleccion(String handle,
-                     List<Origen> origenes,
+                     TipoFuente tipoFuente,
+                     List<String> origenesReales,
                      String titulo,
                      String descripcion,
                      List<CondicionDeFiltrado> criterios,
                      AlgoritmoConsenso algoritmo) {
         this.handle = handle;
-        this.origenes = (origenes != null) ? new ArrayList<>(origenes) : new ArrayList<>();
+        this.tipoFuente = tipoFuente;
+        this.origenesReales = (origenesReales != null) ? new ArrayList<>(origenesReales) : new ArrayList<>();
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.criterios = (criterios != null) ? new ArrayList<>(criterios) : new ArrayList<>();
@@ -95,8 +100,11 @@ public class Coleccion {
 
 
     private HechoDeColeccion wrap(Hecho h) {
-        return new HechoDeColeccion(h, false);
+        HechoDeColeccion hc = new HechoDeColeccion(h, false);
+        hc.setColeccion(this);
+        return hc;
     }
+
 
     public void reemplazarHechoDeColeccion(List<Hecho> hechos) {
         List<HechoDeColeccion> nuevos = hechos.stream().map(this::wrap).toList();
@@ -109,14 +117,29 @@ public class Coleccion {
         this.hechosColeccion.addAll(nuevos);
     }
 
-    public void agregarNuevaFuente(Origen nuevaFuente) {
-        if (nuevaFuente == null) return;
-        if (this.origenes == null) this.origenes = new ArrayList<>();
-        if (!this.origenes.contains(nuevaFuente)) this.origenes.add(nuevaFuente);
+    public boolean coincideCon(Hecho hecho) {
+        boolean coincidePorTipo = tipoFuente == null || hecho.getTipoFuente() == tipoFuente;
+        boolean coincidePorOrigen = origenesReales.isEmpty() || origenesReales.contains(hecho.getOrigenReal());
+        return coincidePorTipo && coincidePorOrigen;
     }
 
-    public void eliminarFuente(Origen fuente) {
-        if (this.origenes != null) this.origenes.remove(fuente);
+    public void removerHechosPorOrigenes(List<String> origenesAEliminar) {
+        if (origenesAEliminar == null || origenesAEliminar.isEmpty()) return;
+
+        this.hechosColeccion.removeIf(hdc ->
+                origenesAEliminar.contains(hdc.getHecho().getOrigenReal())
+        );
+
+    }
+
+
+    public void agregarOrigenReal(String origen) {
+        if (origen == null || origen.isBlank()) return;
+        if (!origenesReales.contains(origen)) origenesReales.add(origen);
+    }
+
+    public void eliminarOrigenReal(String origen) {
+        origenesReales.remove(origen);
     }
 
 

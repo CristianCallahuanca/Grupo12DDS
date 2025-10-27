@@ -1,7 +1,8 @@
 package org.example.metamapa.gestordatos.models.entidades.enums;
 
-public enum Origen {
+public enum TipoFuente {
     DINAMICA,
     ESTATICA,
-    PROXY
+    DEMO,
+    METAMAPA
 }

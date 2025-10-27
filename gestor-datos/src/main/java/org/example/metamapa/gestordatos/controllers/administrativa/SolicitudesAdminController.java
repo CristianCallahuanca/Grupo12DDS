@@ -1,35 +1,41 @@
 package org.example.metamapa.gestordatos.controllers.administrativa;
 
+import lombok.RequiredArgsConstructor;
 import org.example.metamapa.gestordatos.Servicios.ISolicitudesService;
+import org.example.metamapa.gestordatos.models.dtos.output.SolicitudOutputDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/gestordatos/admin/solicitudes")
+@RequiredArgsConstructor
 public class SolicitudesAdminController {
 
     private final ISolicitudesService solicitudesService;
 
-    public SolicitudesAdminController(ISolicitudesService solicitudesService) {
-        this.solicitudesService = solicitudesService;
-    }
-
     @GetMapping
     public ResponseEntity<?> listarPendientes() {
-        return ResponseEntity.ok(solicitudesService.listarSolicitudesPendientes());
+        var pendientes = solicitudesService.listarSolicitudesPendientes();
+        return ResponseEntity.ok(Map.of("mensaje", "Solicitudes pendientes obtenidas correctamente", "estado", "ok", "solicitudes", pendientes));
     }
 
     @PostMapping("/{id}/aprobar")
-    public ResponseEntity<String> aprobar(@PathVariable Long id) {
-        var solicitud = solicitudesService.aprobarSolicitud(id);
-        if (solicitud == null) return ResponseEntity.badRequest().body("Solicitud no encontrada");
-        return ResponseEntity.ok("Solicitud aprobada correctamente");
+    public ResponseEntity<?> aprobar(@PathVariable Long id) {
+        SolicitudOutputDTO solicitud = solicitudesService.aprobarSolicitud(id);
+        if (solicitud == null)
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(Map.of("mensaje", "Solicitud aprobada correctamente", "estado", "ok", "solicitud", solicitud));
     }
 
     @PostMapping("/{id}/rechazar")
-    public ResponseEntity<String> rechazar(@PathVariable Long id) {
-        var solicitud = solicitudesService.denegarSolicitud(id);
-        if (solicitud == null) return ResponseEntity.badRequest().body("Solicitud no encontrada");
-        return ResponseEntity.ok("Solicitud rechazada correctamente");
+    public ResponseEntity<?> rechazar(@PathVariable Long id) {
+        SolicitudOutputDTO solicitud = solicitudesService.denegarSolicitud(id);
+        if (solicitud == null)
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(Map.of("mensaje", "Solicitud rechazada correctamente", "estado", "ok", "solicitud", solicitud));
     }
 }

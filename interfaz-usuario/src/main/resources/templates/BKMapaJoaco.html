@@ -308,14 +308,24 @@
       </div>
 
       <div class="filtro-group">
-        <label for="filtroOrigen">Origen:</label>
-        <select id="filtroOrigen">
-          <option value="">Todos los orígenes</option>
+        <label for="filtroTipoFuente">Tipo de fuente:</label>
+        <select id="filtroTipoFuente">
+          <option value="">Todas</option>
           <option value="DINAMICA">Por otros usuarios</option>
           <option value="ESTATICA">De archivos</option>
-          <option value="PROXY">Otros mapas</option>
+          <option value="DEMO">Fuentes demo</option>
+          <option value="METAMAPA">Fuentes MetaMapa</option>
         </select>
       </div>
+
+      <div class="filtro-group">
+        <label for="filtroOrigenReal">Origen Real:</label>
+        <select id="filtroOrigenReal">
+          <option value="">Todos</option>
+          <!-- llenar este select dinámicamente desde /admin/origenes-reales -->
+        </select>
+      </div>
+
     </div>
 
     <!-- FILTROS POR FECHA -->
@@ -389,7 +399,8 @@
     titulo: "",
     categoria: "",
     descripcion: "",
-    origen: "",
+    tipoFuente: "",
+    origenReal: "",
     contieneMultimedia: "",
     desdeAcontecimiento: "",
     hastaAcontecimiento: "",
@@ -738,7 +749,8 @@
       titulo: document.getElementById("filtroTitulo").value,
       categoria: document.getElementById("filtroCategoria").value,
       descripcion: document.getElementById("filtroDescripcion").value,
-      origen: document.getElementById("filtroOrigen").value,
+      tipoFuente: document.getElementById("filtroTipoFuente").value,
+      origenReal: document.getElementById("filtroOrigenReal").value,
       contieneMultimedia: multimediaValue !== "" ? multimediaValue : "",
       desdeAcontecimiento: document.getElementById(
               "filtroFechaAcontecimientoInicio"
@@ -765,7 +777,8 @@
     document.getElementById("filtroFechaAcontecimientoFin").value = "";
     document.getElementById("filtroFechaCargaInicio").value = "";
     document.getElementById("filtroFechaCargaFin").value = "";
-    document.getElementById("filtroOrigen").value = "";
+    document.getElementById("filtroTipoFuente").value = "";
+    document.getElementById("filtroOrigenReal").value = "";
     document.getElementById("selectorColeccion").value = "";
 
     // Ocultar elementos de colección
@@ -783,7 +796,8 @@
       titulo: "",
       categoria: "",
       descripcion: "",
-      origen: "",
+      tipoFuente: "",
+      origenReal: "",
       contieneMultimedia: "",
       desdeAcontecimiento: "",
       hastaAcontecimiento: "",
@@ -841,8 +855,10 @@
       activos.push(`Acontecimiento: ${filtrosActivos.desdeAcontecimiento}`);
     if (filtrosActivos.desdeCarga)
       activos.push(`Carga: ${filtrosActivos.desdeCarga}`);
-    if (filtrosActivos.origen)
-      activos.push(`Origen: ${filtrosActivos.origen}`);
+    if (filtrosActivos.tipoFuente)
+      activos.push(`Tipo Fuente: ${filtrosActivos.tipoFuente}`);
+    if (filtrosActivos.origenReal)
+      activos.push(`Origen Real: ${filtrosActivos.origenReal}`);
     if (filtrosActivos.coleccionId)
       activos.push(
               `Colección: ${coleccionActual?.nombre || "Seleccionada"}`

@@ -30,7 +30,10 @@ public class ConsensoScheduler {
         log.info("Iniciando tarea programada: consenso diario de colecciones (03:00 AM).");
 
         try {
+            long inicio = System.currentTimeMillis();
             coleccionesService.aplicarConsensoATodas();
+            log.info("Consenso diario completado en {} segundos.", (System.currentTimeMillis() - inicio) / 1000.0);
+
             log.info("Consenso diario completado exitosamente.");
         } catch (Exception e) {
             log.error("Error durante el consenso diario: {}", e.getMessage(), e);

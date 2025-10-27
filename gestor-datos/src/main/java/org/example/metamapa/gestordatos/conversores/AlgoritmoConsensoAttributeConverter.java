@@ -12,24 +12,18 @@ import org.example.metamapa.gestordatos.models.Consenso.MultiplesMenciones;
 public class AlgoritmoConsensoAttributeConverter implements AttributeConverter<AlgoritmoConsenso, String> {
 
     @Override
-    public String convertToDatabaseColumn(AlgoritmoConsenso algoritmo){
+    public String convertToDatabaseColumn(AlgoritmoConsenso algoritmo) {
+        if (algoritmo == null) return null;
 
-        if(algoritmo == null){
-            return null;
-        }
-
-        String condicion = "";
-
-        switch (algoritmo.getClass().getSimpleName()) {
-            case "Absoluto" -> condicion = "ABSOLUTO";
-            case "MayoriaSimple" -> condicion = "MAYORIA_SIMPLE";
-            case "MultiplesMenciones" -> condicion = "MULTIPLES_MENCIONES";
-            default -> throw new IllegalArgumentException("Tipo desconocido: " + algoritmo.getClass().getSimpleName());
-        }
-
-        return condicion;
-
+        return switch (algoritmo.getClass().getSimpleName()) {
+            case "Absoluto" -> "ABSOLUTO";
+            case "MayoriaSimple" -> "MAYORIA_SIMPLE";
+            case "MultiplesMenciones" -> "MULTIPLES_MENCIONES";
+            default -> throw new IllegalArgumentException(
+                    "Tipo de algoritmo desconocido: " + algoritmo.getClass().getSimpleName());
+        };
     }
+
 
     @Override
     public AlgoritmoConsenso convertToEntityAttribute(String s){
@@ -53,7 +47,7 @@ public class AlgoritmoConsensoAttributeConverter implements AttributeConverter<A
                 algoritmo = new MultiplesMenciones();
                 break;
             }
-            default -> throw new IllegalArgumentException("Tipo desconocido" + s);
+            default -> throw new IllegalArgumentException("Tipo de algoritmo desconocido: " + s);
         }
 
         return algoritmo;

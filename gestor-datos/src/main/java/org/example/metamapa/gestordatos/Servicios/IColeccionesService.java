@@ -11,7 +11,7 @@ import java.util.Map;
 public interface IColeccionesService {
 
     /* ==== ADMIN ==== */
-    void crearColeccion(ColeccionInputDTO coleccionDTO);
+    ColeccionOutputDTO  crearColeccion(ColeccionInputDTO coleccionDTO);
 
     List<ColeccionOutputDTO> retrieveColecciones();
 
@@ -23,14 +23,14 @@ public interface IColeccionesService {
 
     ColeccionOutputDTO updateAlgoritmo(String handle, String nuevoAlgoritmo);
 
-    ColeccionOutputDTO updateFuente(List<Integer> origenes, String handle);
+    ColeccionOutputDTO actualizarOrigenesReales(String handle, List<String> nuevosOrigenes);
 
     void aplicarConsensoATodas();
 
     /* ==== PÚBLICA ==== */
     ColeccionOutputDTO retrieveColeccion(String handle);
 
-    List<HechoOutputDTO> retrieveHechosColeccion(String handle, List<CriterioRequest> criterios);
+    List<HechoOutputDTO> retrieveHechosColeccion(String handle, Map<String, String> queryParams);
 
-    List<HechoOutputDTO> retrieveColeccionModoNavegacion(String handle, String modoNavegacion, Map<String, String> queryParams);
+    List<HechoOutputDTO> retrieveColeccionModoNavegacion(String handle, Map<String, String> queryParams);
 }

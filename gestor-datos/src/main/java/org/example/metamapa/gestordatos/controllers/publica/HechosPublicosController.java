@@ -1,37 +1,43 @@
 package org.example.metamapa.gestordatos.controllers.publica;
 
+import lombok.RequiredArgsConstructor;
 import org.example.metamapa.gestordatos.Servicios.IHechoService;
 import org.example.metamapa.gestordatos.models.dtos.input.CriterioRequest;
 import org.example.metamapa.gestordatos.models.dtos.output.HechoOutputDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.example.metamapa.gestordatos.conversores.StringAObjetos;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/gestordatos/publica/hechos")
+@RequiredArgsConstructor
 public class HechosPublicosController {
 
     private final IHechoService hechosService;
 
-    public HechosPublicosController(IHechoService hechosService) {
-        this.hechosService = hechosService;
-    }
-
     @GetMapping
-    public ResponseEntity<List<HechoOutputDTO>> obtenerHechosFiltrados(
-            @RequestParam Map<String, String> queryParams) {
-
-        List<CriterioRequest> criterios = hechosService.convertirQueryParamsACriterios(queryParams);
-        return ResponseEntity.ok(hechosService.buscarTodosLosHechos(criterios));
+    public ResponseEntity<?> obtenerHechosFiltrados(@RequestParam Map<String, String> queryParams) {
+        List<CriterioRequest> criterios = StringAObjetos.convertirQueryParamsACriterios(queryParams);
+        List<HechoOutputDTO> hechos = hechosService.buscarTodosLosHechos(criterios);
+        return ResponseEntity.ok(Map.of(
+                "estado", "ok",
+                "filtros_aplicados", criterios.size(),
+                "hechos_encontrados", hechos.size(),
+                "hechos", hechos
+        ));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> editarHecho(@PathVariable Long id, @RequestBody Map<String, Object> cambios) {
+    public ResponseEntity<?> editarHecho(@PathVariable Long id, @RequestBody Map<String, Object> cambios) {
         boolean actualizado = hechosService.editarHechoContribuyente(id, cambios);
         if (!actualizado)
-            return ResponseEntity.status(400).body("No se pudo actualizar el hecho (plazo vencido o no autorizado)");
-        return ResponseEntity.ok("Hecho actualizado correctamente");
-    }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("mensaje", "No autorizado o plazo vencido", "estado", "error"));
 
+        return ResponseEntity.ok(Map.of("mensaje", "Hecho actualizado correctamente", "estado", "ok"));
+    }
 }

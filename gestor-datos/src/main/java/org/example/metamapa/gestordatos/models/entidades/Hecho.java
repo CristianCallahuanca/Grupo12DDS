@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoDeEdicion;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
-import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
+import org.example.metamapa.gestordatos.models.entidades.enums.TipoFuente;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -63,14 +63,17 @@ public class Hecho {
     @JoinColumn(name = "contribuyente_id")
     private ContribuyenteRegistrado contribuyente;
 
-    @ElementCollection(targetClass = Origen.class)
-    @CollectionTable(name = "hecho_origenes", joinColumns = @JoinColumn(name = "hecho_id"))
-    @Column(name = "origen")
     @Enumerated(EnumType.STRING)
-    private List<Origen> origenes = new ArrayList<>();
+    @Column(name = "tipoFuente", nullable = false)
+    private TipoFuente tipoFuente;
 
     @Column(name = "sin_categorizar")
     private Boolean sinCategorizar = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "origen_id")
+    private OrigenReal origenReal;
+
 
     @OneToMany(mappedBy = "hecho", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HechoDeColeccion> hechosDeColeccion = new ArrayList<>();
@@ -97,38 +100,39 @@ public class Hecho {
     public void marcarComoNoVisible() { this.estadoHecho = EstadoHecho.NO_VISIBLE; }
 
 
-    public void agregarOrigen(Origen origen) {
-        if (origen == null) return;
-        if (this.origenes == null) this.origenes = new ArrayList<>();
-        if (!this.origenes.contains(origen)) this.origenes.add(origen);
-    }
-
-
     public boolean puedeSerEditadoPor(ContribuyenteRegistrado autor) {
         if (autor == null || this.contribuyente == null) return false;
+
         boolean esAutor = this.contribuyente.getId().equals(autor.getId());
-        boolean esDinamica = this.origenes != null && this.origenes.contains(Origen.DINAMICA);
+        boolean esDinamica = this.tipoFuente == TipoFuente.DINAMICA;
         boolean dentroDePlazo = ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
+
         return esAutor && esDinamica && dentroDePlazo;
     }
+
 
     public void editarCon(Hecho cambios, ContribuyenteRegistrado autor) {
         if (!puedeSerEditadoPor(autor)) {
             throw new IllegalStateException("El hecho ya no puede ser editado o el autor no está autorizado.");
         }
 
-        this.titulo = cambios.getTitulo();
-        this.descripcion = cambios.getDescripcion();
-        this.categoria = cambios.getCategoria();
-        this.ubicacion = cambios.getUbicacion();
-        this.etiqueta = cambios.getEtiqueta();
-        this.archivosMultimedia = (cambios.getArchivosMultimedia() != null)
-                ? new ArrayList<>(cambios.getArchivosMultimedia())
-                : new ArrayList<>();
-        this.fechaAcontecimiento = cambios.getFechaAcontecimiento();
-        this.estadoEdicionHecho = EstadoDeEdicion.EDITADO;
+        if (cambios.getTitulo() != null) this.titulo = cambios.getTitulo();
+        if (cambios.getDescripcion() != null) this.descripcion = cambios.getDescripcion();
+        if (cambios.getCategoria() != null) this.categoria = cambios.getCategoria();
+        if (cambios.getUbicacion() != null) this.ubicacion = cambios.getUbicacion();
+        if (cambios.getEtiqueta() != null) this.etiqueta = cambios.getEtiqueta();
 
+        if (cambios.getArchivosMultimedia() != null) {
+            this.archivosMultimedia = new ArrayList<>(cambios.getArchivosMultimedia());
+        }
+
+        if (cambios.getFechaAcontecimiento() != null) {
+            this.fechaAcontecimiento = cambios.getFechaAcontecimiento();
+        }
+
+        this.estadoEdicionHecho = EstadoDeEdicion.EDITADO;
     }
+
 
 
 

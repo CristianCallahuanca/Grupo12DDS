@@ -8,25 +8,24 @@ import org.springframework.data.jpa.domain.Specification;
 @Entity
 @NoArgsConstructor
 @DiscriminatorValue("POR_ID_CONTRIBUYENTE")
-public class PorIdContribuyente extends CondicionDeFiltrado{
+public class PorIdContribuyente extends CondicionDeFiltrado {
 
     @Column(name = "id_buscado")
-    private Long idBuscado;
+    private String idBuscado;
 
-
-    public PorIdContribuyente(Long idBuscado) {
+    public PorIdContribuyente(String idBuscado) {
         this.idBuscado = idBuscado;
     }
 
-    //TODO Lo tiene que ir a buscar a la BD cuando esté hecha
     @Override
     public boolean cumpleUno(Hecho unHecho) {
-        return true/* unHecho.getContribuyente_id().equals(idBuscado)*/;
+        return unHecho.getContribuyente() != null &&
+                unHecho.getContribuyente().getId().equalsIgnoreCase(idBuscado);
     }
 
     @Override
     public Specification<Hecho> toSpecification() {
-        return (root, query, cb) -> cb.equal(root.join("contribuyente").get("id"), idBuscado);
+        return (root, query, cb) ->
+                cb.equal(cb.lower(root.join("contribuyente").get("id")), idBuscado.toLowerCase());
     }
-
 }

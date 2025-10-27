@@ -1,16 +1,18 @@
 package org.example.metamapa.agregador.models.entidades.filtros;
 
 import org.example.metamapa.agregador.models.entidades.Hecho;
-import org.example.metamapa.agregador.models.entidades.Origen;
+import org.example.metamapa.agregador.models.entidades.TipoFuente;
 
-public class PorOrigen extends CondicionDeFiltrado{
-    private Origen unOrigen;
+public class PorOrigen extends CondicionDeFiltrado {
 
-    public PorOrigen(Origen origen) {
-        this.unOrigen = origen;
+    private TipoFuente unTipoFuente;
+
+    public PorOrigen(TipoFuente tipoFuente) {
+        this.unTipoFuente = tipoFuente;
     }
 
-    public boolean cumpleUno(Hecho unHecho){
-        return unHecho.getOrigenes().contains(unOrigen);
+    @Override
+    public boolean cumpleUno(Hecho unHecho) {
+        return unHecho.getTipoFuente() == unTipoFuente;
     }
 }

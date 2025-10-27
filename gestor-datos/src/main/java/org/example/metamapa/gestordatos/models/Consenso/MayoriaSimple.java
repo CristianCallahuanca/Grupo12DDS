@@ -1,11 +1,30 @@
 package org.example.metamapa.gestordatos.models.Consenso;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
-import org.example.metamapa.gestordatos.models.entidades.enums.Origen;
+
+import java.util.List;
 
 public class MayoriaSimple extends AlgoritmoConsenso {
+
     @Override
-    public boolean esConsensuado(Hecho hecho) {
-        int cantidadFuentes = hecho.getOrigenes().size();
-        return cantidadFuentes > (Origen.values().length / 2);
+    public String getNombre() {
+        return "Mayoría Simple";
+    }
+    @Override
+    public boolean esConsensuado(Hecho hecho, List<Hecho> hechosDeColeccion) {
+        var grupo = hechosDeColeccion.stream()
+                .filter(h -> h.getTitulo().equalsIgnoreCase(hecho.getTitulo()))
+                .toList();
+
+        long fuentesDistintas = grupo.stream()
+                .map(Hecho::getOrigenReal)
+                .distinct()
+                .count();
+
+        long totalFuentesColeccion = hechosDeColeccion.stream()
+                .map(Hecho::getOrigenReal)
+                .distinct()
+                .count();
+
+        return fuentesDistintas >= (totalFuentesColeccion / 2.0);
     }
 }

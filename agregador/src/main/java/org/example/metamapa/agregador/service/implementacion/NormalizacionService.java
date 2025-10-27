@@ -1,13 +1,16 @@
 package org.example.metamapa.agregador.service.implementacion;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.agregador.infraestructura.ProvinciaLocator;
 import org.example.metamapa.agregador.models.dtos.DTO_IN.HechoDTO_IN;
-import org.example.metamapa.agregador.models.entidades.ContribuyenteRegistrado;
-import org.example.metamapa.agregador.models.entidades.Hecho;
-import org.example.metamapa.agregador.models.entidades.Origen;
-import org.example.metamapa.agregador.models.entidades.Ubicacion;
+import org.example.metamapa.agregador.models.entidades.*;
+import org.example.metamapa.agregador.models.repositorios.IContribuyenteRepository;
+import org.example.metamapa.agregador.models.repositorios.IOrigenRealRepository;
 import org.example.metamapa.agregador.service.INormalizacionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,6 +24,15 @@ import java.util.*;
 @Slf4j
 public class NormalizacionService implements INormalizacionService {
 
+    @Autowired
+    private IOrigenRealRepository origenRealRepository;
+    private final Map<String, OrigenReal> cacheOrigenes = new HashMap<>();
+    private final IContribuyenteRepository contribuyenteRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
+    public NormalizacionService(IContribuyenteRepository contribuyenteRepository) {
+        this.contribuyenteRepository = contribuyenteRepository;
+    }
 
     private static final Map<String, List<String>> catalogoCategorias = Map.ofEntries(
             Map.entry("vientos fuertes", List.of("viento", "temporal", "tormenta", "ráfaga", "vendaval")),
@@ -47,6 +59,7 @@ public class NormalizacionService implements INormalizacionService {
             DateTimeFormatter.ofPattern("yyyy-MM-dd"),
             DateTimeFormatter.ofPattern("dd/MM/yyyy")
     );
+
 
 
     private Ubicacion normalizarUbicacion(HechoDTO_IN dto) {
@@ -107,14 +120,20 @@ public class NormalizacionService implements INormalizacionService {
         return parse(dto.getFechaAcontecimiento());
     }
 
-    private Origen normalizaOrigen(String tipoFuente) {
-        if ("DINAMICA".equalsIgnoreCase(tipoFuente)) return Origen.DINAMICA;
-        if ("ESTATICA".equalsIgnoreCase(tipoFuente)) return Origen.ESTATICA;
-        return Origen.PROXY;
+    private TipoFuente normalizaOrigen(String tipoFuente) {
+        if (tipoFuente == null) return TipoFuente.ESTATICA;
+        return switch (tipoFuente.toUpperCase()) {
+            case "DINAMICA" -> TipoFuente.DINAMICA;
+            case "ESTATICA" -> TipoFuente.ESTATICA;
+            case "DEMO" -> TipoFuente.DEMO;
+            case "METAMAPA" -> TipoFuente.METAMAPA;
+            default -> TipoFuente.ESTATICA;
+        };
     }
 
 
     public Hecho normalizarHecho(HechoDTO_IN dto) {
+        log.info("→ Normalizando hecho: '{}'", dto.getTitulo());
 
         Hecho h = new Hecho(
                 dto.getTitulo(),
@@ -126,21 +145,77 @@ public class NormalizacionService implements INormalizacionService {
                 dto.getArchivosMultimedia()
         );
 
-        if (dto.getContribuyenteID() != null && !dto.getContribuyenteID().isBlank()) {
-            ContribuyenteRegistrado c = new ContribuyenteRegistrado();
-            c.setId(Long.valueOf(dto.getContribuyenteID()));  // solo referencia, sin persistir
-            h.setContribuyente(c);
+        TipoFuente tipoFuente = normalizaOrigen(dto.getTipoFuente());
+        h.setTipoFuente(tipoFuente);
+        log.debug("   • TipoFuente asignado: {}", tipoFuente);
+
+        if (tipoFuente == TipoFuente.DINAMICA &&
+                dto.getContribuyenteID() != null && !dto.getContribuyenteID().isBlank()) {
+
+            String contribuyenteId = dto.getContribuyenteID();
+
+            ContribuyenteRegistrado contribuyente = contribuyenteRepository.findById(contribuyenteId)
+                    .orElseGet(() -> {
+                        log.debug("Nuevo contribuyente detectado: {}", contribuyenteId);
+                        ContribuyenteRegistrado nuevo = new ContribuyenteRegistrado();
+                        nuevo.setId(contribuyenteId);
+                        return entityManager.merge(nuevo);
+                    });
+
+            h.setContribuyente(contribuyente);
+            log.debug("Contribuyente asignado: {}", contribuyenteId);
         } else {
             h.setContribuyente(null);
+            log.debug("Sin contribuyente (no aplica para tipo {})", tipoFuente);
         }
 
-        h.getOrigenes().add(normalizaOrigen(dto.getTipoFuente()));
-        h.setOrigenReal(dto.getOrigen());
+        if (dto.getOrigen() != null && !dto.getOrigen().isBlank()) {
+            String nombre = dto.getOrigen().trim();
+            log.debug("Analizando origen: '{}'", nombre);
+
+            OrigenReal origen = cacheOrigenes.get(nombre);
+            if (origen != null) {
+                log.debug("Origen encontrado en cache: '{}'", nombre);
+            } else {
+                // Buscar en BD
+                origen = origenRealRepository.findByNombreIgnoreCase(nombre).orElse(null);
+
+                if (origen != null) {
+                    log.debug("Origen encontrado en BD: '{}'", nombre);
+                } else {
+                    log.debug("Origen no encontrado, creando nuevo: '{}'", nombre);
+                    try {
+                        origen = origenRealRepository.save(new OrigenReal(null, nombre, tipoFuente));
+                        log.debug("Origen creado y guardado en BD: '{}'", nombre);
+                    } catch (DataIntegrityViolationException e) {
+                        log.warn("Duplicado detectado al guardar '{}', recuperando existente", nombre);
+                        origen = origenRealRepository.findByNombreIgnoreCase(nombre)
+                                .orElseThrow(() -> new RuntimeException("Origen duplicado no encontrado tras excepción"));
+                    }
+                }
+
+                cacheOrigenes.put(nombre, origen);
+                log.debug("Origen agregado a cache: '{}'", nombre);
+            }
+
+            h.setOrigenReal(origen);
+            log.info("Origen asignado al hecho '{}': {}", dto.getTitulo(), origen.getNombre());
+        } else {
+            log.warn("Hecho '{}' vino sin origen — no se asignará OrigenReal", dto.getTitulo());
+        }
+
         return h;
     }
 
 
+
     public List<Hecho> normalizarHechos(List<HechoDTO_IN> hechos) {
+        cacheOrigenes.clear();
+
+        log.info("Precargando orígenes reales existentes en cache...");
+        origenRealRepository.findAll().forEach(o -> cacheOrigenes.put(o.getNombre(), o));
+        log.info("{} orígenes reales precargados", cacheOrigenes.size());
+
         List<Hecho> lista = new ArrayList<>();
         int total = hechos.size();
         log.info("Iniciando normalización de {} hechos...", total);
@@ -153,15 +228,29 @@ public class NormalizacionService implements INormalizacionService {
                 log.warn("Error normalizando '{}': {}", dto.getTitulo(), e.getMessage());
             }
 
-            // Log de progreso cada 1000 hechos
             if ((i + 1) % 1000 == 0) {
-                log.info("→ Progreso: {} / {} hechos normalizados", (i + 1), total);
+                log.info("Progreso: {} / {} hechos normalizados", (i + 1), total);
             }
         }
 
         log.info("Normalización completada. Total procesados: {}", lista.size());
         return lista;
     }
+
+    public OrigenReal obtenerOCrear(String nombre, TipoFuente tipoFuente) {
+        return origenRealRepository.findByNombre(nombre)
+                .orElseGet(() -> {
+                    try {
+                        return origenRealRepository.save(new OrigenReal(null, nombre, tipoFuente));
+                    } catch (DataIntegrityViolationException e) {
+                        log.warn("OrigenReal duplicado detectado para '{}', reutilizando existente", nombre);
+                        return origenRealRepository.findByNombre(nombre)
+                                .orElseThrow(() -> new RuntimeException("Origen duplicado no encontrado"));
+                    }
+                });
+    }
+
+
 
 
 }

@@ -19,8 +19,6 @@ public interface IHechoService {
 
     public List<Hecho> filtrarHechos(List<CondicionDeFiltrado> condiciones);
 
-    List<CriterioRequest> convertirQueryParamsACriterios(Map<String, String> queryParams);
-
     boolean editarHechoContribuyente(Long id, Map<String, Object> cambios);
     long contarTodos();
 }

@@ -1,7 +1,8 @@
 package org.example.metamapa.agregador.models.entidades;
 
-public enum Origen {
+public enum TipoFuente {
     DINAMICA,
     ESTATICA,
-    PROXY
+    DEMO,
+    METAMAPA
 }

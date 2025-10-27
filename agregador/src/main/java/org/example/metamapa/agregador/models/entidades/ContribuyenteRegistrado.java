@@ -23,8 +23,7 @@ import java.util.List;
 public class ContribuyenteRegistrado {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
 
     @Column(name = "nombre")
     private String nombre;

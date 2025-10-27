@@ -44,3 +44,12 @@ public class PorColeccion extends CondicionDeFiltrado{
     }
 }
 
+/*@Override
+    public boolean cumpleUno(Hecho unHecho) {
+        Coleccion coleccion = ... // buscar o recibir la colección
+        boolean coincidePorTipo = (coleccion.getTipoFuente() == null)
+                || coleccion.getTipoFuente().equals(unHecho.getTipoFuente());
+        boolean coincidePorOrigenReal = coleccion.getOrigenesReales().isEmpty()
+                || coleccion.getOrigenesReales().contains(unHecho.getOrigenReal());
+        return coincidePorTipo && coincidePorOrigenReal;
+    }*/

@@ -4,9 +4,9 @@ import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.entidades.Ubicacion;
 
 public class PorIDContribuyente extends CondicionDeFiltrado{
-    private final Long idBuscado;
+    private final String idBuscado;
 
-    public PorIDContribuyente(Long id) {
+    public PorIDContribuyente(String id) {
         this.idBuscado = id;
     }
 

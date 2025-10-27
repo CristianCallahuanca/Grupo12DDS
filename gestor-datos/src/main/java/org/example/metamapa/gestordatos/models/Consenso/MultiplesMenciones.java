@@ -1,50 +1,43 @@
 package org.example.metamapa.gestordatos.models.Consenso;
 
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
-import org.example.metamapa.gestordatos.models.entidades.HechoDeColeccion;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 
 public class MultiplesMenciones extends AlgoritmoConsenso {
 
     @Override
-    public void consensuarHechos(List<HechoDeColeccion> hechosDeColeccion) {
-        var grupos = hechosDeColeccion.stream()
-                .collect(Collectors.groupingBy(hdc -> hdc.getHecho().getTitulo()));
-
-        grupos.forEach((titulo, grupo) -> {
-            boolean variasFuentes = grupo.stream()
-                    .map(hdc -> hdc.getHecho().getOrigenes())
-                    .flatMap(List::stream)
-                    .distinct()
-                    .count() > 1;
-
-            boolean hayConflictos = grupo.stream().anyMatch(hdc1 ->
-                    grupo.stream().anyMatch(hdc2 ->
-                            !Objects.equals(hdc1, hdc2) &&
-                                    !atributosCoinciden(hdc1.getHecho(), hdc2.getHecho())
-                    )
-            );
-
-            boolean consensuado = variasFuentes && !hayConflictos;
-            grupo.forEach(hdc -> hdc.setConsensuado(consensuado));
-        });
+    public String getNombre() {
+        return "Múltiples Menciones";
     }
-
-    private boolean atributosCoinciden(Hecho a, Hecho b) {
-        return Objects.equals(a.getDescripcion(), b.getDescripcion()) &&
-                Objects.equals(a.getCategoria(), b.getCategoria()) &&
-                Objects.equals(a.getFechaAcontecimiento(), b.getFechaAcontecimiento());
-    }
-
     @Override
-    public boolean esConsensuado(Hecho hecho) {
-        // No se usa directamente en este algoritmo.
-        return false;
+    public boolean esConsensuado(Hecho hecho, List<Hecho> hechosDeColeccion) {
+        // Agrupamos por título
+        var grupo = hechosDeColeccion.stream()
+                .filter(h -> h.getTitulo().equalsIgnoreCase(hecho.getTitulo()))
+                .toList();
+
+        long fuentesDistintas = grupo.stream()
+                .map(Hecho::getOrigenReal)
+                .distinct()
+                .count();
+
+        // Si hay al menos 2 fuentes distintas, y no hay conflictos entre atributos
+        boolean variasFuentes = fuentesDistintas > 1;
+        boolean hayConflictos = grupo.stream().anyMatch(h1 ->
+                grupo.stream().anyMatch(h2 ->
+                        !h1.equals(h2) &&
+                                (!Objects.equals(h1.getDescripcion(), h2.getDescripcion()) ||
+                                        !Objects.equals(h1.getCategoria(), h2.getCategoria()) ||
+                                        !Objects.equals(h1.getFechaAcontecimiento(), h2.getFechaAcontecimiento()))
+                )
+        );
+
+        return variasFuentes && !hayConflictos;
     }
+
 }
 
 

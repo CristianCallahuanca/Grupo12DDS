@@ -1,7 +1,6 @@
 package org.example.metamapa.agregador.models.entidades;
 
 
-import org.example.metamapa.agregador.models.entidades.EstadoHecho;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -67,20 +66,17 @@ public class Hecho {
     @ManyToOne(fetch = FetchType.LAZY)
     private ContribuyenteRegistrado contribuyente;
 
-    @ElementCollection(targetClass = Origen.class)
-    @CollectionTable(
-            name = "hecho_origenes",
-            joinColumns = @JoinColumn(name = "hecho_id")
-    )
-    @Column(name = "origen")
     @Enumerated(EnumType.STRING)
-    private List<Origen> origenes;
+    @Column(name = "tipo_fuente", nullable = false)
+    private TipoFuente tipoFuente;
 
     @Column( name = "sin_categorizar")
     private Boolean sinCategorizar;
 
-    @Column(name = "origen_real")
-    private String origenReal;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "origen_id")
+    private OrigenReal origenReal;
+
 
     public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
                  LocalDateTime fechaAcontecimiento,String etiqueta,List<String> archivosMultimedia) {
@@ -95,9 +91,6 @@ public class Hecho {
         this.estadoHecho = EstadoHecho.EN_REVISION;
         this.estadoEdicionHecho = EstadoDeEdicion.NO_EDITADO;
         this.fechaCarga = LocalDateTime.now();
-        this.contribuyente = new ContribuyenteRegistrado(); //TODO
-        this.origenes = new ArrayList<Origen>();
-        this.origenReal = "";
 
         if("Sin categoria".equals(categoria)){
             this.setSinCategorizar(true);
@@ -136,10 +129,8 @@ public class Hecho {
     }
 
     public boolean puedeSerEditado() {
-        return this.origenes.contains(Origen.DINAMICA)  && //hay que ver que sea registrado
+        return this.tipoFuente == TipoFuente.DINAMICA &&
                 ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
     }
-
-
 
 }

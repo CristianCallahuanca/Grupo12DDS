@@ -67,8 +67,9 @@ public class HechosService implements IHechosService {
         dto.setLongitud(hecho.getLongitud());
         dto.setFechaAcontecimiento(hecho.getFechaAcontecimiento());
         dto.setEtiqueta(hecho.getEtiqueta());
-        dto.setContribuyenteID("1"); //TODO HARDCODEADO TEMPORAL
+        dto.setContribuyenteID(hecho.getContribuyenteID());
         dto.setArchivosMultimedia(hecho.getArchivosMultimedia());
+        dto.setOrigen("Contribuyente Metamapa");
         dto.setTipoFuente("DINAMICA");
         return dto;
     }
