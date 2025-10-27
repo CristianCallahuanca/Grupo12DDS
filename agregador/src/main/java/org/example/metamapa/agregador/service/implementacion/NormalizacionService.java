@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.agregador.infraestructura.ProvinciaLocator;
 import org.example.metamapa.agregador.models.dtos.DTO_IN.HechoDTO_IN;
 import org.example.metamapa.agregador.models.entidades.*;
+import org.example.metamapa.agregador.models.repositorios.ICategoriaRepository;
 import org.example.metamapa.agregador.models.repositorios.IContribuyenteRepository;
 import org.example.metamapa.agregador.models.repositorios.IOrigenRealRepository;
 import org.example.metamapa.agregador.service.INormalizacionService;
@@ -26,29 +27,15 @@ public class NormalizacionService implements INormalizacionService {
 
     @Autowired
     private IOrigenRealRepository origenRealRepository;
-    private final Map<String, OrigenReal> cacheOrigenes = new HashMap<>();
-    private final IContribuyenteRepository contribuyenteRepository;
+    @Autowired
+    private IContribuyenteRepository contribuyenteRepository;
+    @Autowired
+    private CatalogoCategoriasService catalogoCategoriasService;
+
     @PersistenceContext
     private EntityManager entityManager;
-    public NormalizacionService(IContribuyenteRepository contribuyenteRepository) {
-        this.contribuyenteRepository = contribuyenteRepository;
-    }
 
-    private static final Map<String, List<String>> catalogoCategorias = Map.ofEntries(
-            Map.entry("vientos fuertes", List.of("viento", "temporal", "tormenta", "ráfaga", "vendaval")),
-            Map.entry("inundaciones", List.of("inundación", "anegamiento", "crecida", "desborde", "lluvia")),
-            Map.entry("granizo", List.of("granizo", "piedra")),
-            Map.entry("nevadas", List.of("nieve", "nevada")),
-            Map.entry("calor extremo", List.of("calor", "ola de calor", "temperatura alta", "térmico")),
-            Map.entry("sequía", List.of("sequía", "falta de agua", "escasez hídrica", "árido")),
-            Map.entry("derrumbes", List.of("derrumbe", "deslizamiento", "alud", "corte de ruta")),
-            Map.entry("actividad volcánica", List.of("volcán", "erupción")),
-            Map.entry("incendios", List.of("incendio", "fuego", "quema", "forestal")),
-            Map.entry("contaminación", List.of("contaminación", "vertido", "basura", "residuos")),
-            Map.entry("evento sanitario", List.of("enfermedad", "brote", "epidemia", "pandemia", "virus")),
-            Map.entry("derrame", List.of("derrame", "petróleo", "químico", "aceite")),
-            Map.entry("intoxicación masiva", List.of("intoxicación", "alimento", "veneno"))
-    );
+    private final Map<String, OrigenReal> cacheOrigenes = new HashMap<>();
 
     private static final List<DateTimeFormatter> FORMATTERS = List.of(
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
@@ -74,31 +61,30 @@ public class NormalizacionService implements INormalizacionService {
         }
     }
 
-
-    private String normalizarCategoria(HechoDTO_IN dto) {
-        String textoBase = (dto.getCategoria() + " " + dto.getDescripcion());
-        return detectarCategoria(textoBase);
-    }
-
-
-    public String normalizarCategoriaDesdeTexto(String titulo, String descripcion) {
-        String textoBase = (titulo == null ? "" : titulo) + " " + (descripcion == null ? "" : descripcion);
-        return detectarCategoria(textoBase);
-    }
-
-
-    private String detectarCategoria(String textoBase) {
-        if (textoBase == null || textoBase.isBlank()) return "Sin categoria";
+    private Categoria detectarCategoriaDesdeTexto(String textoBase) {
+        if (textoBase == null || textoBase.isBlank()) return null;
 
         String texto = textoBase.toLowerCase().replaceAll("[^a-záéíóúñü ]", "");
 
-        return catalogoCategorias.entrySet().stream()
+        Map<String, List<String>> catalogo = catalogoCategoriasService.obtenerSinonimosPorCategoria();
+
+        return catalogo.entrySet().stream()
                 .filter(entry -> entry.getValue().stream().anyMatch(texto::contains))
-                .map(Map.Entry::getKey)
                 .findFirst()
-                .orElse("Sin categoria");
+                .map(entry -> catalogoCategoriasService.obtenerCategoriaPorNombre(entry.getKey()))
+                .orElse(null);
     }
 
+
+    private Categoria normalizarCategoria(HechoDTO_IN dto) {
+        String textoBase = (dto.getCategoria() + " " + dto.getDescripcion());
+        return detectarCategoriaDesdeTexto(textoBase);
+    }
+
+    public Categoria normalizarCategoriaDesdeTexto(String titulo, String descripcion) {
+        String textoBase = (titulo == null ? "" : titulo) + " " + (descripcion == null ? "" : descripcion);
+        return detectarCategoriaDesdeTexto(textoBase);
+    }
 
     private static LocalDateTime parse(String dateStr) {
         if (dateStr == null || dateStr.isBlank()) return null;
@@ -114,7 +100,6 @@ public class NormalizacionService implements INormalizacionService {
         log.warn("Formato de fecha no soportado: {}", dateStr);
         return null;
     }
-
 
     private LocalDateTime normalizarFecha(HechoDTO_IN dto) {
         return parse(dto.getFechaAcontecimiento());
@@ -132,15 +117,21 @@ public class NormalizacionService implements INormalizacionService {
     }
 
 
+
     public Hecho normalizarHecho(HechoDTO_IN dto) {
         log.info("→ Normalizando hecho: '{}'", dto.getTitulo());
+
+        // Normalizamos campos simples
+        Ubicacion ubicacion = normalizarUbicacion(dto);
+        LocalDateTime fecha = normalizarFecha(dto);
+        Categoria categoria = normalizarCategoria(dto);
 
         Hecho h = new Hecho(
                 dto.getTitulo(),
                 dto.getDescripcion(),
-                normalizarCategoria(dto),
-                normalizarUbicacion(dto),
-                normalizarFecha(dto),
+                categoria,
+                ubicacion,
+                fecha,
                 dto.getEtiqueta(),
                 dto.getArchivosMultimedia()
         );
@@ -149,6 +140,7 @@ public class NormalizacionService implements INormalizacionService {
         h.setTipoFuente(tipoFuente);
         log.debug("   • TipoFuente asignado: {}", tipoFuente);
 
+        // Contribuyente
         if (tipoFuente == TipoFuente.DINAMICA &&
                 dto.getContribuyenteID() != null && !dto.getContribuyenteID().isBlank()) {
 
@@ -163,73 +155,41 @@ public class NormalizacionService implements INormalizacionService {
                     });
 
             h.setContribuyente(contribuyente);
-            log.debug("Contribuyente asignado: {}", contribuyenteId);
-        } else {
-            h.setContribuyente(null);
-            log.debug("Sin contribuyente (no aplica para tipo {})", tipoFuente);
         }
 
+        // Origen real
         if (dto.getOrigen() != null && !dto.getOrigen().isBlank()) {
             String nombre = dto.getOrigen().trim();
-            log.debug("Analizando origen: '{}'", nombre);
 
-            OrigenReal origen = cacheOrigenes.get(nombre);
-            if (origen != null) {
-                log.debug("Origen encontrado en cache: '{}'", nombre);
-            } else {
-                // Buscar en BD
-                origen = origenRealRepository.findByNombreIgnoreCase(nombre).orElse(null);
-
-                if (origen != null) {
-                    log.debug("Origen encontrado en BD: '{}'", nombre);
-                } else {
-                    log.debug("Origen no encontrado, creando nuevo: '{}'", nombre);
-                    try {
-                        origen = origenRealRepository.save(new OrigenReal(null, nombre, tipoFuente));
-                        log.debug("Origen creado y guardado en BD: '{}'", nombre);
-                    } catch (DataIntegrityViolationException e) {
-                        log.warn("Duplicado detectado al guardar '{}', recuperando existente", nombre);
-                        origen = origenRealRepository.findByNombreIgnoreCase(nombre)
-                                .orElseThrow(() -> new RuntimeException("Origen duplicado no encontrado tras excepción"));
-                    }
-                }
-
-                cacheOrigenes.put(nombre, origen);
-                log.debug("Origen agregado a cache: '{}'", nombre);
-            }
+            OrigenReal origen = cacheOrigenes.computeIfAbsent(nombre, key -> {
+                return origenRealRepository.findByNombreIgnoreCase(key)
+                        .orElseGet(() -> {
+                            try {
+                                return origenRealRepository.save(new OrigenReal(null, key, tipoFuente));
+                            } catch (DataIntegrityViolationException e) {
+                                log.warn("Duplicado detectado al guardar '{}', recuperando existente", key);
+                                return origenRealRepository.findByNombreIgnoreCase(key)
+                                        .orElseThrow(() -> new RuntimeException("Origen duplicado no encontrado"));
+                            }
+                        });
+            });
 
             h.setOrigenReal(origen);
-            log.info("Origen asignado al hecho '{}': {}", dto.getTitulo(), origen.getNombre());
-        } else {
-            log.warn("Hecho '{}' vino sin origen — no se asignará OrigenReal", dto.getTitulo());
         }
 
         return h;
     }
 
-
-
     public List<Hecho> normalizarHechos(List<HechoDTO_IN> hechos) {
         cacheOrigenes.clear();
-
-        log.info("Precargando orígenes reales existentes en cache...");
         origenRealRepository.findAll().forEach(o -> cacheOrigenes.put(o.getNombre(), o));
-        log.info("{} orígenes reales precargados", cacheOrigenes.size());
 
         List<Hecho> lista = new ArrayList<>();
-        int total = hechos.size();
-        log.info("Iniciando normalización de {} hechos...", total);
-
-        for (int i = 0; i < total; i++) {
-            HechoDTO_IN dto = hechos.get(i);
+        for (HechoDTO_IN dto : hechos) {
             try {
                 lista.add(normalizarHecho(dto));
             } catch (Exception e) {
                 log.warn("Error normalizando '{}': {}", dto.getTitulo(), e.getMessage());
-            }
-
-            if ((i + 1) % 1000 == 0) {
-                log.info("Progreso: {} / {} hechos normalizados", (i + 1), total);
             }
         }
 
@@ -249,8 +209,6 @@ public class NormalizacionService implements INormalizacionService {
                     }
                 });
     }
-
-
-
-
 }
+
+

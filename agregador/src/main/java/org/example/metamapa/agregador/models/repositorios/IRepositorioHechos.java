@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface IRepositorioHechos extends JpaRepository<Hecho, Long>{
+    List<Hecho> findByCategoriaIsNull();
     List<Hecho> findByFechaCargaAfter(LocalDateTime fecha);
 }

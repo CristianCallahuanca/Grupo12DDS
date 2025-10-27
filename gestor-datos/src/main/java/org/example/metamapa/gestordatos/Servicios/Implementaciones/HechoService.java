@@ -6,10 +6,12 @@ import org.example.metamapa.gestordatos.Servicios.IHechoService;
 import org.example.metamapa.gestordatos.conversores.StringAObjetos;
 import org.example.metamapa.gestordatos.models.dtos.input.CriterioRequest;
 import org.example.metamapa.gestordatos.models.dtos.output.HechoOutputDTO;
+import org.example.metamapa.gestordatos.models.entidades.Categoria;
 import org.example.metamapa.gestordatos.models.entidades.ContribuyenteRegistrado;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.entidades.enums.TipoFuente;
+import org.example.metamapa.gestordatos.models.repositorios.ICategoriaRepository;
 import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,8 @@ public class HechoService implements IHechoService {
 
     private final IHechosRepository repositorioHechos;
     private final FiltradorService filtradorService;
+    private ICategoriaRepository categoriaRepo;
+
 
     /*
        ================ BÚSQUEDA Y FILTRADO ======================
@@ -88,7 +92,19 @@ public class HechoService implements IHechoService {
             switch (campo) {
                 case "titulo" -> cambiosHecho.setTitulo((String) valor);
                 case "descripcion" -> cambiosHecho.setDescripcion((String) valor);
-                case "categoria" -> cambiosHecho.setCategoria((String) valor);
+                case "categoria" -> {
+                    if (valor instanceof String nombreCategoria) {
+                        Categoria categoria = categoriaRepo.findByNombreIgnoreCase(nombreCategoria)
+                                .orElse(null);
+
+                        // Si eligió "Otro" o no existe la categoría, no la seteamos (queda null)
+                        if (categoria == null || nombreCategoria.equalsIgnoreCase("Otro")) {
+                            cambiosHecho.setCategoria(null);
+                        } else {
+                            cambiosHecho.setCategoria(categoria);
+                        }
+                    }
+                }
                 case "etiqueta" -> cambiosHecho.setEtiqueta((String) valor);
                 case "fechaAcontecimiento" -> {
                     if (valor instanceof String fechaStr)
@@ -135,7 +151,8 @@ public class HechoService implements IHechoService {
 
         dto.setTitulo(hecho.getTitulo());
         dto.setDescripcion(hecho.getDescripcion());
-        dto.setCategoria(hecho.getCategoria());
+        dto.setCategoria(
+                hecho.getCategoria() != null ? hecho.getCategoria().getNombre() : null);
         if (hecho.getUbicacion() != null) {
             dto.setLatitud(String.valueOf(hecho.getUbicacion().getLatitud()));
             dto.setLongitud(String.valueOf(hecho.getUbicacion().getLongitud()));

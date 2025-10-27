@@ -59,9 +59,13 @@ public class DuplicacionService implements IDuplicacionService {
         if (distancia < RADIO_CERCANO_METROS) return true;
 
         // Caso 2: misma fecha, misma categoría y distancia razonable (<100 m)
+        // Caso 2: misma fecha, misma categoría y distancia razonable (<100 m)
         if (distancia < RADIO_RAZONABLE_METROS &&
                 h1.getCategoria() != null && h2.getCategoria() != null &&
-                h1.getCategoria().equalsIgnoreCase(h2.getCategoria())) return true;
+                h1.getCategoria().getNombre() != null && h2.getCategoria().getNombre() != null &&
+                h1.getCategoria().getNombre().equalsIgnoreCase(h2.getCategoria().getNombre())) {
+            return true;
+        }
 
         // Caso 3: misma fecha, distancia <100 m y mismo título
         if (distancia < RADIO_RAZONABLE_METROS &&

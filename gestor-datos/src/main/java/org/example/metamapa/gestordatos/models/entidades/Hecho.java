@@ -32,8 +32,9 @@ public class Hecho {
     @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(name = "categoria")
-    private String categoria;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
 
     @OneToOne
     @JoinColumn(name = "ubicacion_id")
@@ -80,7 +81,7 @@ public class Hecho {
 
     public Hecho(String titulo,
                  String descripcion,
-                 String categoria,
+                 Categoria categoria,
                  Ubicacion ubicacion,
                  LocalDateTime fechaAcontecimiento,
                  String etiqueta) {

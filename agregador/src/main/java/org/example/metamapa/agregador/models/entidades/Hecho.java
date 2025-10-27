@@ -32,8 +32,10 @@ public class Hecho {
     @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(name = "categoria")
-    private String categoria;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
+
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ubicacion_id")
@@ -78,7 +80,7 @@ public class Hecho {
     private OrigenReal origenReal;
 
 
-    public Hecho(String titulo, String descripcion, String categoria, Ubicacion ubicacion,
+    public Hecho(String titulo, String descripcion, Categoria categoria, Ubicacion ubicacion,
                  LocalDateTime fechaAcontecimiento,String etiqueta,List<String> archivosMultimedia) {
 
         this.titulo = titulo;

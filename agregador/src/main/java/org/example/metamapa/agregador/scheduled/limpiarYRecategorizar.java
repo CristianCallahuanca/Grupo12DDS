@@ -1,6 +1,7 @@
 package org.example.metamapa.agregador.scheduled;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.metamapa.agregador.models.entidades.Categoria;
 import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
 import org.example.metamapa.agregador.service.implementacion.DuplicacionService;
@@ -11,10 +12,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
-public class LimpiezaNocturnaScheduler {
+public class limpiarYRecategorizar {
 
     @Autowired
     private IRepositorioHechos hechosRepo;
@@ -33,19 +35,22 @@ public class LimpiezaNocturnaScheduler {
 
         List<Hecho> sinDuplicados = duplicacionService.eliminarHechosRepetidos(recientes);
 
-        // Re-etiquetado incremental (solo los sin categoría)
+        AtomicInteger recategorizados = new AtomicInteger(0);
+
         sinDuplicados.stream()
-                .filter(h -> h.getCategoria().equalsIgnoreCase("Sin categoria"))
+                .filter(h -> h.getCategoria() == null)
                 .forEach(h -> {
-                    String nuevaCat = normalizacionService.normalizarCategoriaDesdeTexto(
+                    Categoria nuevaCat = normalizacionService.normalizarCategoriaDesdeTexto(
                             h.getTitulo(), h.getDescripcion());
-                    if (!"Sin categoria".equals(nuevaCat)) {
+                    if (nuevaCat != null) {
                         h.setCategoria(nuevaCat);
+                        recategorizados.incrementAndGet();
                     }
                 });
 
         hechosRepo.saveAll(sinDuplicados);
-        log.info("Limpieza completada: {} hechos actualizados.", sinDuplicados.size());
+        log.info("Limpieza completada: {} hechos actualizados, {} recategorizados.",
+                sinDuplicados.size(), recategorizados.get());
     }
 }
 
