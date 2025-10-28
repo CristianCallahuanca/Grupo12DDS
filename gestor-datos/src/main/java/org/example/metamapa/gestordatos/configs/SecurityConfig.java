@@ -1,4 +1,4 @@
-package org.example.metamapa.gestordatos;
+package org.example.metamapa.gestordatos.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

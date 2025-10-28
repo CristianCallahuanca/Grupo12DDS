@@ -2,6 +2,7 @@ package org.example.metamapa.gestordatos.controllers.publica;
 
 import org.example.metamapa.gestordatos.Servicios.IContribuyenteService;
 import org.example.metamapa.gestordatos.models.dtos.input.ContribuyenteRegInputDTO;
+import org.example.metamapa.gestordatos.models.dtos.input.LoginRequest;
 import org.example.metamapa.gestordatos.models.dtos.output.AuthResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,19 +19,22 @@ public class ContribuyenteController {
 
     @PostMapping("/registrarse")
     public ResponseEntity<?> registrar(@RequestBody ContribuyenteRegInputDTO inputDTO) {
-        var usuario = contribuyenteService.crearContribuyenteRegistrado(inputDTO);
-
-        AuthResponse response = new AuthResponse(
-                null, // Por ahora sin JWT
-                "Usuario registrado correctamente",
-                usuario.getUserId(),
-                usuario.getEmail(),
-                usuario.getNombre(),
-                usuario.getApellido(),
-                usuario.getRol()
-        );
+        var response = contribuyenteService.crearContribuyenteRegistrado(inputDTO);
 
         return ResponseEntity.status(201).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            AuthResponse response = contribuyenteService.login(
+                    loginRequest.getEmail(),
+                    loginRequest.getPassword()
+            );
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body(e.getMessage());
+        }
     }
 }
 
