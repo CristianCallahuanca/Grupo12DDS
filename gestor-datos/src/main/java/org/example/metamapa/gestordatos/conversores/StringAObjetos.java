@@ -59,7 +59,7 @@ public class StringAObjetos {
             case "porfechaacontecimientohasta" -> new PorFechaAcontecimientoHasta(LocalDateTime.parse(params.get("hasta")));
             case "porestado" -> new PorEstado(EstadoHecho.valueOf(params.get("estadoHecho").toUpperCase()));
             case "porsincategorizar" -> new PorSinCategorizar(Boolean.parseBoolean(params.get("sinCategorizar")));
-            case "poridcontribuyente" -> new PorIdContribuyente(params.get("idBuscado"));
+            case "poridcontribuyente" -> new PorIdContribuyente(Long.valueOf(params.get("idBuscado")));
             case "poridhecho" -> new PorIDHecho(Long.parseLong(params.get("idBuscado")));
             case "porareavisible" -> new PorAreaVisible(
                     Double.parseDouble(params.get("norte")),

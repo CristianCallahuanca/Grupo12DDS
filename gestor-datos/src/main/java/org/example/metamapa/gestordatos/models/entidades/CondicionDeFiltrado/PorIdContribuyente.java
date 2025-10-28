@@ -11,21 +11,21 @@ import org.springframework.data.jpa.domain.Specification;
 public class PorIdContribuyente extends CondicionDeFiltrado {
 
     @Column(name = "id_buscado")
-    private String idBuscado;
+    private Long idBuscado;
 
-    public PorIdContribuyente(String idBuscado) {
+    public PorIdContribuyente(Long idBuscado) {
         this.idBuscado = idBuscado;
     }
 
     @Override
     public boolean cumpleUno(Hecho unHecho) {
         return unHecho.getContribuyente() != null &&
-                unHecho.getContribuyente().getId().equalsIgnoreCase(idBuscado);
+                unHecho.getContribuyente().getUserId() == idBuscado;
     }
 
     @Override
     public Specification<Hecho> toSpecification() {
         return (root, query, cb) ->
-                cb.equal(cb.lower(root.join("contribuyente").get("id")), idBuscado.toLowerCase());
+                cb.equal(cb.lower(root.join("contribuyente").get("id")), idBuscado);
     }
 }

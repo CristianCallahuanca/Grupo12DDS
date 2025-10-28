@@ -28,7 +28,7 @@ public class HechoCrudoController {
     private String uploadDir;
 
     // ✅ SOLO los 7 campos obligatorios + archivos opcionales
-    @PostMapping(value = "/hecho", consumes = {"multipart/form-data"})
+    //@PostMapping(value = "/hecho", consumes = {"multipart/form-data"})
     public ResponseEntity<?> crearHechoCrudo(
             // ✅ 7 CAMPOS OBLIGATORIOS (exactamente como tu JSON)
             @RequestParam String titulo,

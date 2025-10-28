@@ -104,7 +104,7 @@ public class Hecho {
     public boolean puedeSerEditadoPor(ContribuyenteRegistrado autor) {
         if (autor == null || this.contribuyente == null) return false;
 
-        boolean esAutor = this.contribuyente.getId().equals(autor.getId());
+        boolean esAutor = this.contribuyente.getUserId() == autor.getUserId();
         boolean esDinamica = this.tipoFuente == TipoFuente.DINAMICA;
         boolean dentroDePlazo = ChronoUnit.DAYS.between(this.fechaCarga, LocalDateTime.now()) <= 7;
 

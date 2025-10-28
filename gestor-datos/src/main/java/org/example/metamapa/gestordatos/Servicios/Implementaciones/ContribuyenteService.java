@@ -18,7 +18,8 @@ public class ContribuyenteService implements IContribuyenteService {
     public ContribuyenteRegistrado crearContribuyenteRegistrado(ContribuyenteRegInputDTO constribuyenteInputDTO) {
 
         ContribuyenteRegistrado contribuyente = new ContribuyenteRegistrado(constribuyenteInputDTO.getNombre(),
-                constribuyenteInputDTO.getApellido(), constribuyenteInputDTO.getEdad(), constribuyenteInputDTO.getDni());
+                constribuyenteInputDTO.getApellido(), constribuyenteInputDTO.getFechaNacimiento(), constribuyenteInputDTO.getDni(),
+                constribuyenteInputDTO.getEmail(),constribuyenteInputDTO.getPassword());
 
         contribuyenteRepository.save(contribuyente);
 
