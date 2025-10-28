@@ -29,7 +29,7 @@ public class HechoService implements IHechoService {
 
     private final IHechosRepository repositorioHechos;
     private final FiltradorService filtradorService;
-    private ICategoriaRepository categoriaRepo;
+    private final ICategoriaRepository categoriaRepo;
 
 
     /*
