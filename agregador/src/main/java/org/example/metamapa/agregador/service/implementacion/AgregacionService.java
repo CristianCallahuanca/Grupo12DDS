@@ -53,6 +53,11 @@ public class AgregacionService implements IAgregacionService{
         long inicio = System.currentTimeMillis();
 
         List<HechoDTO_IN> hechosDTO = obtenerHechosDeFuentesParalelo();
+
+        if(hechosDTO.size() > 0){
+            System.out.println("el id del wachin: " + hechosDTO.get(0).getContribuyenteID());
+        }
+
         int total = hechosDTO.size();
         log.info("Se recibieron {} hechos desde las fuentes registradas.", total);
 

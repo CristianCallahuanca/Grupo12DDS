@@ -141,20 +141,22 @@ public class NormalizacionService implements INormalizacionService {
         log.debug("   • TipoFuente asignado: {}", tipoFuente);
 
         // Contribuyente
-        if (tipoFuente == TipoFuente.DINAMICA &&
-                dto.getContribuyenteID() != 0 ) {
 
-            long contribuyenteId = dto.getContribuyenteID();
+        if (tipoFuente == TipoFuente.DINAMICA) {
 
-            ContribuyenteRegistrado contribuyente = contribuyenteRepository.findById(contribuyenteId)
-                    .orElseGet(() -> {
-                        log.debug("Nuevo contribuyente detectado: {}", contribuyenteId);
-                        ContribuyenteRegistrado nuevo = new ContribuyenteRegistrado();
-                        nuevo.setUserId(contribuyenteId);
-                        return entityManager.merge(nuevo);
-                    });
+            try {
+                long contribuyenteId = Long.parseLong(dto.getContribuyenteID());
 
-            h.setContribuyente(contribuyente);
+                // ✅ SOLUCIÓN EFICIENTE: Solo referencia al ID
+                ContribuyenteRegistrado contribuyente = new ContribuyenteRegistrado();
+                contribuyente.setUserId(contribuyenteId);
+                // NO llamar a entityManager.merge() - Hibernate lo maneja automáticamente
+
+                h.setContribuyente(contribuyente);
+
+            } catch (NumberFormatException e) {
+                log.warn("ContribuyenteID inválido: {}", dto.getContribuyenteID());
+            }
         }
 
         // Origen real

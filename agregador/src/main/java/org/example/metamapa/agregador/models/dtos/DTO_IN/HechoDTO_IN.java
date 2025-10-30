@@ -16,7 +16,7 @@ public class HechoDTO_IN {
     private String longitud;
     private String fechaAcontecimiento;
     private String etiqueta;
-    private long contribuyenteID;
+    private String contribuyenteID;
     private List<String> archivosMultimedia;
     private String origen;
     private String tipoFuente;

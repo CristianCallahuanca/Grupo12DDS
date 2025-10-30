@@ -23,6 +23,9 @@ public class HechosDinamicosController {
 
     @PostMapping("/hecho")
     public ResponseEntity<String> subirHechoPublico(@Valid @RequestBody HechoCrudoDTO_IN hecho) {
+
+        System.out.println("el id del chabon:" + hecho.getContribuyenteID());
+
         hechosService.cargarHecho(hecho);
         return ResponseEntity.status(HttpStatus.CREATED).body("Hecho cargado correctamente");
     }
