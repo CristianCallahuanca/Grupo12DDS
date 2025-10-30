@@ -26,10 +26,7 @@ public class EstadisticaGeneral {
     private LocalDateTime fecha;
 
     @Column(name = "tipo_estadistica")
-    private String tipo_estadistica;
-
-    @Column(name = "cantidad_solicitudes_spam")
-    private String cantidad_solicitudes_spam;
+    private String tipoEstadistica;
 
     @Column(name = "categoria")
     private String categoria;
@@ -43,24 +40,19 @@ public class EstadisticaGeneral {
     @Column(name = "titulo")
     private String titulo;
 
-    @Column(name = "cantidad_hechos")
-    private String cantidadHechos;
-
     @Column(name = "hora")
     private String hora;
 
 
-    public EstadisticaGeneral(String tipo_estadistica,String cantidad_solicitudes_spam, String categoria, String provincia, String cantidad,
-                              String titulo, String cantidadHechos, String hora) {
+    public EstadisticaGeneral(String tipo_estadistica, String categoria, String provincia, String cantidad,
+                              String titulo, String hora) {
 
         this.fecha = LocalDateTime.now();
-        this.tipo_estadistica = tipo_estadistica;
-        this.cantidad_solicitudes_spam = cantidad_solicitudes_spam;
+        this.tipoEstadistica = tipo_estadistica;
         this.categoria = categoria;
         this.provincia = provincia;
         this.cantidad = cantidad;
         this.titulo = titulo;
-        this.cantidadHechos = cantidadHechos;
         this.hora = hora;
     }
 

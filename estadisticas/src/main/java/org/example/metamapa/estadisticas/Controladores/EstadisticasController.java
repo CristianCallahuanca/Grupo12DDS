@@ -41,11 +41,9 @@ public class EstadisticasController {
 
                 String sb = indice + "," +
                         est.getFecha() + "," +
-                        est.getTipo_estadistica() + "," +
+                        est.getTipoEstadistica() + "," +
                         est.getTitulo() + "," +
                         est.getCantidad() + "," +
-                        est.getCantidadHechos() + "," +
-                        est.getCantidad_solicitudes_spam() + "," +
                         est.getCategoria() + "," +
                         est.getHora() + "," +
                         est.getProvincia();
