@@ -149,6 +149,7 @@ public class HechoService implements IHechoService {
     private HechoOutputDTO hechoADTOOut(Hecho hecho) {
         HechoOutputDTO dto = new HechoOutputDTO();
 
+        dto.setId(String.valueOf(hecho.getHecho_id()));
         dto.setTitulo(hecho.getTitulo());
         dto.setDescripcion(hecho.getDescripcion());
         dto.setCategoria(

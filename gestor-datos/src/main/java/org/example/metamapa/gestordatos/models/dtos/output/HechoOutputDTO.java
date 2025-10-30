@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 public class HechoOutputDTO {
+    private String id;
     private String titulo;
     private String descripcion;
     private String categoria;

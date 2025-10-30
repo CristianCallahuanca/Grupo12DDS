@@ -4,7 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Parent de Spring Boot: provee TODAS las versiones (BOM) -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -22,6 +21,10 @@
 
     <properties>
         <java.version>17</java.version>
+
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+
         <spring-boot.version>3.5.5</spring-boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -36,8 +39,6 @@
         <module>gestor-datos</module>
         <module>estadisticas</module>
         <module>interfaz-usuario</module>
-
-
     </modules>
 
     <dependencyManagement>
@@ -45,8 +46,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2023.0.1</version> <!-- Compatible con Spring Boot 3.2.x / 3.5.x -->
-                <type>pom</type>
+                <version>2023.0.1</version> <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
