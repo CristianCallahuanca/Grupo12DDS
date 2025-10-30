@@ -5,6 +5,7 @@ import org.example.metamapa.gestordatos.configs.JwtUtil;
 import org.example.metamapa.gestordatos.models.dtos.input.ContribuyenteRegInputDTO;
 import org.example.metamapa.gestordatos.models.dtos.output.AuthResponse;
 import org.example.metamapa.gestordatos.models.entidades.ContribuyenteRegistrado;
+import org.example.metamapa.gestordatos.models.entidades.Rol;
 import org.example.metamapa.gestordatos.models.repositorios.IContribuyenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,5 +72,18 @@ public class ContribuyenteService implements IContribuyenteService {
                 usuario.getApellido(),
                 usuario.getRol()
         );
+    }
+
+    public Boolean rolAdminService(String email, String password){
+
+        ContribuyenteRegistrado usuario = contribuyenteRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if(password.equals("TerribleContraseniaPRO")){
+            usuario.setRol(Rol.ADMIN);
+            contribuyenteRepository.save(usuario);
+            return true;
+        }
+
+        return false;
     }
 }

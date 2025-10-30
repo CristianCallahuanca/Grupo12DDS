@@ -26,6 +26,6 @@ public class PorIdContribuyente extends CondicionDeFiltrado {
     @Override
     public Specification<Hecho> toSpecification() {
         return (root, query, cb) ->
-                cb.equal(cb.lower(root.join("contribuyente").get("id")), idBuscado);
+                cb.equal(cb.lower(root.join("contribuyente").get("user_id")), idBuscado);
     }
 }

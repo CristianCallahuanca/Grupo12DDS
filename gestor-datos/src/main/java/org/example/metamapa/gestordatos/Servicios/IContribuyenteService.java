@@ -8,4 +8,5 @@ public interface IContribuyenteService {
 
     public AuthResponse crearContribuyenteRegistrado(ContribuyenteRegInputDTO constribuyenteInputDTO);
     public AuthResponse login(String email, String password);
+    public Boolean rolAdminService(String email, String password);
 }

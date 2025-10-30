@@ -2,6 +2,7 @@ package org.example.metamapa.gestordatos.controllers.publica;
 
 import org.example.metamapa.gestordatos.Servicios.IContribuyenteService;
 import org.example.metamapa.gestordatos.models.dtos.input.ContribuyenteRegInputDTO;
+import org.example.metamapa.gestordatos.models.dtos.input.DarRolAdminRequest;
 import org.example.metamapa.gestordatos.models.dtos.input.LoginRequest;
 import org.example.metamapa.gestordatos.models.dtos.output.AuthResponse;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,16 @@ public class ContribuyenteController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(401).body(e.getMessage());
         }
+    }
+
+    @PostMapping("/darRolAdmin")
+    public ResponseEntity<String> rolAdmin(@RequestBody DarRolAdminRequest request) {
+        Boolean seAsignoRol = contribuyenteService.rolAdminService(request.getEmail(), request.getPassword());
+
+        if(seAsignoRol) {
+            return ResponseEntity.status(200).body("Se le asignó el rol ADMIN");
+        }
+        return ResponseEntity.status(400).body("No se le pudo asignar el rol");
     }
 }
 
