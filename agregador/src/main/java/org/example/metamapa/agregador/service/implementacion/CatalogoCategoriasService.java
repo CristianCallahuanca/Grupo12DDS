@@ -1,11 +1,14 @@
 package org.example.metamapa.agregador.service.implementacion;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.agregador.models.entidades.Categoria;
 import org.example.metamapa.agregador.models.entidades.Sinonimo;
 import org.example.metamapa.agregador.models.repositorios.ICategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +25,8 @@ public class CatalogoCategoriasService {
     private Map<String, Categoria> categoriasPorNombre;
     private Map<String, List<String>> sinonimosPorCategoria;
 
-    @PostConstruct
+    @Transactional
+    @EventListener(ApplicationReadyEvent.class)
     public void inicializarCatalogo() {
         List<Categoria> categorias = categoriaRepo.findAll();
         if (categorias.isEmpty()) {

@@ -1,4 +1,4 @@
-INSERT INTO categorias (nombre) VALUES
+INSERT IGNORE INTO categorias (nombre) VALUES
                                     ('vientos fuertes'),
                                     ('inundaciones'),
                                     ('granizo'),
@@ -14,7 +14,7 @@ INSERT INTO categorias (nombre) VALUES
                                     ('intoxicación masiva');
 
 
-INSERT INTO sinonimos (palabra, categoria_id) VALUES
+INSERT IGNORE INTO sinonimos (palabra, categoria_id) VALUES
                                                   ('viento',        (SELECT id FROM categorias WHERE nombre='vientos fuertes')),
                                                   ('temporal',      (SELECT id FROM categorias WHERE nombre='vientos fuertes')),
                                                   ('tormenta',      (SELECT id FROM categorias WHERE nombre='vientos fuertes')),
