@@ -4,13 +4,13 @@ import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.entidades.Ubicacion;
 
 public class PorIDContribuyente extends CondicionDeFiltrado{
-    private final String idBuscado;
+    private final long idBuscado;
 
-    public PorIDContribuyente(String id) {
+    public PorIDContribuyente(long id) {
         this.idBuscado = id;
     }
 
     public boolean cumpleUno(Hecho unHecho) {
-        return unHecho.getContribuyente().getId() == idBuscado;
+        return unHecho.getContribuyente().getUserId() == idBuscado;
     }
 }

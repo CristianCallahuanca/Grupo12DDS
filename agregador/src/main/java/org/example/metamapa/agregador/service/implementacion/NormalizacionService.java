@@ -142,15 +142,15 @@ public class NormalizacionService implements INormalizacionService {
 
         // Contribuyente
         if (tipoFuente == TipoFuente.DINAMICA &&
-                dto.getContribuyenteID() != null && !dto.getContribuyenteID().isBlank()) {
+                dto.getContribuyenteID() != 0 ) {
 
-            String contribuyenteId = dto.getContribuyenteID();
+            long contribuyenteId = dto.getContribuyenteID();
 
             ContribuyenteRegistrado contribuyente = contribuyenteRepository.findById(contribuyenteId)
                     .orElseGet(() -> {
                         log.debug("Nuevo contribuyente detectado: {}", contribuyenteId);
                         ContribuyenteRegistrado nuevo = new ContribuyenteRegistrado();
-                        nuevo.setId(contribuyenteId);
+                        nuevo.setUserId(contribuyenteId);
                         return entityManager.merge(nuevo);
                     });
 

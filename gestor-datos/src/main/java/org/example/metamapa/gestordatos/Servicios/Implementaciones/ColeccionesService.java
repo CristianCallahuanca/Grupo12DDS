@@ -264,6 +264,8 @@ public class ColeccionesService implements IColeccionesService {
         Coleccion coleccion = new Coleccion(handle, null, new ArrayList<>(),
                 dto.getTitulo(), dto.getDescripcion(), criterios, algoritmo);
 
+
+
         coleccion.setOrigenesReales(dto.getOrigenesReales());
 
         return coleccion;
