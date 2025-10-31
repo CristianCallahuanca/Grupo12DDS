@@ -93,9 +93,6 @@ public class HechosDinamicosTest {
 
         when(repositorioHechosCrudos.findByFueLeidoFalse()).thenReturn(hechosNoLeidos);
 
-        // Simular que saveAll no hace nada, solo para evitar NullPointerException si la entidad tiene IDs
-      //  doNothing().when(repositorioHechosCrudos).saveAll(anyList());
-
         List<HechoCrudoDTO_OUT> result = service.obtenerHechos();
 
         ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
