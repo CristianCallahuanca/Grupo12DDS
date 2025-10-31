@@ -7,6 +7,7 @@ import org.example.metamapa.gestordatos.models.entidades.enums.EstadoEliminar;
 
 @Data
 public class SolicitudOutputDTO {
+    private long id;
     private EstadoEliminar estado;
     private String justificacion;
     private Long idHechoAsociado;

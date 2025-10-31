@@ -77,6 +77,7 @@ public class SolicitudesService implements ISolicitudesService {
 
     private SolicitudOutputDTO toOutputDTO(SolicitudEliminacion solicitud) {
         SolicitudOutputDTO dto = new SolicitudOutputDTO();
+        dto.setId(solicitud.getId());
         dto.setEstado(solicitud.getEstadoEliminar());
         dto.setJustificacion(solicitud.getJustificacion());
         dto.setIdHechoAsociado(solicitud.getHecho().getHecho_id());

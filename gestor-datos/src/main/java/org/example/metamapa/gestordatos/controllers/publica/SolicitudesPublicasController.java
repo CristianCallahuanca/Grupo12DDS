@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,5 +26,21 @@ public class SolicitudesPublicasController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("mensaje", "Solicitud creada correctamente", "estado", "ok", "solicitud", solicitud));
+    }
+
+    @GetMapping("/pendientes")
+    public ResponseEntity<List<SolicitudOutputDTO>> obtenerSolicitudes(){
+
+        return ResponseEntity.status(200).body(solicitudesService.listarSolicitudesPendientes());
+    }
+
+    @PostMapping("/aceptar")
+    public ResponseEntity<SolicitudOutputDTO> aprobarSolicitud(@RequestParam Long id){
+        return ResponseEntity.status(200).body(solicitudesService.aprobarSolicitud(id));
+    }
+
+    @PostMapping("/rechazar")
+    public ResponseEntity<SolicitudOutputDTO> rechazarSolicitud(@RequestParam Long id){
+        return ResponseEntity.status(200).body(solicitudesService.denegarSolicitud(id));
     }
 }
