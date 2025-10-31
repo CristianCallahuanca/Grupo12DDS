@@ -103,6 +103,10 @@
             <artifactId>gt-metadata</artifactId>
             <version>28.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
 
     </dependencies>
 
