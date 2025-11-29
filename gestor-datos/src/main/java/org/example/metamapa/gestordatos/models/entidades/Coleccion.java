@@ -32,10 +32,6 @@ public class Coleccion {
     @Column(name = "origen_real")
     private List<String> origenesReales = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_fuente", nullable = true)
-    private TipoFuente tipoFuente;
-
     @Column(name = "titulo")
     private String titulo;
 
@@ -61,7 +57,6 @@ public class Coleccion {
                      List<CondicionDeFiltrado> criterios,
                      AlgoritmoConsenso algoritmo) {
         this.handle = handle;
-        this.tipoFuente = tipoFuente;
         this.origenesReales = (origenesReales != null) ? new ArrayList<>(origenesReales) : new ArrayList<>();
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -118,9 +113,8 @@ public class Coleccion {
     }
 
     public boolean coincideCon(Hecho hecho) {
-        boolean coincidePorTipo = tipoFuente == null || hecho.getTipoFuente() == tipoFuente;
         boolean coincidePorOrigen = origenesReales.isEmpty() || origenesReales.contains(hecho.getOrigenReal());
-        return coincidePorTipo && coincidePorOrigen;
+        return coincidePorOrigen;
     }
 
     public void removerHechosPorOrigenes(List<String> origenesAEliminar) {

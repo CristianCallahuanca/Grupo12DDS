@@ -15,5 +15,4 @@ public class ColeccionInputDTO {
     private String algoritmoConsenso; // Ej: "mayoriaSimple", "mayoriaAbsoluta", etc.
     private List<String> origenesReales = new ArrayList<>();
     private List<CriterioRequest> criterios = new ArrayList<>();
-
 }

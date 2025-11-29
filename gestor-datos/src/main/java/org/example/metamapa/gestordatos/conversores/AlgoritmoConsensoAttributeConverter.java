@@ -24,7 +24,6 @@ public class AlgoritmoConsensoAttributeConverter implements AttributeConverter<A
         };
     }
 
-
     @Override
     public AlgoritmoConsenso convertToEntityAttribute(String s){
 

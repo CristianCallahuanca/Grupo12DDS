@@ -41,9 +41,9 @@ public class ColeccionesAdminController {
 
     @PutMapping("/{handle}")
     public ResponseEntity<?> actualizar(@PathVariable String handle,
-                                        @RequestBody Map<String, String> cambios) {
+                                        @Valid @RequestBody ColeccionInputDTO cambios) {
 
-        if (cambios == null || cambios.isEmpty()) {
+        if (cambios == null ) {
             return ResponseEntity.badRequest()
                     .body(Map.of("mensaje", "No se enviaron cambios para actualizar", "estado", "error"));
         }

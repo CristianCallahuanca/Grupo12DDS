@@ -17,7 +17,7 @@ public interface IColeccionesService {
 
     List<ColeccionOutputDTO> listarColecciones();
 
-    boolean actualizarColeccion(String handle, Map<String, String> cambios);
+    boolean actualizarColeccion(String handle, ColeccionInputDTO cambios);
 
     boolean eliminarColeccion(String handle);
 

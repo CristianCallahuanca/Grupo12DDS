@@ -73,15 +73,20 @@ public class ColeccionesService implements IColeccionesService {
     }
 
     @Override
-    public boolean actualizarColeccion(String handle, Map<String, String> cambios) {
-
+    public boolean actualizarColeccion(String handle, ColeccionInputDTO cambios) {
         return coleccionesRepository.findById(handle).map(c -> {
-            if (cambios.containsKey("titulo")) {
-                c.setTitulo(cambios.get("titulo"));
-            }
-            if (cambios.containsKey("descripcion")) {
-                c.setDescripcion(cambios.get("descripcion"));
-            }
+            // Actualizar todos los campos (asume que el DTO trae todos los valores)
+            c.setTitulo(cambios.getTitulo());
+            c.setDescripcion(cambios.getDescripcion());
+            c.setAlgoritmo(StringAObjetos.algoritmoConsensoFactory(cambios.getAlgoritmoConsenso()));
+
+            c.getOrigenesReales().clear();
+            c.getOrigenesReales().addAll(cambios.getOrigenesReales());
+
+            c.getCriterios().clear();
+            var criterios = cambios.getCriterios().stream().map(StringAObjetos::criterioFactory).toList();
+            c.getCriterios().addAll(criterios);
+
             coleccionesRepository.save(c);
             log.info("Colección {} actualizada", handle);
             return true;
@@ -277,10 +282,6 @@ public class ColeccionesService implements IColeccionesService {
         List<CondicionDeFiltrado> criterios = new ArrayList<>(
                 coleccion.getCriterios() != null ? coleccion.getCriterios() : List.of()
         );
-
-        if (coleccion.getTipoFuente() != null) {
-            criterios.add(new PorTipoFuente(coleccion.getTipoFuente()));
-        }
 
         if (coleccion.getOrigenesReales() != null && !coleccion.getOrigenesReales().isEmpty()) {
             criterios.addAll(

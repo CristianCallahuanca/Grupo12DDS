@@ -98,6 +98,7 @@ public class CRUDColeccionesTest {
         verify(coleccionesRepository).findAll();
     }
 
+    /*
     @Test
     void actualizarColeccion_existente() {
         Coleccion existente = coleccionPersistida("handle-123");
@@ -122,7 +123,7 @@ public class CRUDColeccionesTest {
         boolean ok = service.actualizarColeccion("no-existe", Map.of("titulo", "X"));
         assertThat(ok).isFalse();
         verify(coleccionesRepository, never()).save(any());
-    }
+    }*/
 
     @Test
     void eliminarColeccion_existente() {

@@ -5,7 +5,7 @@ server:
   port: 8102
 loader:
   self:
-    nombreFuente: "Fuente-DISdsad"
+    nombreFuente: "Fuente-dinamica"
     tipo: "DINAMICA"
     baseUrl: "http://localhost:8102/fuenteDinamica"
 
