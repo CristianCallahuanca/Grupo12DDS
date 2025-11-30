@@ -4,7 +4,7 @@ spring:
 server:
   port: 8200
 agregador:
-  cron: "*/20 * * * * *"
+  cron: "*/200 * * * * *"
   timeout:
     segundos: 30
 

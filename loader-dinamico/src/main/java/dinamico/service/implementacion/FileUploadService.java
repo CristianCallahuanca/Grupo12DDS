@@ -31,7 +31,8 @@ public class FileUploadService implements IFileUploadService {
         try {
             Map<String, Object> resultUpload = cloudinary.uploader().upload(
                     file.getBytes(),
-                    ObjectUtils.asMap("folder", "library")
+                    ObjectUtils.asMap("folder", "library","resource_type", "auto")
+
             );
 
             return resultUpload.get("secure_url").toString();

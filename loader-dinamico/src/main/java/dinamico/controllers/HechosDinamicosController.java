@@ -28,7 +28,7 @@ public class HechosDinamicosController {
     @PostMapping(value = "/hecho", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> subirHechoPublico(
             @RequestPart("data") String data,
-            @RequestPart("image") List<MultipartFile> files
+            @RequestPart("file") List<MultipartFile> files
     ) {
 
         // Convertimos el JSON manualmente
