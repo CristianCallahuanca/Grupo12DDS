@@ -2,6 +2,7 @@ package dinamico.models.dtos.input;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,7 +16,6 @@ public class HechoCrudoDTO_IN {
     private String longitud;
     private String fechaAcontecimiento;
     private String etiqueta;
-    private List<String> archivosMultimedia;
     private String contribuyenteID;
     private String origen;
 }

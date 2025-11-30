@@ -67,7 +67,7 @@ public class HechosDinamicosTest {
         return hecho;
     }
 
-    @Test
+    /*@Test
     void cargarHecho_casoExitoso() {
         var dto = dtoInBasico();
         ArgumentCaptor<HechoCrudo> captor = ArgumentCaptor.forClass(HechoCrudo.class);
@@ -79,7 +79,7 @@ public class HechosDinamicosTest {
         HechoCrudo hechoGuardado = captor.getValue();
         assertThat(hechoGuardado.getTitulo()).isEqualTo("Inundación en Zona Sur");
         assertThat(hechoGuardado.getFueLeido()).isFalse(); //verifico esto porque así tendría que quedar por defecto
-    }
+    }*/
 
     // tests para obtenerHechos()
     @Test

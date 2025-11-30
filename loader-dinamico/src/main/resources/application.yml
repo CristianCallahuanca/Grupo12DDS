@@ -5,7 +5,7 @@ server:
   port: 8102
 loader:
   self:
-    nombreFuente: "Fuente-dinamica"
+    nombreFuente: "Fuente-dinamicaasasasas"
     tipo: "DINAMICA"
     baseUrl: "http://localhost:8102/fuenteDinamica"
 
@@ -17,3 +17,5 @@ logging:
   level:
     root: INFO
     dinamico: DEBUG
+
+

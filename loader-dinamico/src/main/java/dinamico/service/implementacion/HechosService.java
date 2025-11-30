@@ -4,9 +4,11 @@ import dinamico.models.dtos.input.HechoCrudoDTO_IN;
 import dinamico.models.dtos.output.HechoCrudoDTO_OUT;
 import dinamico.models.entidades.hecho.HechoCrudo;
 import dinamico.models.repositorios.IRepositorioHechosCrudos;
+import dinamico.service.IFileUploadService;
 import dinamico.service.IHechosService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +18,14 @@ import java.util.stream.Collectors;
 public class HechosService implements IHechosService {
 
     private final IRepositorioHechosCrudos repositorioHechosCrudos;
+    private final IFileUploadService fileUploadService;
 
     @Value("${loader.self.nombreFuente}")
     private String nombreFuente;
 
-    public HechosService(IRepositorioHechosCrudos repositorioHechosCrudos){
+    public HechosService(IRepositorioHechosCrudos repositorioHechosCrudos,IFileUploadService fileUploadService){
         this.repositorioHechosCrudos = repositorioHechosCrudos;
+        this.fileUploadService = fileUploadService;
     }
 
     public List<HechoCrudoDTO_OUT> obtenerHechos() {
@@ -41,10 +45,9 @@ public class HechosService implements IHechosService {
     }
 
 
-    public void cargarHecho(HechoCrudoDTO_IN hecho){
+    public void cargarHecho(HechoCrudoDTO_IN hecho,List<MultipartFile> files){
 
-        repositorioHechosCrudos.save(dtoInAHechoCrudo(hecho));
-
+        repositorioHechosCrudos.save(dtoInAHechoCrudo(hecho,files));
     }
 
     public void vaciarDB(){
@@ -75,7 +78,17 @@ public class HechosService implements IHechosService {
     }
 
     // Convierte un solo DTO_IN a HechoCrudo
-    public HechoCrudo dtoInAHechoCrudo(HechoCrudoDTO_IN dto) {
+    public HechoCrudo dtoInAHechoCrudo(HechoCrudoDTO_IN dto, List<MultipartFile> files) {
+
+        List<String> linksFotos = files
+                .stream()
+                .map(file -> fileUploadService.upload(file))
+                .collect(Collectors.toList());
+
+        for(int i = 0; i < linksFotos.size(); i++){
+            System.out.println("link:" + linksFotos.get(i));
+        }
+
         return new HechoCrudo(
                 dto.getTitulo(),
                 dto.getDescripcion(),
@@ -85,16 +98,8 @@ public class HechosService implements IHechosService {
                 dto.getFechaAcontecimiento(),
                 dto.getEtiqueta(),
                 dto.getContribuyenteID(),
-                dto.getArchivosMultimedia()
+                linksFotos
         );
     }
-
-    // Convierte una lista de DTO_IN a lista de HechoCrudo
-    public List<HechoCrudo> dtoInAHechosCrudos(List<HechoCrudoDTO_IN> dtos) {
-        return dtos.stream()
-                .map(this::dtoInAHechoCrudo)
-                .collect(Collectors.toList());
-    }
-
 
 }
