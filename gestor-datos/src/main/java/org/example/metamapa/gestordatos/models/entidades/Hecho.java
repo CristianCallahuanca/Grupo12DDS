@@ -36,7 +36,7 @@ public class Hecho {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ubicacion_id")
     private Ubicacion ubicacion;
 

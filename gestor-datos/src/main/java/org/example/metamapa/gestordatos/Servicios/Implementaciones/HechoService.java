@@ -10,6 +10,7 @@ import org.example.metamapa.gestordatos.models.entidades.Categoria;
 import org.example.metamapa.gestordatos.models.entidades.ContribuyenteRegistrado;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
+import org.example.metamapa.gestordatos.models.entidades.Ubicacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
 import org.example.metamapa.gestordatos.models.entidades.enums.TipoFuente;
 import org.example.metamapa.gestordatos.models.repositorios.ICategoriaRepository;
@@ -92,6 +93,9 @@ public class HechoService implements IHechoService {
         // Mapear los cambios del request a una instancia temporal de Hecho
         Hecho cambiosHecho = new Hecho();
         cambios.forEach((campo, valor) -> {
+
+            System.out.println(valor);
+
             switch (campo) {
                 case "titulo" -> cambiosHecho.setTitulo((String) valor);
                 case "descripcion" -> cambiosHecho.setDescripcion((String) valor);
@@ -109,6 +113,23 @@ public class HechoService implements IHechoService {
                     }
                 }
                 case "etiqueta" -> cambiosHecho.setEtiqueta((String) valor);
+                case "ubicacion" -> {
+                    if (valor instanceof Map<?, ?> ubicacionMap) {
+                        // Extraer latitud y longitud del mapa
+                        Object latitudObj = ubicacionMap.get("latitud");
+                        Object longitudObj = ubicacionMap.get("longitud");
+
+                        // Convertir a Double y crear el objeto Ubicacion
+                        if (latitudObj instanceof Number && longitudObj instanceof Number) {
+                            Double latitud = ((Number) latitudObj).doubleValue();
+                            Double longitud = ((Number) longitudObj).doubleValue();
+
+                            // Crear el objeto Ubicacion (depende de cómo sea tu constructor)
+                            Ubicacion ubicacion = new Ubicacion(latitud, longitud);
+                            cambiosHecho.setUbicacion(ubicacion);
+                        }
+                    }
+                }
                 case "fechaAcontecimiento" -> {
                     if (valor instanceof String fechaStr)
                         cambiosHecho.setFechaAcontecimiento(LocalDateTime.parse(fechaStr));
