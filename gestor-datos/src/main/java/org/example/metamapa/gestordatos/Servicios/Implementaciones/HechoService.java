@@ -10,6 +10,7 @@ import org.example.metamapa.gestordatos.models.entidades.Categoria;
 import org.example.metamapa.gestordatos.models.entidades.ContribuyenteRegistrado;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
+import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
 import org.example.metamapa.gestordatos.models.entidades.enums.TipoFuente;
 import org.example.metamapa.gestordatos.models.repositorios.ICategoriaRepository;
 import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
@@ -52,6 +53,8 @@ public class HechoService implements IHechoService {
         log.debug("Se crearon {} condiciones de filtrado", condiciones.size());
         List<Hecho> hechos = this.filtrarHechos(condiciones);
         log.debug("Se obtuvieron {} hechos desde la base de datos", hechos.size());
+
+        hechos = hechos.stream().filter(hecho -> hecho.getEstadoHecho() != EstadoHecho.NO_VISIBLE).collect(Collectors.toList());
 
         return hechoADTOOuts(hechos);
     }

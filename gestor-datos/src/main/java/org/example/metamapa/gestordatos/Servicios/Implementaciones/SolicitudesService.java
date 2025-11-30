@@ -9,6 +9,7 @@ import org.example.metamapa.gestordatos.models.dtos.output.SolicitudOutputDTO;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.entidades.SolicitudEliminacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoEliminar;
+import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
 import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 import org.example.metamapa.gestordatos.models.repositorios.ISolicitudesRepository;
 import org.springframework.stereotype.Service;
@@ -33,10 +34,11 @@ public class SolicitudesService implements ISolicitudesService {
         SolicitudEliminacion solicitud = new SolicitudEliminacion(hecho, dto.getJustificacion());
 
         // Detección de spam
-        if (DetectorDeSpam.esSpam(solicitud.getJustificacion())) {
-            solicitud.setEstadoEliminar(EstadoEliminar.RECHAZADA);
-            solicitud.setVerificoSiEsSpam(true);
-        }
+        //TODO: CRIZ ESTO ES SPAM CASI SIEMPRE, de hecho se me hace dificil hacer una justificacion que no sea SPAM
+        //if (DetectorDeSpam.esSpam(solicitud.getJustificacion())) {
+          //  solicitud.setEstadoEliminar(EstadoEliminar.RECHAZADA);
+           // solicitud.setVerificoSiEsSpam(true);
+        //}
 
         solicitudRepository.save(solicitud);
         return toOutputDTO(solicitud);
@@ -50,6 +52,10 @@ public class SolicitudesService implements ISolicitudesService {
 
         solicitud.setEstadoEliminar(EstadoEliminar.APROBADA);
         solicitudRepository.save(solicitud);
+
+        Hecho hecho = solicitud.getHecho();
+        hecho.setEstadoHecho(EstadoHecho.NO_VISIBLE);
+        hechosRepository.save(hecho); // ← ESTO FALTA
 
         return toOutputDTO(solicitud);
     }
