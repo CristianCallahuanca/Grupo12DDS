@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,9 +29,8 @@ public class HechosDinamicosController {
     @PostMapping(value = "/hecho", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> subirHechoPublico(
             @RequestPart("data") String data,
-            @RequestPart("file") List<MultipartFile> files
+            @RequestPart(value = "file", required = false) List<MultipartFile> files // ← required = false
     ) {
-
         // Convertimos el JSON manualmente
         ObjectMapper mapper = new ObjectMapper();
         HechoCrudoDTO_IN hecho;
@@ -40,7 +40,10 @@ public class HechosDinamicosController {
             throw new RuntimeException("JSON inválido: " + e.getMessage());
         }
 
-        hechosService.cargarHecho(hecho, files);
+        // Si files es null, pasar una lista vacía
+        List<MultipartFile> archivos = files != null ? files : new ArrayList<>();
+
+        hechosService.cargarHecho(hecho, archivos);
 
         System.out.println("titulo = " + hecho.getTitulo());
         System.out.println("categoria = " + hecho.getCategoria());
