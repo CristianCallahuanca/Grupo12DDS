@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.metamapa.gestordatos.models.entidades.enums.Provider;
 
 import java.util.Date;
 import java.util.List;
@@ -46,6 +47,15 @@ public class ContribuyenteRegistrado  {
 
         @Enumerated(EnumType.STRING) // Guarda el nombre del enum en la BD
         private Rol rol = Rol.USER; // Valor por defecto
+
+        //SSO
+
+        @Column(name = "google_id", unique = true)
+        private String googleId;  // El ID único que Google da (campo "sub")
+
+        @Column(name = "provider", nullable = false)
+        @Enumerated(EnumType.STRING)
+        private Provider provider;  //LOCAL, GOOGLE, HYBRID
 
         public ContribuyenteRegistrado(String nombre, String apellido, Date fecha_nacimiento, int dni, String email, String password) {
                 this.nombre = nombre;
