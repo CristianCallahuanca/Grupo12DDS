@@ -1,80 +1,56 @@
 package org.example.metamapa.estadisticas.Servicios.implementaciones;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.metamapa.estadisticas.Models.entidades.EstadisticaGeneral;
-import org.example.metamapa.estadisticas.Models.repositorios.IEstadisticasGenerales;
+import org.example.metamapa.estadisticas.Models.entidades.*;
+import org.example.metamapa.estadisticas.Models.repositorios.*;
 import org.example.metamapa.estadisticas.Servicios.IEstadisticaService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 @Slf4j
 public class EstadisticaService implements IEstadisticaService {
 
-    private final IEstadisticasGenerales repoEstadisticas;
+    private final IEstHechosPorProvinciaColeccionRepository repoMayorHechos;
+    private final IEstCategoriaMasReportadaRepository repoCatMasRep;
+    private final IEstProvinciaPorCategoriaRepository repoProvPorCat;
+    private final IEstHoraPorCategoriaRepository repoHoraPorCat;
+    private final IEstCantidadSolicitudesSpamRepository repoSpam;
+    private final DataSource dataSource;
 
-    @Value("${spring.datasource.url}")
-    private String dbUrl;
 
-    @Value("${spring.datasource.username}")
-    private String dbUser;
+    public EstadisticaService(IEstHechosPorProvinciaColeccionRepository repoMayorHechos,
+                              IEstCategoriaMasReportadaRepository repoCatMasRep,
+                              IEstProvinciaPorCategoriaRepository repoProvPorCat,
+                              IEstHoraPorCategoriaRepository repoHoraPorCat,
+                              IEstCantidadSolicitudesSpamRepository repoSpam,
+                              DataSource dataSource) {
 
-    @Value("${spring.datasource.password}")
-    private String dbPass;
-
-    public EstadisticaService(IEstadisticasGenerales repoEstadisticas) {
-        this.repoEstadisticas = repoEstadisticas;
+        this.repoMayorHechos = repoMayorHechos;
+        this.repoCatMasRep = repoCatMasRep;
+        this.repoProvPorCat = repoProvPorCat;
+        this.repoHoraPorCat = repoHoraPorCat;
+        this.repoSpam = repoSpam;
+        this.dataSource = dataSource;
     }
-
-    @Override
-    public List<EstadisticaGeneral> obtenerEstadisticas() {
-        List<EstadisticaGeneral> lista = new ArrayList<>();
-
-        String sql = "SELECT * FROM estadistica_general ORDER BY fecha DESC";
-
-        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPass);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                lista.add(new EstadisticaGeneral(
-                        rs.getString("tipo_estadistica"),
-                        rs.getString("categoria"),
-                        rs.getString("provincia"),
-                        rs.getString("cantidad"),
-                        rs.getString("titulo"),
-                        rs.getString("hora")
-                ));
-
-            }
-
-            log.info("Se recuperaron {} estadísticas almacenadas.", lista.size());
-
-        } catch (SQLException e) {
-            log.error("Error al obtener estadísticas desde la base de datos", e);
-        }
-
-        return lista;
-    }
-
 
     @Override
     public void generarEstadisticas() {
-        repoEstadisticas.deleteAll();
-        log.info("Estadísticas anteriores eliminadas. Generando nuevas...");
+        log.info("Iniciando generación de estadísticas...");
 
-        try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPass);
+        try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
 
-            generarMayorCantidadHechosPorProvincia(stmt);
-            generarCategoriaMasReportada(stmt);
-            generarProvinciaPorCategoria(stmt);
-            generarHoraPorCategoria(stmt);
-            generarCantidadSolicitudesSpam(stmt);
+            LocalDateTime ahora = LocalDateTime.now();
+
+            generarMayorCantidadHechosPorProvinciaColeccion(stmt, ahora);
+            generarCategoriaMasReportada(stmt, ahora);
+            generarProvinciaPorCategoria(stmt, ahora);
+            generarHoraPorCategoria(stmt, ahora);
+            generarCantidadSolicitudesSpam(stmt, ahora);
 
             log.info("Generación de estadísticas completada correctamente.");
 
@@ -83,144 +59,198 @@ public class EstadisticaService implements IEstadisticaService {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // 1) De una colección, ¿en qué provincia se agrupan la mayor cantidad de hechos?
+    // -------------------------------------------------------------------------
+    private void generarMayorCantidadHechosPorProvinciaColeccion(Statement stmt,
+                                                                 LocalDateTime fechaCalculo) throws SQLException {
 
-    private void generarMayorCantidadHechosPorProvincia(Statement stmt) throws SQLException {
         String sql = """
-                SELECT c.titulo AS titulo_coleccion, u.provincia, COUNT(h.hecho_id) AS cantidad_hechos
+                SELECT 
+                    c.handle AS coleccion_handle,
+                    c.titulo AS coleccion_titulo,
+                    u.provincia,
+                    COUNT(h.hecho_id) AS cantidad_hechos
                 FROM hecho h
                 JOIN ubicacion u ON h.ubicacion_id = u.id
                 JOIN hecho_de_coleccion hc ON hc.hecho_id = h.hecho_id
                 JOIN coleccion c ON hc.coleccion_id = c.handle
-                GROUP BY c.titulo, u.provincia
+                GROUP BY c.handle, c.titulo, u.provincia
                 ORDER BY cantidad_hechos DESC
-                LIMIT 1;
+                LIMIT 1
                 """;
 
         try (ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
-                EstadisticaGeneral e = new EstadisticaGeneral(
-                        "mayor_cant_hechos_provincia",
-                        null,
-                        rs.getString("provincia"),
-                        String.valueOf(rs.getInt("cantidad_hechos")),
-                        null,
-                        null
-                );
-                repoEstadisticas.save(e);
+                EstHechosPorProvinciaColeccion est = new EstHechosPorProvinciaColeccion();
+                est.setFechaCalculo(fechaCalculo);
+                est.setColeccionHandle(rs.getString("coleccion_handle"));
+                est.setColeccionTitulo(rs.getString("coleccion_titulo"));
+                est.setProvincia(rs.getString("provincia"));
+                est.setCantidadHechos(rs.getInt("cantidad_hechos"));
+
+                repoMayorHechos.save(est);
             }
         }
-        log.info("Consulta 1 completada: Mayor cantidad de hechos por provincia.");
+
+        log.info("Consulta 1 completada: Mayor cantidad de hechos por provincia y colección.");
     }
 
-    private void generarCategoriaMasReportada(Statement stmt) throws SQLException {
+    // -------------------------------------------------------------------------
+    // 2) ¿Cuál es la categoría con mayor cantidad de hechos reportados?
+    // -------------------------------------------------------------------------
+    private void generarCategoriaMasReportada(Statement stmt,
+                                              LocalDateTime fechaCalculo) throws SQLException {
+
         String sql = """
-                SELECT cat.nombre AS categoria, COUNT(h.hecho_id) AS cantidad
+                SELECT
+                    cat.id     AS categoria_id,
+                    cat.nombre AS categoria_nombre,
+                    COUNT(h.hecho_id) AS cantidad_hechos
                 FROM hecho h
                 JOIN categorias cat ON h.categoria_id = cat.id
                 WHERE h.categoria_id IS NOT NULL
-                GROUP BY cat.nombre
-                ORDER BY cantidad DESC
-                LIMIT 1;
+                GROUP BY cat.id, cat.nombre
+                ORDER BY cantidad_hechos DESC
+                LIMIT 1
                 """;
 
         try (ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
-                repoEstadisticas.save(new EstadisticaGeneral(
-                        "categoria_mas_reportada",
-                        rs.getString("categoria"),
-                        null,
-                        String.valueOf(rs.getInt("cantidad")),
-                        null,
-                        null
-                ));
+                EstCategoriaMasReportada est = new EstCategoriaMasReportada();
+                est.setFechaCalculo(fechaCalculo);
+                est.setCategoriaId(rs.getLong("categoria_id"));
+                est.setCategoriaNombre(rs.getString("categoria_nombre"));
+                est.setCantidadHechos(rs.getInt("cantidad_hechos"));
+
+                repoCatMasRep.save(est);
             } else {
-                repoEstadisticas.save(new EstadisticaGeneral(
-                        "categoria_mas_reportada",
-                        "sin_categoria",
-                        null,
-                        "0",
-                        null,
-                        null
-                ));
+                // snapshot “vacío”
+                EstCategoriaMasReportada est = new EstCategoriaMasReportada();
+                est.setFechaCalculo(fechaCalculo);
+                est.setCategoriaNombre("sin_categoria");
+                est.setCantidadHechos(0);
+                repoCatMasRep.save(est);
             }
         }
+
         log.info("Consulta 2 completada: Categoría más reportada.");
     }
 
-    private void generarProvinciaPorCategoria(Statement stmt) throws SQLException {
+    // -------------------------------------------------------------------------
+    // 3) ¿En qué provincia se presenta la mayor cantidad de hechos de una cierta categoría?
+    //    -> para cada categoría, la provincia top
+    // -------------------------------------------------------------------------
+    private void generarProvinciaPorCategoria(Statement stmt,
+                                              LocalDateTime fechaCalculo) throws SQLException {
+
         String sql = """
-                WITH conteo AS (
-                    SELECT\s
-                        cat.nombre AS categoria,\s
-                        u.provincia,\s
-                        COUNT(h.hecho_id) AS cantidad
+            SELECT
+                cat.id     AS categoria_id,
+                cat.nombre AS categoria_nombre,
+                (
+                    SELECT u.provincia
                     FROM hecho h
-                    JOIN categorias cat ON h.categoria_id = cat.id
                     JOIN ubicacion u ON h.ubicacion_id = u.id
-                    WHERE h.categoria_id IS NOT NULL
-                    GROUP BY cat.nombre, u.provincia
-                )
-                SELECT c1.categoria, c1.provincia, c1.cantidad
-                FROM conteo c1
-                WHERE c1.cantidad = (
-                    SELECT MAX(c2.cantidad) FROM conteo c2 WHERE c2.categoria = c1.categoria
-                )
-                ORDER BY c1.categoria
-                LIMIT 1
-                """;
+                    WHERE h.categoria_id = cat.id
+                    GROUP BY u.provincia
+                    ORDER BY COUNT(h.hecho_id) DESC
+                    LIMIT 1
+                ) AS provincia_top,
+                (
+                    SELECT COUNT(h2.hecho_id)
+                    FROM hecho h2
+                    JOIN ubicacion u2 ON h2.ubicacion_id = u2.id
+                    WHERE h2.categoria_id = cat.id
+                    GROUP BY u2.provincia
+                    ORDER BY COUNT(h2.hecho_id) DESC
+                    LIMIT 1
+                ) AS cantidad_hechos_top
+            FROM categorias cat
+            WHERE EXISTS (
+                SELECT 1
+                FROM hecho h
+                WHERE h.categoria_id = cat.id
+            )
+            ORDER BY cat.nombre;
+            """;
 
         try (ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                repoEstadisticas.save(new EstadisticaGeneral(
-                        "categoria_mas_reportada_por_provincia",
-                        rs.getString("categoria"),
-                        rs.getString("provincia"),
-                        String.valueOf(rs.getInt("cantidad")),
-                        null,
-                        null
-                ));
+                EstProvinciaPorCategoria est = new EstProvinciaPorCategoria();
+                est.setFechaCalculo(fechaCalculo);
+                est.setCategoriaId(rs.getLong("categoria_id"));
+                est.setCategoriaNombre(rs.getString("categoria_nombre"));
+                est.setProvincia(rs.getString("provincia_top"));
+                est.setCantidadHechos(rs.getInt("cantidad_hechos_top"));
+
+                repoProvPorCat.save(est);
             }
         }
+
         log.info("Consulta 3 completada: Provincia con más hechos por categoría.");
     }
 
-    private void generarHoraPorCategoria(Statement stmt) throws SQLException {
+
+    // -------------------------------------------------------------------------
+    // 4) ¿A qué hora del día ocurren la mayor cantidad de hechos de una cierta categoría?
+    //    -> para cada categoría, la hora (0-23) con más hechos
+    // -------------------------------------------------------------------------
+    private void generarHoraPorCategoria(Statement stmt,
+                                         LocalDateTime fechaCalculo) throws SQLException {
+
         String sql = """
-                WITH conteo AS (
-                    SELECT\s
-                        cat.nombre AS categoria,\s
-                        HOUR(h.fecha_acontecimiento) AS hora,\s
-                        COUNT(h.hecho_id) AS cantidad
+            SELECT
+                cat.id     AS categoria_id,
+                cat.nombre AS categoria_nombre,
+                (
+                    SELECT HOUR(h.fecha_acontecimiento)
                     FROM hecho h
-                    JOIN categorias cat ON h.categoria_id = cat.id
-                    WHERE h.categoria_id IS NOT NULL
-                    GROUP BY cat.nombre, HOUR(h.fecha_acontecimiento)
-                )
-                SELECT c1.categoria, c1.hora, c1.cantidad
-                FROM conteo c1
-                WHERE c1.cantidad = (
-                    SELECT MAX(c2.cantidad) FROM conteo c2 WHERE c2.categoria = c1.categoria
-                )
-                ORDER BY c1.categoria
-                LIMIT 1
-                """;
+                    WHERE h.categoria_id = cat.id
+                    GROUP BY HOUR(h.fecha_acontecimiento)
+                    ORDER BY COUNT(h.hecho_id) DESC
+                    LIMIT 1
+                ) AS hora_top,
+                (
+                    SELECT COUNT(h2.hecho_id)
+                    FROM hecho h2
+                    WHERE h2.categoria_id = cat.id
+                    GROUP BY HOUR(h2.fecha_acontecimiento)
+                    ORDER BY COUNT(h2.hecho_id) DESC
+                    LIMIT 1
+                ) AS cantidad_hechos_top
+            FROM categorias cat
+            WHERE EXISTS (
+                SELECT 1
+                FROM hecho h
+                WHERE h.categoria_id = cat.id
+            )
+            ORDER BY cat.nombre;
+            """;
 
         try (ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                repoEstadisticas.save(new EstadisticaGeneral(
-                        "categoria_mas_reportada_por_hora",
-                        rs.getString("categoria"),
-                        null,
-                        String.valueOf(rs.getInt("cantidad")),
-                        null,
-                        String.valueOf(rs.getInt("hora"))
-                ));
+                EstHoraPorCategoria est = new EstHoraPorCategoria();
+                est.setFechaCalculo(fechaCalculo);
+                est.setCategoriaId(rs.getLong("categoria_id"));
+                est.setCategoriaNombre(rs.getString("categoria_nombre"));
+                est.setHora(rs.getInt("hora_top"));
+                est.setCantidadHechos(rs.getInt("cantidad_hechos_top"));
+
+                repoHoraPorCat.save(est);
             }
         }
+
         log.info("Consulta 4 completada: Hora con más hechos por categoría.");
     }
 
-    private void generarCantidadSolicitudesSpam(Statement stmt) throws SQLException {
+
+    // -------------------------------------------------------------------------
+    // 5) ¿Cuántas solicitudes de eliminación son spam?
+    // -------------------------------------------------------------------------
+    private void generarCantidadSolicitudesSpam(Statement stmt,
+                                                LocalDateTime fechaCalculo) throws SQLException {
+
         String sql = """
                 SELECT COUNT(*) AS cantidad_spam
                 FROM solicitud_eliminacion
@@ -229,16 +259,14 @@ public class EstadisticaService implements IEstadisticaService {
 
         try (ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
-                repoEstadisticas.save(new EstadisticaGeneral(
-                        "cantidad_solicitudes_spam",
-                        null,
-                        null,
-                        String.valueOf(rs.getInt("cantidad_spam")),
-                        null,
-                        null
-                ));
+                EstCantidadSolicitudesSpam est = new EstCantidadSolicitudesSpam();
+                est.setFechaCalculo(fechaCalculo);
+                est.setCantidadSpam(rs.getInt("cantidad_spam"));
+
+                repoSpam.save(est);
             }
         }
+
         log.info("Consulta 5 completada: Cantidad de solicitudes de spam.");
     }
 }
