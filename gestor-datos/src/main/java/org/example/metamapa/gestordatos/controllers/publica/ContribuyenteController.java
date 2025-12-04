@@ -89,51 +89,42 @@ public class ContribuyenteController {
             @RequestParam("state") String state,
             HttpServletRequest request) {
 
-        System.out.println("🔵 ===== CALLBACK RECIBIDO =====");
+        System.out.println("🔵 CALLBACK GOOGLE RECIBIDO");
 
         try {
-            // 1. Validar state
+            // 1. Validar state (seguridad)
             HttpSession session = request.getSession();
             String savedState = (String) session.getAttribute("oauth_state");
 
             if (savedState == null || !savedState.equals(state)) {
-                return ResponseEntity.status(400).body("Error: state inválido");
+                return ResponseEntity.status(400)
+                        .body("Error de seguridad: state inválido");
             }
 
-            // 2. Intercambiar código por tokens
+            // 2. Intercambiar código por tokens de Google
             Map<String, Object> tokens = googleAuthService.exchangeCodeForTokens(code);
 
-            // 3. Decodificar JWT
+            // 3. Decodificar JWT de Google para obtener datos del usuario
             String idToken = (String) tokens.get("id_token");
-            System.out.println("🎫 ID Token obtenido: " + idToken.substring(0, 50) + "...");
-
             Map<String, Object> googleUser = googleAuthService.decodeGoogleToken(idToken);
 
-            // 4. ✅ ¡ESTA ES LA LÍNEA QUE FALTA! Buscar/crear usuario y generar token
-            System.out.println("🔍 Llamando a handleGoogleUser...");
-            AuthResponse authResponse = googleAuthService.handleGoogleUser(googleUser);
+            // 4. Usar tu servicio para manejar el usuario (igual que login)
+            AuthResponse response = contribuyenteService.loginConGoogle(googleUser);
 
-            System.out.println("🎉 ¡Usuario procesado! Token generado: " +
-                    authResponse.getToken().substring(0, 30) + "...");
+            System.out.println("🎉 Login Google exitoso para: " + response.getEmail());
 
-            // 5. Ahora puedes devolver el AuthResponse (igual que tu login normal)
-            return ResponseEntity.ok(authResponse);
+            // 5. Devolver MISMA respuesta que login normal
+            return ResponseEntity.ok(response);
 
-            // O si quieres mantener el HTML informativo:
-        /*
-        String responseHtml = "<h1>✅ ¡Login con Google EXITOSO!</h1>" +
-                "<p>Usuario: " + googleUser.get("email") + "</p>" +
-                "<p>Token JWT generado: " + authResponse.getToken().substring(0, 30) + "...</p>" +
-                "<p>ID de usuario en nuestra BD: " + authResponse.getUserId() + "</p>";
-
-        return ResponseEntity.ok(responseHtml);
-        */
+        } catch (RuntimeException e) {
+            // Manejar errores de negocio (igual que login)
+            System.out.println("❌ Error en login Google: " + e.getMessage());
+            return ResponseEntity.status(401).body(e.getMessage());
 
         } catch (Exception e) {
-            System.out.println("❌ ERROR: " + e.getMessage());
-            e.printStackTrace();
-
-            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+            // Manejar errores técnicos
+            System.out.println("💥 Error técnico en Google callback: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error interno del servidor");
         }
     }
 

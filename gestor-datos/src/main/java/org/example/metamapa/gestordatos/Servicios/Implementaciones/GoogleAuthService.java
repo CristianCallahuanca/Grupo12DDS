@@ -6,6 +6,7 @@ import org.example.metamapa.gestordatos.configs.JwtUtil;
 import org.example.metamapa.gestordatos.models.dtos.output.AuthResponse;
 import org.example.metamapa.gestordatos.models.dtos.output.UsuarioDTO;
 import org.example.metamapa.gestordatos.models.entidades.ContribuyenteRegistrado;
+import org.example.metamapa.gestordatos.models.entidades.Rol;
 import org.example.metamapa.gestordatos.models.entidades.enums.Provider;
 import org.example.metamapa.gestordatos.models.repositorios.IContribuyenteRepository;
 import org.springframework.beans.factory.annotation.Value;
