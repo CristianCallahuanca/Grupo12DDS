@@ -2,6 +2,7 @@ package org.example.metamapa.gestordatos.controllers.publica;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.example.metamapa.gestordatos.Servicios.IContribuyenteService;
 import org.example.metamapa.gestordatos.Servicios.Implementaciones.GoogleAuthService;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,16 +25,19 @@ public class ContribuyenteController {
 
     private final IContribuyenteService contribuyenteService;
     private final GoogleAuthService googleAuthService;
+    private final ObjectMapper objectMapper;
 
-    public ContribuyenteController(IContribuyenteService contribuyenteService, GoogleAuthService googleAuthService) {
+    public ContribuyenteController(IContribuyenteService contribuyenteService,
+                                   GoogleAuthService googleAuthService,
+                                   ObjectMapper objectMapper) {
         this.contribuyenteService = contribuyenteService;
         this.googleAuthService = googleAuthService;
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping("/registrarse")
     public ResponseEntity<?> registrar(@RequestBody ContribuyenteRegInputDTO inputDTO) {
         var response = contribuyenteService.crearContribuyenteRegistrado(inputDTO);
-
         return ResponseEntity.status(201).body(response);
     }
 
@@ -51,7 +57,6 @@ public class ContribuyenteController {
     @PostMapping("/darRolAdmin")
     public ResponseEntity<String> rolAdmin(@RequestBody DarRolAdminRequest request) {
         Boolean seAsignoRol = contribuyenteService.rolAdminService(request.getEmail(), request.getPassword());
-
         if(seAsignoRol) {
             return ResponseEntity.status(200).body("Se le asignó el rol ADMIN");
         }
@@ -84,58 +89,143 @@ public class ContribuyenteController {
     }
 
     @GetMapping("/google/callback")
-    public ResponseEntity<?> callbackGoogle(
-            @RequestParam("code") String code,
-            @RequestParam("state") String state,
-            HttpServletRequest request) {
+    public void callbackGoogle(
+            @RequestParam(value = "code", required = false) String code,
+            @RequestParam(value = "state", required = false) String state,
+            @RequestParam(value = "error", required = false) String error,
+            HttpServletRequest request,
+            HttpServletResponse httpResponse) throws IOException {
 
-        System.out.println("🔵 CALLBACK GOOGLE RECIBIDO");
+        System.out.println("🎯 GOOGLE CALLBACK - CORS PERMITIENDO TODO");
+
+        // Headers para permitir popups
+        httpResponse.setContentType("text/html;charset=UTF-8");
+        httpResponse.setHeader("Cross-Origin-Opener-Policy", "unsafe-none");
+        httpResponse.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
 
         try {
-            // 1. Validar state (seguridad)
+            // Si hay error
+            if (error != null) {
+                String html = """
+                <!DOCTYPE html>
+                <html>
+                <script>
+                    window.opener.postMessage({
+                        type: 'GOOGLE_LOGIN_ERROR',
+                        error: 'Error de Google: %s'
+                    }, '*');
+                    setTimeout(() => window.close(), 100);
+                </script>
+                </html>
+                """.formatted(error);
+                httpResponse.getWriter().write(html);
+                return;
+            }
+
+            // Validar code y state
+            if (code == null || state == null) {
+                String html = """
+                <!DOCTYPE html>
+                <html>
+                <script>
+                    window.opener.postMessage({
+                        type: 'GOOGLE_LOGIN_ERROR',
+                        error: 'Faltan parámetros'
+                    }, '*');
+                    setTimeout(() => window.close(), 100);
+                </script>
+                </html>
+                """;
+                httpResponse.getWriter().write(html);
+                return;
+            }
+
+            // 1. Validar state
             HttpSession session = request.getSession();
             String savedState = (String) session.getAttribute("oauth_state");
 
             if (savedState == null || !savedState.equals(state)) {
-                return ResponseEntity.status(400)
-                        .body("Error de seguridad: state inválido");
+                String html = """
+                <!DOCTYPE html>
+                <html>
+                <script>
+                    window.opener.postMessage({
+                        type: 'GOOGLE_LOGIN_ERROR',
+                        error: 'State inválido'
+                    }, '*');
+                    setTimeout(() => window.close(), 100);
+                </script>
+                </html>
+                """;
+                httpResponse.getWriter().write(html);
+                return;
             }
 
-            // 2. Intercambiar código por tokens de Google
+            // Limpiar state
+            session.removeAttribute("oauth_state");
+            session.removeAttribute("oauth_state_time");
+
+            // 2. Obtener tokens de Google
             Map<String, Object> tokens = googleAuthService.exchangeCodeForTokens(code);
 
-            // 3. Decodificar JWT de Google para obtener datos del usuario
+            // 3. Decodificar token
             String idToken = (String) tokens.get("id_token");
             Map<String, Object> googleUser = googleAuthService.decodeGoogleToken(idToken);
 
-            // 4. Usar tu servicio para manejar el usuario (igual que login)
-            AuthResponse response = contribuyenteService.loginConGoogle(googleUser);
+            // 4. Login con Google
+            AuthResponse authResponse = contribuyenteService.loginConGoogle(googleUser);
 
-            System.out.println("🎉 Login Google exitoso para: " + response.getEmail());
+            System.out.println("✅ Login exitoso para: " + authResponse.getEmail());
 
-            // 5. Devolver MISMA respuesta que login normal
-            return ResponseEntity.ok(response);
+            // 5. Crear respuesta
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("type", "GOOGLE_LOGIN_SUCCESS");
+            responseData.put("token", authResponse.getToken());
+            responseData.put("userId", authResponse.getUserId());
+            responseData.put("email", authResponse.getEmail());
+            responseData.put("nombre", authResponse.getNombre());
+            responseData.put("apellido", authResponse.getApellido());
+            responseData.put("rol", authResponse.getRol());
 
-        } catch (RuntimeException e) {
-            // Manejar errores de negocio (igual que login)
-            System.out.println("❌ Error en login Google: " + e.getMessage());
-            return ResponseEntity.status(401).body(e.getMessage());
+            // Convertir a JSON
+            String jsonData = objectMapper.writeValueAsString(responseData);
+
+            // 6. HTML que envía datos y cierra ventana
+            String html = """
+            <!DOCTYPE html>
+            <html>
+            <script>
+                try {
+                    const data = %s;
+                    window.opener.postMessage(data, '*');
+                } catch(e) {
+                    window.opener.postMessage({
+                        type: 'GOOGLE_LOGIN_ERROR',
+                        error: 'Error: ' + e.message
+                    }, '*');
+                }
+                setTimeout(() => window.close(), 100);
+            </script>
+            </html>
+            """.formatted(jsonData);
+
+            httpResponse.getWriter().write(html);
 
         } catch (Exception e) {
-            // Manejar errores técnicos
-            System.out.println("💥 Error técnico en Google callback: " + e.getMessage());
-            return ResponseEntity.status(500).body("Error interno del servidor");
+            System.out.println("💥 ERROR: " + e.getMessage());
+            String html = """
+            <!DOCTYPE html>
+            <html>
+            <script>
+                window.opener.postMessage({
+                    type: 'GOOGLE_LOGIN_ERROR',
+                    error: 'Error del servidor'
+                }, '*');
+                setTimeout(() => window.close(), 100);
+            </script>
+            </html>
+            """;
+            httpResponse.getWriter().write(html);
         }
     }
-
-
 }
-
-/*
-*
-*   private String nombre;
-    private String apellido;
-    private Integer dni;
-    private Date fechaNacimiento;
-    private String email;
-    private String password;*/
