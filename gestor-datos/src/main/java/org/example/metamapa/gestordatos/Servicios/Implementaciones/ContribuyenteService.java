@@ -107,6 +107,12 @@ public class ContribuyenteService implements IContribuyenteService {
         System.out.println("   Email: " + email);
         System.out.println("   Google ID: " + googleId);
 
+        Optional<ContribuyenteRegistrado> usuarioExistente = contribuyenteRepository.findByEmail(email);
+
+        if (usuarioExistente.isPresent()) {
+            throw new RuntimeException("Ya existe una cuenta asociada a este email");
+        }
+
         // 1. Buscar usuario por Google ID primero
         Optional<ContribuyenteRegistrado> usuarioOpt =
                 contribuyenteRepository.findByGoogleId(googleId);

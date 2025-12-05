@@ -96,8 +96,6 @@ public class ContribuyenteController {
             HttpServletRequest request,
             HttpServletResponse httpResponse) throws IOException {
 
-        System.out.println("🎯 GOOGLE CALLBACK - CORS PERMITIENDO TODO");
-
         // Headers para permitir popups
         httpResponse.setContentType("text/html;charset=UTF-8");
         httpResponse.setHeader("Cross-Origin-Opener-Policy", "unsafe-none");
@@ -211,8 +209,27 @@ public class ContribuyenteController {
 
             httpResponse.getWriter().write(html);
 
+        } catch (RuntimeException e) {
+            // ⚠️ ESTE ES EL CAMBIO: Capturar errores específicos del negocio
+            System.out.println("❌ Error específico en Google login: " + e.getMessage());
+
+            String html = """
+            <!DOCTYPE html>
+            <html>
+            <script>
+                window.opener.postMessage({
+                    type: 'GOOGLE_LOGIN_ERROR',
+                    error: '%s'
+                }, '*');
+                setTimeout(() => window.close(), 100);
+            </script>
+            </html>
+            """.formatted(e.getMessage().replace("\"", "\\\""));
+
+            httpResponse.getWriter().write(html);
+
         } catch (Exception e) {
-            System.out.println("💥 ERROR: " + e.getMessage());
+            System.out.println("💥 ERROR TÉCNICO: " + e.getMessage());
             String html = """
             <!DOCTYPE html>
             <html>
