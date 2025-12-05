@@ -32,9 +32,16 @@ public class ContribuyenteService implements IContribuyenteService {
 
     public AuthResponse crearContribuyenteRegistrado(ContribuyenteRegInputDTO constribuyenteInputDTO) {
 
+        Optional<ContribuyenteRegistrado> usuarioExistente = contribuyenteRepository.findByEmail(constribuyenteInputDTO.getEmail());
+
+        if (usuarioExistente.isPresent()) {
+            throw new RuntimeException("El correo electrónico ya está registrado");
+        }
+
         ContribuyenteRegistrado usuario  = new ContribuyenteRegistrado(constribuyenteInputDTO.getNombre(),
-                constribuyenteInputDTO.getApellido(), constribuyenteInputDTO.getFechaNacimiento(), constribuyenteInputDTO.getDni(),
-                constribuyenteInputDTO.getEmail(),passwordEncoder.encode(constribuyenteInputDTO.getPassword()));
+                constribuyenteInputDTO.getApellido(),
+                constribuyenteInputDTO.getEmail(),passwordEncoder.encode(constribuyenteInputDTO.getPassword()),"",Provider.LOCAL);
+
 
         contribuyenteRepository.save(usuario);
 
@@ -117,7 +124,7 @@ public class ContribuyenteService implements IContribuyenteService {
                     System.out.println("🔄 Fusionando cuenta LOCAL con Google");
                     usuario.setGoogleId(googleId);
                     usuario.setProvider(Provider.GOOGLE);
-                    usuario = contribuyenteRepository.save(usuario);
+                    contribuyenteRepository.save(usuario);
                 }
             } else {
                 // 3. Crear NUEVO usuario Google

@@ -30,12 +30,6 @@ public class ContribuyenteRegistrado  {
         @Column(name = "apellido")
         private String apellido;
 
-        @Column(name = "dni")
-        private Integer dni;
-
-        @Column(name = "fecha_nacimiento")
-        private Date fecha_nacimiento;
-
         @Column(name = "email")
         private String email;
 
@@ -57,13 +51,13 @@ public class ContribuyenteRegistrado  {
         @Enumerated(EnumType.STRING)
         private Provider provider;  //LOCAL, GOOGLE, HYBRID
 
-        public ContribuyenteRegistrado(String nombre, String apellido, Date fecha_nacimiento, int dni, String email, String password) {
+        public ContribuyenteRegistrado(String nombre, String apellido, String email, String password,String googleId ,Provider provider) {
                 this.nombre = nombre;
                 this.apellido = apellido;
-                this.fecha_nacimiento = fecha_nacimiento;
-                this.dni = dni;
                 this.email = email;
                 this.password = password;
+                this.googleId = googleId;
+                this.provider = provider;
         }
 
 }
