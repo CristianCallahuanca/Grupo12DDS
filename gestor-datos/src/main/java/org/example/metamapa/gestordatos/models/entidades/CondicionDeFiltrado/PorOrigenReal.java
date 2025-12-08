@@ -27,6 +27,9 @@ public class PorOrigenReal extends CondicionDeFiltrado {
     @Override
     public Specification<Hecho> toSpecification() {
         return (root, query, cb) ->
-                cb.equal(cb.lower(root.get("origenReal").get("nombre")), origenReal.toLowerCase());
+                cb.equal(
+                        cb.lower(root.get("origenReal").get("tipoFuente").as(String.class)), //TODO: REVISAR ESTE CAMBIO
+                        origenReal.toLowerCase()
+                );
     }
 }

@@ -32,12 +32,6 @@ public class ContribuyenteRegistrado {
     @Column(name = "apellido")
     private String apellido;
 
-    @Column(name = "dni")
-    private Number dni;
-
-    @Column(name = "edad")
-    private Number edad;
-
     @OneToMany(mappedBy = "contribuyente")
     private List<Hecho> hechos;
 
@@ -50,11 +44,9 @@ public class ContribuyenteRegistrado {
     }
 
 
-    public ContribuyenteRegistrado(String nombre, String apellido, int edad, int dni) {
+    public ContribuyenteRegistrado(String nombre, String apellido) {
         this.nombre = nombre;
         this.apellido = apellido;
-        this.edad = edad;
-        this.dni = dni;
     }
 
         /*public void cargarHecho(Hecho hecho) {
