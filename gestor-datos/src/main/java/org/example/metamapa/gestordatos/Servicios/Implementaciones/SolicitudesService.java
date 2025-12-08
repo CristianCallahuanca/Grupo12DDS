@@ -35,10 +35,10 @@ public class SolicitudesService implements ISolicitudesService {
 
         // Detección de spam
         //TODO: CRIZ ESTO ES SPAM CASI SIEMPRE, de hecho se me hace dificil hacer una justificacion que no sea SPAM
-        //if (DetectorDeSpam.esSpam(solicitud.getJustificacion())) {
-          //  solicitud.setEstadoEliminar(EstadoEliminar.RECHAZADA);
-           // solicitud.setVerificoSiEsSpam(true);
-        //}
+        if (DetectorDeSpam.esSpam(solicitud.getJustificacion())) {
+            solicitud.setEstadoEliminar(EstadoEliminar.RECHAZADA);
+            solicitud.setVerificoSiEsSpam(true);
+        }
 
         solicitudRepository.save(solicitud);
         return toOutputDTO(solicitud);

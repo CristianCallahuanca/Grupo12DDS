@@ -29,56 +29,46 @@ public class EstadisticasController {
     // ─────────────────────────────
 
     @GetMapping("/mayor-hechos-provincia-coleccion")
-    public ResponseEntity<List<EstadMayorHechosPorProvinciaColeccionDTO>> getMayorHechosProvinciaColeccion(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+    public ResponseEntity<List<EstadMayorHechosPorProvinciaColeccionDTO>> getMayorHechosProvinciaColeccion() {
 
         List<EstadMayorHechosPorProvinciaColeccionDTO> datos =
-                consultaService.obtenerMayorHechosProvinciaColeccion(desde, hasta);
+                consultaService.obtenerMayorHechosProvinciaColeccion();
         if (datos.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(datos);
     }
 
     @GetMapping("/categoria-mas-reportada")
-    public ResponseEntity<List<EstadCategoriaMasReportadaDTO>> getCategoriaMasReportada(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+    public ResponseEntity<List<EstadCategoriaMasReportadaDTO>> getCategoriaMasReportada() {
 
         List<EstadCategoriaMasReportadaDTO> datos =
-                consultaService.obtenerCategoriaMasReportada(desde, hasta);
+                consultaService.obtenerCategoriaMasReportada();
         if (datos.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(datos);
     }
 
     @GetMapping("/provincia-por-categoria")
-    public ResponseEntity<List<EstadProvinciaPorCategoriaDTO>> getProvinciaPorCategoria(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+    public ResponseEntity<List<EstadProvinciaPorCategoriaDTO>> getProvinciaPorCategoria() {
 
         List<EstadProvinciaPorCategoriaDTO> datos =
-                consultaService.obtenerProvinciaPorCategoria(desde, hasta);
+                consultaService.obtenerProvinciaPorCategoria();
         if (datos.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(datos);
     }
 
     @GetMapping("/hora-por-categoria")
-    public ResponseEntity<List<EstadHoraPorCategoriaDTO>> getHoraPorCategoria(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+    public ResponseEntity<List<EstadHoraPorCategoriaDTO>> getHoraPorCategoria() {
 
         List<EstadHoraPorCategoriaDTO> datos =
-                consultaService.obtenerHoraPorCategoria(desde, hasta);
+                consultaService.obtenerHoraPorCategoria();
         if (datos.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(datos);
     }
 
     @GetMapping("/cantidad-solicitudes-spam")
-    public ResponseEntity<List<EstadCantidadSolicitudesSpamDTO>> getCantidadSolicitudesSpam(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+    public ResponseEntity<List<EstadCantidadSolicitudesSpamDTO>> getCantidadSolicitudesSpam() {
 
         List<EstadCantidadSolicitudesSpamDTO> datos =
-                consultaService.obtenerCantidadSolicitudesSpam(desde, hasta);
+                consultaService.obtenerCantidadSolicitudesSpam();
         if (datos.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(datos);
     }
