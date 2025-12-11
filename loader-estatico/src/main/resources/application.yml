@@ -7,8 +7,8 @@ spring:
 
 loader:
   self:
-    id: "loader-estatico-hogar"
-    nombreFuente: "Fuente-CSV-HogarComunitario"
+    id: "loader-estatico"
+    nombreFuente: "Fuente-CSV"
     tipo: "ESTATICA"
     baseUrl: "http://localhost:8101/fuenteEstatica"
 

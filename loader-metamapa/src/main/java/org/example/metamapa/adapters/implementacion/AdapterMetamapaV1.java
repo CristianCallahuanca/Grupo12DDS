@@ -21,20 +21,26 @@ import java.util.List;
 @Slf4j
 public class AdapterMetamapaV1 implements IAdapterMetamapa {
 
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
-    public AdapterMetamapaV1(@Value("${fuente.metamapa.url}") String baseUrl) {
-        this.webClient = WebClient.builder()
-                .baseUrl(baseUrl)
-                .build();
+    public AdapterMetamapaV1(WebClient.Builder webClientBuilder) {
+        this.webClientBuilder = webClientBuilder;
     }
 
-    public List<HechoDTO_IN> obtenerHechos(LocalDateTime fechaDesde) {
+    @Override
+    public List<HechoDTO_IN> obtenerHechos(String baseUrl, LocalDateTime fechaDesde) {
         try {
+            WebClient webClient = webClientBuilder
+                    .baseUrl(baseUrl)
+                    .build();
+
             WebClient.RequestHeadersSpec<?> request = webClient.get().uri(uriBuilder -> {
                 var builder = uriBuilder.path("/hechos");
                 if (fechaDesde != null) {
-                    builder.queryParam("fecha_reporte_desde", fechaDesde.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                    builder.queryParam(
+                            "fecha_reporte_desde",
+                            fechaDesde.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                    );
                 }
                 return builder.build();
             });
@@ -47,10 +53,11 @@ public class AdapterMetamapaV1 implements IAdapterMetamapa {
 
             return Arrays.asList(hechos != null ? hechos : new HechoDTO_IN[0]);
         } catch (Exception e) {
-            log.error("Excepción al conectar con Metamapa", e);
+            log.error("Excepción al conectar con Metamapa en baseUrl={}", baseUrl, e);
             throw new ExcepcionConexionMetamapa("Fallo en la conexión o procesamiento", e);
         }
     }
+
 
     private Mono<Throwable> manejarError(ClientResponse clientResponse) {
         HttpStatusCode statusCode = clientResponse.statusCode();
@@ -59,7 +66,10 @@ public class AdapterMetamapaV1 implements IAdapterMetamapa {
         if (statusCode instanceof HttpStatus statusHttp) {
             return Mono.error(new ExcepcionConexionMetamapa("Error HTTP al conectar con Metamapa", statusHttp));
         } else {
-            return Mono.error(new ExcepcionConexionMetamapa("Código HTTP desconocido", new Throwable("Código: " + statusCode)));
+            return Mono.error(new ExcepcionConexionMetamapa(
+                    "Código HTTP desconocido",
+                    new Throwable("Código: " + statusCode)
+            ));
         }
     }
 }

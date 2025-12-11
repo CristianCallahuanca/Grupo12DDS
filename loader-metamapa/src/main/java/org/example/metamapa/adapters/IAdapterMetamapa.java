@@ -6,5 +6,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IAdapterMetamapa {
-    List<HechoDTO_IN> obtenerHechos(LocalDateTime fechaDesde);
+
+    List<HechoDTO_IN> obtenerHechos(String baseUrl, LocalDateTime fechaDesde);
 }

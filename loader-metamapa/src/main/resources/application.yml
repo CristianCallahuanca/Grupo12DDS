@@ -3,11 +3,9 @@ spring:
     name: loader-proxy
 server:
   port: 8103
-fuente:
-  metamapa:
-    url: https://telepathically-censorian-marlen.ngrok-free.dev/gestordatos
+
 loader:
-  id: metamapa-joaco
+  id: "metamapa-joaco"
   self:
     nombreFuente: "Fuente-MetaMapa"
     tipo: "PROXY"
@@ -15,6 +13,7 @@ loader:
 
 agregador:
   baseUrl: "http://localhost:8200"
+
 logging:
   file:
     name: logs/metamapa/${loader.id}.log
