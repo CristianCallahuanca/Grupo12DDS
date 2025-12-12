@@ -2,17 +2,16 @@ package org.example.metamapa.estatico.service.implementaciones;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.estatico.adapters.IAdapterFileServer;
-import org.example.metamapa.estatico.models.dtos.ArchivoCsv;
-import org.example.metamapa.estatico.models.entidades.CsvProcesado;
-import org.example.metamapa.estatico.models.entidades.CsvProcesadoId;
+import org.example.metamapa.estatico.models.entidades.FuenteEstatica;
 import org.example.metamapa.estatico.models.entidades.HechoCrudo;
-import org.example.metamapa.estatico.models.repositorios.IRepositorioCSVProcesado;
+import org.example.metamapa.estatico.models.repositorios.IFuenteEstaticaRepositorio;
 import org.example.metamapa.estatico.models.repositorios.IRepositorioHechos;
 import org.example.metamapa.estatico.service.IProcesadorCsvService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,81 +20,84 @@ import java.util.List;
 public class ProcesadorCsvService implements IProcesadorCsvService {
 
     private final IAdapterFileServer adapter;
-    private final IRepositorioCSVProcesado repositorioCSV;
-    private final IRepositorioHechos repositorioHechos;
+    private final IFuenteEstaticaRepositorio fuenteRepo;
+    private final IRepositorioHechos repoHechos;
 
     @Value("${loader.self.id}")
     private String loaderId;
 
-    public ProcesadorCsvService(IAdapterFileServer adapter,
-                                IRepositorioCSVProcesado repositorioCSV,
-                                IRepositorioHechos repositorioHechos) {
+    public ProcesadorCsvService(
+            IAdapterFileServer adapter,
+            IFuenteEstaticaRepositorio fuenteRepo,
+            IRepositorioHechos repoHechos
+    ) {
         this.adapter = adapter;
-        this.repositorioCSV = repositorioCSV;
-        this.repositorioHechos = repositorioHechos;
+        this.fuenteRepo = fuenteRepo;
+        this.repoHechos = repoHechos;
     }
 
     @Override
-    public void procesarArchivosCsv() {
-        List<ArchivoCsv> archivos = adapter.obtenerArchivosDisponibles();
+    public void procesarFuentesPendientes() {
 
-        if (archivos.isEmpty()) {
-            log.warn("No se encontraron archivos para procesar.");
+        List<FuenteEstatica> pendientes =
+                fuenteRepo.findByPendienteProcesarTrue();
+
+        if (pendientes.isEmpty()) {
+            log.info("No hay fuentes estáticas pendientes de procesar.");
             return;
         }
 
-        for (ArchivoCsv archivo : archivos) {
+        log.info("Encontradas {} fuentes pendientes de procesar", pendientes.size());
+
+        for (FuenteEstatica fuente : pendientes) {
             try {
-                procesarArchivo(archivo);
-            } catch (IOException e) {
-                log.error("Error leyendo el archivo {}: {}", archivo.getNombre(), e.getMessage());
+                procesarFuente(fuente);
             } catch (Exception e) {
-                log.error("Error procesando el archivo {}: {}", archivo.getNombre(), e.getMessage());
+                log.error("Error procesando la fuente {}: {}", fuente.getNombreFuente(),
+                        e.getMessage());
             }
         }
     }
 
-    private void procesarArchivo(ArchivoCsv archivo) throws IOException {
-        String nombre = archivo.getNombre();
-        byte[] contenido = archivo.leerComoBytes();
-        String hashNuevo = HashUtil.calcularSHA256(contenido);
+    private void procesarFuente(FuenteEstatica fuente) throws IOException {
 
-        if (!debeProcesarse(nombre, hashNuevo)) {
-            log.info("Archivo {} ya fue procesado y no cambió. Se omite.", nombre);
+        Path ruta = Path.of(fuente.getRutaArchivoCsv());
+        log.info("Procesando fuente '{}' desde archivo {}",
+                fuente.getNombreFuente(), ruta);
+
+        byte[] contenido = adapter.leerArchivo(ruta);
+
+        String hashNuevo = HashUtil.calcularSHA256(contenido);
+        String hashAnterior = fuente.getHashUltimoProcesado();
+
+        if (hashAnterior != null && hashAnterior.equals(hashNuevo)) {
+            log.info("Fuente '{}' sin cambios. Se omite.", fuente.getNombreFuente());
+            fuente.setPendienteProcesar(false);
+            fuenteRepo.save(fuente);
             return;
         }
 
-        log.debug("Procesando archivo {} con hash {}", nombre, hashNuevo);
-
-        List<HechoCrudo> hechos = adapter.leerArchivoDesdeBytes(nombre, contenido);
+        List<HechoCrudo> hechos = adapter.parsearArchivo(ruta.getFileName().toString(), contenido);
 
         if (hechos.isEmpty()) {
-            log.warn("El archivo {} no generó ningún hecho válido. Se omitirá.", nombre);
-            return;
+            log.warn("La fuente '{}' no generó hechos válidos.", fuente.getNombreFuente());
         }
 
         for (HechoCrudo hecho : hechos) {
             hecho.setLoaderId(loaderId);
+            hecho.setFuenteOrigen(fuente.getNombreFuente());
         }
 
-        repositorioHechos.saveAll(hechos);
-        guardarOActualizarRegistro(nombre, hashNuevo);
-        log.info("Archivo {} procesado exitosamente.", nombre);
+        repoHechos.saveAll(hechos);
+
+        fuente.setHashUltimoProcesado(hashNuevo);
+        fuente.setFechaUltimoProcesamiento(LocalDateTime.now());
+        fuente.setPendienteProcesar(false);
+
+        fuenteRepo.save(fuente);
+
+        log.info("Procesamiento completo de '{}' ({} hechos)",
+                fuente.getNombreFuente(), hechos.size());
     }
-
-    private boolean debeProcesarse(String nombreArchivo, String nuevoHash) {
-        if (!repositorioCSV.existsById_LoaderIdAndId_NombreArchivo(loaderId, nombreArchivo)) return true;
-
-        String hashAnterior = repositorioCSV.obtenerHashPorNombre(loaderId, nombreArchivo);
-        return !nuevoHash.equals(hashAnterior);
-    }
-
-    private void guardarOActualizarRegistro(String nombreArchivo, String hash) {
-        CsvProcesadoId id = new CsvProcesadoId(loaderId, nombreArchivo);
-        CsvProcesado registro = new CsvProcesado(id, hash, LocalDateTime.now());
-        repositorioCSV.save(registro);
-
-    }
-
 }
 

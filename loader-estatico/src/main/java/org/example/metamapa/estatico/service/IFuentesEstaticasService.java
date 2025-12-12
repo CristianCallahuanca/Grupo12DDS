@@ -9,7 +9,7 @@ public interface IFuentesEstaticasService {
 
     FuenteEstaticaDTO registrarFuenteDesdeCsv(String nombreFuente, MultipartFile archivoCsv);
 
-    FuenteEstaticaDTO registrarFuenteDesdeUrl(String nombreFuente, String urlCsv);
+    FuenteEstaticaDTO actualizarFuenteCsv(Long fuenteId, MultipartFile archivoCsv);
 
     List<FuenteEstaticaDTO> listarFuentes();
 }

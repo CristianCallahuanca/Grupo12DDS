@@ -1,4 +1,4 @@
-package org.example.metamapa.estatico.adapters.implementaciones;
+/*package org.example.metamapa.estatico.adapters.implementaciones;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.estatico.adapters.IAdapterFileServer;
@@ -78,3 +78,4 @@ public class AdapterFileServerRemoto implements IAdapterFileServer {
         return parser.parse(nombreArchivo, contenido);
     }
 }
+*/

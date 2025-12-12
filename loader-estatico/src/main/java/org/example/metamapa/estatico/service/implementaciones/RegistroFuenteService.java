@@ -52,8 +52,6 @@ public class RegistroFuenteService {
         estadoRepo.save(
                 EstadoLoaderEstatico.builder()
                         .loaderId(loaderId)
-                        .fechaInicio(LocalDateTime.now())
-                        .ultimaActualizacion(LocalDateTime.now())
                         .estado(EstadoInstancia.ACTIVO)
                         .build()
         );
@@ -65,7 +63,6 @@ public class RegistroFuenteService {
     public void marcarFinalizado() {
         estadoRepo.findById(loaderId).ifPresent(e -> {
             e.setEstado(EstadoInstancia.FINALIZADO);
-            e.setUltimaActualizacion(LocalDateTime.now());
             estadoRepo.save(e);
             log.info("LoaderEstático '{}' marcado como FINALIZADO", loaderId);
         });

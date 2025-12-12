@@ -16,12 +16,13 @@ public class CronProcesadorCSV {
 
     @PostConstruct
     public void cargaInicial() {
-        procesador.procesarArchivosCsv(); // ejecucion inicial
+        procesador.procesarFuentesPendientes();
     }
 
     @Scheduled(cron = "0 0 * * * *") // cada 1h
     public void ejecucionPeriodica() {
-        procesador.procesarArchivosCsv();
+        procesador.procesarFuentesPendientes();
     }
 }
+
 

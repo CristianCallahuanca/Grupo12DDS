@@ -1,4 +1,4 @@
-package org.example.metamapa.estatico.adapters.implementaciones;
+/*package org.example.metamapa.estatico.adapters.implementaciones;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
@@ -99,4 +99,4 @@ public class AdapterFileServerDrive implements IAdapterFileServer {
         log.debug("Usando parser {} para archivo de Drive {}", parser.getClass().getSimpleName(), nombreArchivo);
         return parser.parse(nombreArchivo, contenido);
     }
-}
+}*/
