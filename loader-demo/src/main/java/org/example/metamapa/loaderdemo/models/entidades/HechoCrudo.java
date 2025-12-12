@@ -36,4 +36,3 @@ public class HechoCrudo {
     private boolean enviado = false;
     private LocalDateTime fechaEnvio;
 }
-//TODO: REOGANIZAR LOS ATRIBUTOS

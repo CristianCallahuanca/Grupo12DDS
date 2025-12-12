@@ -17,13 +17,8 @@ import java.time.LocalDateTime;
 @Slf4j
 public class RegistroFuenteService {
 
-    private final IEstadoLoaderDemoRepositorio estadoRepo;
     private final WebClient webClient = WebClient.create();
 
-    public RegistroFuenteService(IEstadoLoaderDemoRepositorio estadoRepo){
-        this.estadoRepo = estadoRepo;
-
-    }
     @Value("${loader.self.nombreFuente}")
     private String nombreFuente;
 
@@ -36,44 +31,6 @@ public class RegistroFuenteService {
     @Value("${agregador.baseUrl}")
     private String urlAgregador;
 
-    @Value("${loader.id}")
-    private String loaderId;
-
-
-
-    @PostConstruct
-    public void validarLoaderIdUnico() {
-        estadoRepo.findById(loaderId).ifPresent(e -> {
-            if (e.getEstado() == EstadoInstancia.ACTIVO) {
-                throw new IllegalStateException(
-                        "Ya existe un loader-demo activo con ID '" + loaderId + "'. " +
-                                "Detenelo antes de iniciar una nueva instancia."
-                );
-            }
-        });
-
-        estadoRepo.save(
-                EstadoLoaderDemo.builder()
-                        .loaderId(loaderId)
-                        .fechaInicio(LocalDateTime.now())
-                        .ultimaActualizacion(LocalDateTime.now())
-                        .estado(EstadoInstancia.ACTIVO)
-                        .build()
-        );
-
-        log.info("LoaderDemo iniciado correctamente con ID '{}'", loaderId);
-    }
-
-
-    @PreDestroy
-    public void marcarFinalizado() {
-        estadoRepo.findById(loaderId).ifPresent(e -> {
-            e.setEstado(EstadoInstancia.FINALIZADO);
-            e.setUltimaActualizacion(LocalDateTime.now());
-            estadoRepo.save(e);
-            log.info("LoaderDemo '{}' marcado como FINALIZADO", loaderId);
-        });
-    }
 
     @PostConstruct
     public void anunciarFuenteAlAgregador() {

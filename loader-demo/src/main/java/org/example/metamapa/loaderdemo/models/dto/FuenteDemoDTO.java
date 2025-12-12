@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FuenteDemoDTO {
     private Long id;
-    private String nombreFuente;
-    private String url;
-    private boolean activa;
+    private String nombre;
+    private String urlBase;
+    private String pathApi;
+    private Boolean activa;
+    private String nombreDetectado;
+    private String etiquetaDetectada;
 }

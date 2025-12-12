@@ -1,6 +1,7 @@
 package org.example.metamapa.loaderdemo.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.example.metamapa.loaderdemo.infraestructura.externos.Conexion;
 import org.example.metamapa.loaderdemo.models.dto.FuenteDemoDTO;
 import org.example.metamapa.loaderdemo.models.dto.FuenteDemoRequest;
 import org.example.metamapa.loaderdemo.service.IFuentesDemoService;
@@ -16,16 +17,36 @@ import java.util.List;
 public class FuentesDemoAdminController {
 
     private final IFuentesDemoService fuentesDemoService;
+    private final Conexion conexion;  // Para autenticar las fuentes
 
     @PostMapping
     public ResponseEntity<FuenteDemoDTO> registrarFuenteDemo(
             @RequestBody FuenteDemoRequest request) {
 
-        FuenteDemoDTO fuente = fuentesDemoService.registrarFuenteDemo(
-                request.getNombreFuente(),
-                request.getUrl()
-        );
-        return ResponseEntity.status(HttpStatus.CREATED).body(fuente);
+        try {
+            if (request.getEmail() != null && !request.getEmail().isBlank()
+                    && request.getPassword() != null && !request.getPassword().isBlank()) {
+                boolean autenticado = conexion.validarAutenticacion(request.getEmail(), request.getPassword(), request.getUrl());
+
+                if (!autenticado) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                            .body(null);
+                }
+            }
+
+            FuenteDemoDTO fuente = fuentesDemoService.registrarFuenteDemo(
+                    request.getNombreFuente(),
+                    request.getUrl(),
+                    request.getPathApi(),
+                    request.getEmail(),
+                    request.getPassword()
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(fuente);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @GetMapping
@@ -35,3 +56,4 @@ public class FuentesDemoAdminController {
         return ResponseEntity.ok(fuentes);
     }
 }
+

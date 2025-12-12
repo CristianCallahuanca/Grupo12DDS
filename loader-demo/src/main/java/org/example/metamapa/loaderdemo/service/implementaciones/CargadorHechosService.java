@@ -6,6 +6,7 @@ import org.example.metamapa.loaderdemo.infraestructura.adapters.IAdapterFuenteDe
 import org.example.metamapa.loaderdemo.models.entidades.HechoCrudo;
 import org.example.metamapa.loaderdemo.models.repositorio.IRepositorioHechos;
 import org.example.metamapa.loaderdemo.service.ICargadorHechosService;
+import org.example.metamapa.loaderdemo.service.IFuentesDemoService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,23 +21,57 @@ public class CargadorHechosService implements ICargadorHechosService {
 
     private final IAdapterFuenteDemo adapter;
     private final IRepositorioHechos repositorio;
+    private final IFuentesDemoService fuentesDemoService;
 
     @Value("${loader.id}")
     private String loaderId;
 
     @Override
-    public void cargarSiguienteHecho() {
-        adapter.obtenerSiguienteHecho()
-                .map(this::mapearADominio)
-                .ifPresent(repositorio::save);
+    public void cargarHechosDeTodasLasFuentes() {
+        var fuentes = fuentesDemoService.obtenerFuentesActivas();
+
+        if (fuentes.isEmpty()) {
+            log.info("No hay fuentes demo activas configuradas, no se cargan hechos.");
+            return;
+        }
+
+        LocalDateTime ahora = LocalDateTime.now();
+
+        for (var fuente : fuentes) {
+
+            if (fuente.getUltimaConsulta() == null ||
+                    fuente.getUltimaConsulta().isBefore(ahora.minusHours(1))) {
+
+                try {
+                    adapter.obtenerSiguienteHecho(fuente)
+                            .map(this::mapearADominio)
+                            .ifPresent(h -> {
+                                repositorio.save(h);
+                                log.info("Hecho guardado para fuente {}", fuente.getNombre());
+                            });
+                } catch (Exception e) {
+                    log.error("Error cargando hechos desde fuente {}: {}", fuente.getNombre(), e.getMessage());
+                }
+
+            } else {
+                log.info("Fuente {} omitida: última consulta hace menos de una hora ({})",
+                        fuente.getNombre(), fuente.getUltimaConsulta());
+            }
+        }
     }
 
     private HechoCrudo mapearADominio(Map<String, Object> datos) {
-        LocalDateTime fechaHecho = null;
-        try {
+        LocalDateTime fechaHecho;
 
-            fechaHecho = LocalDateTime.parse(datos.get("fecha").toString(),
-                    java.time.format.DateTimeFormatter.ISO_DATE_TIME);
+        try {
+            Object valorFecha = datos.get("fecha");
+            if (valorFecha == null) {
+                throw new IllegalArgumentException("Fecha nula");
+            }
+            fechaHecho = LocalDateTime.parse(
+                    valorFecha.toString(),
+                    java.time.format.DateTimeFormatter.ISO_DATE_TIME
+            );
         } catch (Exception e) {
             log.warn("No se pudo parsear la fecha '{}', usando fecha actual.", datos.get("fecha"));
             fechaHecho = LocalDateTime.now();
@@ -56,5 +91,4 @@ public class CargadorHechosService implements ICargadorHechosService {
                 .enviado(false)
                 .build();
     }
-
 }

@@ -10,4 +10,7 @@ import lombok.NoArgsConstructor;
 public class FuenteDemoRequest {
     private String nombreFuente; // ej: "DDSI-Desastres-Naturales"
     private String url;          // ej: "https://api-ddsi.disilab.ar/public"
+    private String pathApi;
+    private String email;     // Opcional
+    private String password;  // Opcional
 }
