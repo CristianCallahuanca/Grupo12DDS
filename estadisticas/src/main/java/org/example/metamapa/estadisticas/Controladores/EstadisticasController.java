@@ -101,13 +101,12 @@ public class EstadisticasController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
             HttpServletResponse response) throws IOException {
 
-        response.setContentType("text/csv");
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Disposition",
                 "attachment; filename=\"categoria_mas_reportada.csv\"");
 
-        try (PrintWriter writer = response.getWriter()) {
-            generacionCsvService.escribirCategoriaMasReportadaCsv(writer, desde, hasta);
-        }
+        generacionCsvService.escribirCategoriaMasReportadaCsv(response.getOutputStream(), desde, hasta);
 
         log.info("CSV de categoria_mas_reportada enviado correctamente.");
     }
@@ -118,13 +117,12 @@ public class EstadisticasController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
             HttpServletResponse response) throws IOException {
 
-        response.setContentType("text/csv");
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Disposition",
                 "attachment; filename=\"provincia_por_categoria.csv\"");
 
-        try (PrintWriter writer = response.getWriter()) {
-            generacionCsvService.escribirProvinciaPorCategoriaCsv(writer, desde, hasta);
-        }
+        generacionCsvService.escribirProvinciaPorCategoriaCsv(response.getOutputStream(), desde, hasta);
 
         log.info("CSV de provincia_por_categoria enviado correctamente.");
     }
@@ -135,13 +133,12 @@ public class EstadisticasController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
             HttpServletResponse response) throws IOException {
 
-        response.setContentType("text/csv");
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Disposition",
                 "attachment; filename=\"hora_por_categoria.csv\"");
 
-        try (PrintWriter writer = response.getWriter()) {
-            generacionCsvService.escribirHoraPorCategoriaCsv(writer, desde, hasta);
-        }
+        generacionCsvService.escribirHoraPorCategoriaCsv(response.getOutputStream(), desde, hasta);
 
         log.info("CSV de hora_por_categoria enviado correctamente.");
     }
@@ -152,13 +149,12 @@ public class EstadisticasController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
             HttpServletResponse response) throws IOException {
 
-        response.setContentType("text/csv");
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Disposition",
                 "attachment; filename=\"cantidad_solicitudes_spam.csv\"");
 
-        try (PrintWriter writer = response.getWriter()) {
-            generacionCsvService.escribirCantidadSolicitudesSpamCsv(writer, desde, hasta);
-        }
+        generacionCsvService.escribirCantidadSolicitudesSpamCsv(response.getOutputStream(), desde, hasta);
 
         log.info("CSV de cantidad_solicitudes_spam enviado correctamente.");
     }

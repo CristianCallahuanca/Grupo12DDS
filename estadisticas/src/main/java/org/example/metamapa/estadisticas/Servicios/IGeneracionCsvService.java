@@ -1,5 +1,7 @@
 package org.example.metamapa.estadisticas.Servicios;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 
@@ -9,19 +11,19 @@ public interface IGeneracionCsvService {
                                                   LocalDate desde,
                                                   LocalDate hasta);
 
-    void escribirCategoriaMasReportadaCsv(PrintWriter writer,
-                                          LocalDate desde,
-                                          LocalDate hasta);
+    void escribirCategoriaMasReportadaCsv(OutputStream outputStream,
+                                                 LocalDate desde,
+                                                 LocalDate hasta)throws IOException;
 
-    void escribirProvinciaPorCategoriaCsv(PrintWriter writer,
-                                          LocalDate desde,
-                                          LocalDate hasta);
+    public void escribirProvinciaPorCategoriaCsv(OutputStream outputStream,
+                                                 LocalDate desde,
+                                                 LocalDate hasta) throws IOException;
 
-    void escribirHoraPorCategoriaCsv(PrintWriter writer,
-                                     LocalDate desde,
-                                     LocalDate hasta);
-
-    void escribirCantidadSolicitudesSpamCsv(PrintWriter writer,
+    public void escribirHoraPorCategoriaCsv(OutputStream outputStream,
                                             LocalDate desde,
-                                            LocalDate hasta);
+                                            LocalDate hasta) throws IOException;
+
+    public void escribirCantidadSolicitudesSpamCsv(OutputStream outputStream,
+                                                   LocalDate desde,
+                                                   LocalDate hasta) throws IOException;
 }

@@ -2,12 +2,18 @@ package org.example.metamapa.estadisticas.Servicios.implementaciones;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.example.metamapa.estadisticas.Models.entidades.*;
 import org.example.metamapa.estadisticas.Models.repositorios.*;
 import org.example.metamapa.estadisticas.Servicios.IGeneracionCsvService;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -60,21 +66,43 @@ public class GeneracionCsvService implements IGeneracionCsvService {
     // 2) Categoría más reportada
     // ─────────────────────────────
     @Override
-    public void escribirCategoriaMasReportadaCsv(PrintWriter writer,
+    public void escribirCategoriaMasReportadaCsv(OutputStream outputStream,
                                                  LocalDate desde,
-                                                 LocalDate hasta) {
+                                                 LocalDate hasta) throws IOException {
 
-        writer.println("fecha_calculo,categoria_id,categoria_nombre,cantidad_hechos");
+        // Escribir BOM para UTF-8 (esto soluciona los acentos en Excel)
+        outputStream.write(0xEF);
+        outputStream.write(0xBB);
+        outputStream.write(0xBF);
 
+        CSVFormat format = CSVFormat.EXCEL
+                .withDelimiter(';')
+                .withHeader(
+                        "fecha",
+                        "categoria_id",
+                        "categoria_nombre",
+                        "cantidad_hechos"
+                )
+                .withSkipHeaderRecord(false);
 
         List<EstCategoriaMasReportada> lista =
                 repoCatMasRep.findByFechaCalculoBetween(inicio(desde), fin(hasta));
 
-        lista.forEach(e -> writer.printf("%s,%d,%s,%d%n",
-                e.getFechaCalculo(),
-                e.getCategoriaId(),
-                e.getCategoriaNombre(),
-                e.getCantidadHechos()));
+        try (CSVPrinter csvPrinter = new CSVPrinter(
+                new OutputStreamWriter(outputStream, StandardCharsets.UTF_8),
+                format)) {
+
+            for (EstCategoriaMasReportada e : lista) {
+                csvPrinter.printRecord(
+                        e.getFechaCalculo(),
+                        e.getCategoriaId(),
+                        e.getCategoriaNombre(),
+                        e.getCantidadHechos()
+                );
+            }
+
+            csvPrinter.flush();
+        }
 
         log.info("CSV generado por rango para categoria_mas_reportada. Registros: {}", lista.size());
     }
@@ -82,22 +110,48 @@ public class GeneracionCsvService implements IGeneracionCsvService {
     // ─────────────────────────────
     // 3) Provincia por categoría
     // ─────────────────────────────
-    @Override
-    public void escribirProvinciaPorCategoriaCsv(PrintWriter writer,
-                                                 LocalDate desde,
-                                                 LocalDate hasta) {
 
-        writer.println("fecha_calculo,categoria_id,categoria_nombre,provincia,cantidad_hechos");
+    @Override
+    public void escribirProvinciaPorCategoriaCsv(OutputStream outputStream,
+                                                 LocalDate desde,
+                                                 LocalDate hasta) throws IOException {
+
+        // Primero escribir el BOM (Byte Order Mark) para UTF-8
+        outputStream.write(0xEF);
+        outputStream.write(0xBB);
+        outputStream.write(0xBF);
+
+        // Usar UTF-8 explícitamente en todos los lugares
+        CSVFormat format = CSVFormat.EXCEL
+                .withDelimiter(';')
+                .withHeader(
+                        "fecha",
+                        "categoria_id",
+                        "categoria_nombre",
+                        "provincia",
+                        "cantidad_hechos"
+                )
+                .withSkipHeaderRecord(false);
 
         List<EstProvinciaPorCategoria> lista =
                 repoProvPorCat.findByFechaCalculoBetween(inicio(desde), fin(hasta));
 
-        lista.forEach(e -> writer.printf("%s,%d,%s,%s,%d%n",
-                e.getFechaCalculo(),
-                e.getCategoriaId(),
-                e.getCategoriaNombre(),
-                e.getProvincia(),
-                e.getCantidadHechos()));
+        // Asegurar que el Writer use UTF-8 con BOM
+        try (OutputStreamWriter osw = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+             CSVPrinter csvPrinter = new CSVPrinter(osw, format)) {
+
+            for (EstProvinciaPorCategoria e : lista) {
+                csvPrinter.printRecord(
+                        e.getFechaCalculo(),
+                        e.getCategoriaId(),
+                        e.getCategoriaNombre(),
+                        e.getProvincia(),
+                        e.getCantidadHechos()
+                );
+            }
+
+            csvPrinter.flush();
+        }
 
         log.info("CSV generado por rango para provincia_por_categoria. Registros: {}", lista.size());
     }
@@ -106,21 +160,45 @@ public class GeneracionCsvService implements IGeneracionCsvService {
     // 4) Hora por categoría
     // ─────────────────────────────
     @Override
-    public void escribirHoraPorCategoriaCsv(PrintWriter writer,
+    public void escribirHoraPorCategoriaCsv(OutputStream outputStream,
                                             LocalDate desde,
-                                            LocalDate hasta) {
+                                            LocalDate hasta) throws IOException {
 
-        writer.println("fecha_calculo,categoria_id,categoria_nombre,hora,cantidad_hechos");
+        // Escribir BOM para UTF-8
+        outputStream.write(0xEF);
+        outputStream.write(0xBB);
+        outputStream.write(0xBF);
+
+        CSVFormat format = CSVFormat.EXCEL
+                .withDelimiter(';')
+                .withHeader(
+                        "fecha",
+                        "categoria_id",
+                        "categoria_nombre",
+                        "hora",
+                        "cantidad_hechos"
+                )
+                .withSkipHeaderRecord(false);
 
         List<EstHoraPorCategoria> lista =
                 repoHoraPorCat.findByFechaCalculoBetween(inicio(desde), fin(hasta));
 
-        lista.forEach(e -> writer.printf("%s,%d,%s,%d,%d%n",
-                e.getFechaCalculo(),
-                e.getCategoriaId(),
-                e.getCategoriaNombre(),
-                e.getHora(),
-                e.getCantidadHechos()));
+        try (CSVPrinter csvPrinter = new CSVPrinter(
+                new OutputStreamWriter(outputStream, StandardCharsets.UTF_8),
+                format)) {
+
+            for (EstHoraPorCategoria e : lista) {
+                csvPrinter.printRecord(
+                        e.getFechaCalculo(),
+                        e.getCategoriaId(),
+                        e.getCategoriaNombre(),
+                        e.getHora(),
+                        e.getCantidadHechos()
+                );
+            }
+
+            csvPrinter.flush();
+        }
 
         log.info("CSV generado por rango para hora_por_categoria. Registros: {}", lista.size());
     }
@@ -129,19 +207,39 @@ public class GeneracionCsvService implements IGeneracionCsvService {
     // 5) Cantidad de solicitudes spam
     // ─────────────────────────────
     @Override
-    public void escribirCantidadSolicitudesSpamCsv(PrintWriter writer,
+    public void escribirCantidadSolicitudesSpamCsv(OutputStream outputStream,
                                                    LocalDate desde,
-                                                   LocalDate hasta) {
+                                                   LocalDate hasta) throws IOException {
 
-        writer.println("fecha_calculo,cantidad_spam");
+        // Escribir BOM para UTF-8
+        outputStream.write(0xEF);
+        outputStream.write(0xBB);
+        outputStream.write(0xBF);
 
+        CSVFormat format = CSVFormat.EXCEL
+                .withDelimiter(';')
+                .withHeader(
+                        "fecha",
+                        "cantidad_spam"
+                )
+                .withSkipHeaderRecord(false);
 
         List<EstCantidadSolicitudesSpam> lista =
                 repoSpam.findByFechaCalculoBetween(inicio(desde), fin(hasta));
 
-        lista.forEach(e -> writer.printf("%s,%d%n",
-                e.getFechaCalculo(),
-                e.getCantidadSpam()));
+        try (CSVPrinter csvPrinter = new CSVPrinter(
+                new OutputStreamWriter(outputStream, StandardCharsets.UTF_8),
+                format)) {
+
+            for (EstCantidadSolicitudesSpam e : lista) {
+                csvPrinter.printRecord(
+                        e.getFechaCalculo(),
+                        e.getCantidadSpam()
+                );
+            }
+
+            csvPrinter.flush();
+        }
 
         log.info("CSV generado por rango para cantidad_solicitudes_spam. Registros: {}", lista.size());
     }
