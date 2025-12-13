@@ -1,35 +1,30 @@
 package org.example.metamapa.Controladores;
 
-import org.springframework.http.*;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.DefaultResponseErrorHandler;
-import org.springframework.web.client.RestTemplate;
-
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 public class GatewayController {
 
-    private final RestTemplate restTemplate;
-    private final Map<String, String> servicios;
+    private final Map<String, String> servicios = new HashMap<>();
 
     public GatewayController() {
-        this.restTemplate = new RestTemplate();
-
-        // Evitamos que RestTemplate lance excepciones en 4xx y 5xx
-        this.restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
-            @Override
-            public void handleError(ClientHttpResponse response) throws IOException {
-                // No hacemos nada, manejamos los errores manualmente
-            }
-        });
-
-        // Mapear módulo -> URL base
-        servicios = new HashMap<>();
         servicios.put("gestordatos", "http://localhost:8500");
         servicios.put("fuenteDinamica", "http://localhost:8102");
         servicios.put("agregador", "http://localhost:8200");
@@ -40,31 +35,73 @@ public class GatewayController {
     }
 
     @RequestMapping("/{modulo}/**")
-    public ResponseEntity<String> proxy(HttpServletRequest request, @PathVariable String modulo) {
-        String baseUrl = servicios.get(modulo);
+    public void proxy(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable String modulo
+    ) throws IOException {
 
+        String baseUrl = servicios.get(modulo);
         if (baseUrl == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"Módulo desconocido: " + modulo + "\"}");
+            response.sendError(400, "Módulo desconocido");
+            return;
         }
 
-        // Obtenemos el path después del módulo
         String path = request.getRequestURI().substring(("/" + modulo).length());
 
-        String url = baseUrl + "/" + modulo + path;
+        String targetUrl = baseUrl + "/" + modulo + path +
+                (request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
-        //System.out.println("Proxy -> " + url);
+        HttpUriRequest proxyRequest;
 
-        try {
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.status(response.getStatusCode())
-                    .headers(response.getHeaders())
-                    .body(response.getBody());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-                    .body("{\"error\": \"No se pudo conectar al microservicio\", " +
-                            "\"detalle\": \"" + e.getMessage() + "\"}");
+        switch (request.getMethod()) {
+            case "POST" -> {
+                HttpPost post = new HttpPost(targetUrl);
+                post.setEntity(
+                        new InputStreamEntity(
+                                request.getInputStream(),
+                                ContentType.parse(request.getContentType())
+                        )
+                );
+                proxyRequest = post;
+            }
+            case "PUT" -> {
+                HttpPut put = new HttpPut(targetUrl);
+                put.setEntity(
+                        new InputStreamEntity(
+                                request.getInputStream(),
+                                ContentType.parse(request.getContentType())
+                        )
+                );
+                proxyRequest = put;
+            }
+            default -> proxyRequest = new HttpGet(targetUrl);
+        }
+
+        // Copiar headers (menos los peligrosos)
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            if (!headerName.equalsIgnoreCase("host")
+                    && !headerName.equalsIgnoreCase("content-length")) {
+                proxyRequest.addHeader(headerName, request.getHeader(headerName));
+            }
+        }
+
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse proxyResponse = client.execute(proxyRequest)) {
+
+            response.setStatus(proxyResponse.getCode());
+
+            for (Header header : proxyResponse.getHeaders()) {
+                if (!header.getName().equalsIgnoreCase("transfer-encoding")) {
+                    response.setHeader(header.getName(), header.getValue());
+                }
+            }
+
+            proxyResponse.getEntity()
+                    .getContent()
+                    .transferTo(response.getOutputStream());
         }
     }
 }

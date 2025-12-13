@@ -21,6 +21,8 @@ public class SolicitudesPublicasController {
     @PostMapping
     public ResponseEntity<?> crearSolicitud(@RequestBody SolicitudInputDTO solicitudDTO) {
         SolicitudOutputDTO solicitud = solicitudesService.crearSolicitudEliminacion(solicitudDTO);
+        System.out.println("CREADO UNA SOLICITUD ASDDDDDDDDDDDDDDDDDASDASDASDA");
+        System.out.println("id hecho: " + solicitudDTO.getIdhecho() + " justificacion: " + solicitudDTO.getJustificacion());
         if (solicitud == null)
             return ResponseEntity.badRequest().body(Map.of("mensaje", "Hecho no encontrado", "estado", "error"));
 

@@ -13,7 +13,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
+/*
 public class RateLimitUsuarioFilter implements Filter {
 
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
@@ -70,4 +70,4 @@ public class RateLimitUsuarioFilter implements Filter {
 
         chain.doFilter(request, response);
     }
-}
+}*/

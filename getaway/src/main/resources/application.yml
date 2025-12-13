@@ -8,4 +8,7 @@ logging:
 spring:
   application:
     name: Getaway
+  servlet:
+    multipart:
+      enabled: false
 

@@ -4,6 +4,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/*
 @Configuration
 public class RateLimitConfig {
 
@@ -19,4 +20,4 @@ public class RateLimitConfig {
         registration.setOrder(0); // que se ejecute antes del multipart resolver
         return registration;
     }
-}
+}*/

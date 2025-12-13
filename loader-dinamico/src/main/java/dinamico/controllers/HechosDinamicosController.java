@@ -31,6 +31,9 @@ public class HechosDinamicosController {
             @RequestPart("data") String data,
             @RequestPart(value = "file", required = false) List<MultipartFile> files // ← required = false
     ) {
+
+        System.out.println("VOY A CREAR EL HECHOOOOOOOOOOOOOOOOOOOOOO");
+
         // Convertimos el JSON manualmente
         ObjectMapper mapper = new ObjectMapper();
         HechoCrudoDTO_IN hecho;
