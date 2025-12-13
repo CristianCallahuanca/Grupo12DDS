@@ -1,23 +1,21 @@
 package org.example.metamapa.loaderdemo.service.implementaciones;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.loaderdemo.models.dto.FuenteDTO;
-import org.example.metamapa.loaderdemo.models.entidades.EstadoInstancia;
-import org.example.metamapa.loaderdemo.models.entidades.EstadoLoaderDemo;
-import org.example.metamapa.loaderdemo.models.repositorio.IEstadoLoaderDemoRepositorio;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @Slf4j
 public class RegistroFuenteService {
 
     private final WebClient webClient = WebClient.create();
+    private final AtomicBoolean registrado = new AtomicBoolean(false);
 
     @Value("${loader.self.nombreFuente}")
     private String nombreFuente;
@@ -31,13 +29,24 @@ public class RegistroFuenteService {
     @Value("${agregador.baseUrl}")
     private String urlAgregador;
 
-
     @PostConstruct
-    public void anunciarFuenteAlAgregador() {
+    public void anunciarEnArranque() {
+        intentarRegistro("arranque");
+    }
+
+    // Reintento cada 10s (ajustable). Mientras no esté registrado.
+    @Scheduled(fixedDelayString = "${loader.registro.retryDelayMs:10000}")
+    public void retryRegistro() {
+        if (!registrado.get()) {
+            intentarRegistro("retry");
+        }
+    }
+
+    private void intentarRegistro(String origen) {
         FuenteDTO dto = new FuenteDTO(nombreFuente, tipoFuente, baseUrl);
         String endpoint = urlAgregador + "/fuentes/registrar";
 
-        log.info("Anunciando fuente '{}' al Agregador en {}", nombreFuente, endpoint);
+        log.info("[{}] Intentando registrar loader '{}' en {}", origen, nombreFuente, endpoint);
 
         try {
             webClient.post()
@@ -47,11 +56,13 @@ public class RegistroFuenteService {
                     .toBodilessEntity()
                     .block();
 
+            registrado.set(true);
             log.info("Loader '{}' registrado exitosamente en el Agregador", nombreFuente);
+
         } catch (Exception e) {
-            log.error("Error al registrar el loader en el Agregador", e);
-            throw new IllegalStateException("Fallo al anunciarse al Agregador, abortando arranque");
+            // IMPORTANTÍSIMO: no tiramos excepción -> el servicio queda vivo y reintenta
+            log.warn("No se pudo registrar loader '{}' (se reintentará). Causa: {}",
+                    nombreFuente, e.getMessage());
         }
     }
 }
-

@@ -10,6 +10,8 @@ loader:
     nombreFuente: "Fuente-Demo"
     tipo: "PROXY"
     baseUrl: "http://localhost:8700/fuenteDemo"
+  registro:
+    retryDelayMs: 10000
 
 agregador:
   baseUrl: "http://localhost:8200"

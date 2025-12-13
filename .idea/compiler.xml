@@ -22,6 +22,7 @@
       <module name="Administrador de datos y visualiazacion" target="17" />
       <module name="api-admin" target="17" />
       <module name="api-publica" target="17" />
+      <module name="interfaz-usuario" target="17" />
       <module name="loader-proxy" target="17" />
       <module name="Visualizacion" target="17" />
     </bytecodeTargetLevel>

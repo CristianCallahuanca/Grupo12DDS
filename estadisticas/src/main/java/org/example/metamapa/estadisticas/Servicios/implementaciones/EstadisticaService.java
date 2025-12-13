@@ -66,37 +66,37 @@ public class EstadisticaService implements IEstadisticaService {
                                                                  LocalDateTime fechaCalculo) throws SQLException {
 
         String sql = """
-                SELECT
-                        c.handle AS coleccion_handle,
-                        c.titulo AS coleccion_titulo,
-                        (
-                            SELECT u.provincia
-                            FROM hecho h
-                            JOIN ubicacion u ON h.ubicacion_id = u.id
-                            JOIN hecho_de_coleccion hc ON hc.hecho_id = h.hecho_id
-                            WHERE hc.coleccion_id = c.handle
-                            GROUP BY u.provincia
-                            ORDER BY COUNT() DESC, u.provincia ASC
-                            LIMIT 1
-                        ) AS provincia_top,
-                        (
-                            SELECT COUNT()
-                            FROM hecho h2
-                            JOIN ubicacion u2 ON h2.ubicacion_id = u2.id
-                            JOIN hecho_de_coleccion hc2 ON hc2.hecho_id = h2.hecho_id
-                            WHERE hc2.coleccion_id = c.handle
-                            GROUP BY u2.provincia
-                            ORDER BY COUNT(*) DESC, u2.provincia ASC
-                            LIMIT 1
-                        ) AS cantidad_hechos_top
-                FROM coleccion c
-                WHERE EXISTS (
-                            SELECT 1
-                            FROM hecho_de_coleccion hc
-                            WHERE hc.coleccion_id = c.handle
-                            )
-                ORDER BY c.titulo;
-                """;
+        SELECT
+            c.handle AS coleccion_handle,
+            c.titulo AS coleccion_titulo,
+            (
+                SELECT u.provincia
+                FROM hecho h
+                JOIN ubicacion u ON h.ubicacion_id = u.id
+                JOIN hecho_de_coleccion hc ON hc.hecho_id = h.hecho_id
+                WHERE hc.coleccion_id = c.handle
+                GROUP BY u.provincia
+                ORDER BY COUNT(*) DESC, u.provincia ASC
+                LIMIT 1
+            ) AS provincia_top,
+            (
+                SELECT COUNT(*)
+                FROM hecho h2
+                JOIN ubicacion u2 ON h2.ubicacion_id = u2.id
+                JOIN hecho_de_coleccion hc2 ON hc2.hecho_id = h2.hecho_id
+                WHERE hc2.coleccion_id = c.handle
+                GROUP BY u2.provincia
+                ORDER BY COUNT(*) DESC, u2.provincia ASC
+                LIMIT 1
+            ) AS cantidad_hechos_top
+        FROM coleccion c
+        WHERE EXISTS (
+            SELECT 1
+            FROM hecho_de_coleccion hc
+            WHERE hc.coleccion_id = c.handle
+        )
+        ORDER BY c.titulo;
+        """;
 
         try (ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -111,8 +111,9 @@ public class EstadisticaService implements IEstadisticaService {
             }
         }
 
-        log.info("Consulta 1 completada: Mayor cantidad de hechos por provincia y colección.");
+        log.info("Consulta 1 completada: provincia con más hechos por cada colección.");
     }
+
 
     // -------------------------------------------------------------------------
     // 2) ¿Cuál es la categoría con mayor cantidad de hechos reportados?
