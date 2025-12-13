@@ -53,7 +53,7 @@ public class GatewayController {
 
         String url = baseUrl + "/" + modulo + path;
 
-        System.out.println("Proxy -> " + url);
+        //System.out.println("Proxy -> " + url);
 
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
