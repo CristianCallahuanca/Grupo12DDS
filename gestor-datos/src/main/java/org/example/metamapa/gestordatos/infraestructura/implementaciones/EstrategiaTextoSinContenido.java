@@ -7,30 +7,26 @@ import java.util.List;
 @Component
 public class EstrategiaTextoSinContenido implements IEstrategiaDeteccion {
 
-    private static final List<String> PALABRAS_CLAVE_SIGNIFICATIVAS = List.of(
-            "hecho", "información", "eliminar", "borrar", "ofensivo",
-            "falso", "error", "inadecuado", "violación", "privacidad",
-            "motivo", "razón", "solicito", "consideren", "por favor"
-    );
-
-    //TODO si me sirve puedo poner estas palabras en el .yml o archivo
-
+    private static final int MIN_WORDS = 4;         // mínimo razonable
+    private static final int MIN_LETTERS = 12;      // “contenido real” en letras
+    private static final double MIN_LETTER_RATIO = 0.50; // si es casi todo símbolos/números
 
     @Override
     public boolean detectar(String texto) {
-        if (texto == null || texto.isBlank()) return true;
+        if (texto == null) return true;
 
-        String[] palabras = texto.trim().split("\\s+");
+        String t = texto.trim();
+        if (t.isBlank()) return true;
 
-        // muy corto o puede ser menos
-        if (palabras.length < 5) return true;
+        String[] palabras = t.split("\\s+");
+        if (palabras.length < MIN_WORDS) return true;
 
-        String normalizado = texto.toLowerCase();
-        long coincidencias = PALABRAS_CLAVE_SIGNIFICATIVAS.stream()
-                .filter(normalizado::contains)
-                .count();
+        long total = t.length();
+        long letras = t.chars().filter(Character::isLetter).count();
 
-        // si no contiene al menos 1 palabra significativa, probablemente no es serio, quiero decir quizas no es una jutificacion que valga la pena tomar en serio
-        return coincidencias == 0;
+        if (letras < MIN_LETTERS) return true;
+
+        double ratio = (double) letras / total;
+        return ratio < MIN_LETTER_RATIO;
     }
 }

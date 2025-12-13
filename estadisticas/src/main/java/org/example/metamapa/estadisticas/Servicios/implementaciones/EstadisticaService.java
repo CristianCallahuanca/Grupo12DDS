@@ -66,28 +66,46 @@ public class EstadisticaService implements IEstadisticaService {
                                                                  LocalDateTime fechaCalculo) throws SQLException {
 
         String sql = """
-                SELECT 
-                    c.handle AS coleccion_handle,
-                    c.titulo AS coleccion_titulo,
-                    u.provincia,
-                    COUNT(h.hecho_id) AS cantidad_hechos
-                FROM hecho h
-                JOIN ubicacion u ON h.ubicacion_id = u.id
-                JOIN hecho_de_coleccion hc ON hc.hecho_id = h.hecho_id
-                JOIN coleccion c ON hc.coleccion_id = c.handle
-                GROUP BY c.handle, c.titulo, u.provincia
-                ORDER BY cantidad_hechos DESC
-                LIMIT 1
+                SELECT
+                        c.handle AS coleccion_handle,
+                        c.titulo AS coleccion_titulo,
+                        (
+                            SELECT u.provincia
+                            FROM hecho h
+                            JOIN ubicacion u ON h.ubicacion_id = u.id
+                            JOIN hecho_de_coleccion hc ON hc.hecho_id = h.hecho_id
+                            WHERE hc.coleccion_id = c.handle
+                            GROUP BY u.provincia
+                            ORDER BY COUNT() DESC, u.provincia ASC
+                            LIMIT 1
+                        ) AS provincia_top,
+                        (
+                            SELECT COUNT()
+                            FROM hecho h2
+                            JOIN ubicacion u2 ON h2.ubicacion_id = u2.id
+                            JOIN hecho_de_coleccion hc2 ON hc2.hecho_id = h2.hecho_id
+                            WHERE hc2.coleccion_id = c.handle
+                            GROUP BY u2.provincia
+                            ORDER BY COUNT(*) DESC, u2.provincia ASC
+                            LIMIT 1
+                        ) AS cantidad_hechos_top
+                FROM coleccion c
+                WHERE EXISTS (
+                            SELECT 1
+                            FROM hecho_de_coleccion hc
+                            WHERE hc.coleccion_id = c.handle
+                            )
+                ORDER BY c.titulo;
                 """;
 
         try (ResultSet rs = stmt.executeQuery(sql)) {
-            if (rs.next()) {
+            while (rs.next()) {
                 EstHechosPorProvinciaColeccion est = new EstHechosPorProvinciaColeccion();
                 est.setFechaCalculo(fechaCalculo);
                 est.setColeccionHandle(rs.getString("coleccion_handle"));
                 est.setColeccionTitulo(rs.getString("coleccion_titulo"));
-                est.setProvincia(rs.getString("provincia"));
-                est.setCantidadHechos(rs.getInt("cantidad_hechos"));
+                est.setProvincia(rs.getString("provincia_top"));
+                est.setCantidadHechos(rs.getInt("cantidad_hechos_top"));
 
                 repoMayorHechos.save(est);
             }
