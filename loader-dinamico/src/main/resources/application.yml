@@ -8,6 +8,8 @@ loader:
     nombreFuente: "Fuente-dinamicaasasasasaassasssssasdsssssssssssassassss"
     tipo: "DINAMICA"
     baseUrl: "http://localhost:8102/fuenteDinamica"
+  registro:
+    retryDelayMs: 10000
 
 agregador:
   baseUrl: "http://localhost:8200"

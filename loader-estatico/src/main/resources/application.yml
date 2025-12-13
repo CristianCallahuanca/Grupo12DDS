@@ -11,6 +11,8 @@ loader:
     nombreFuente: "Fuente-CSV"
     tipo: "ESTATICA"
     baseUrl: "http://localhost:8101/fuenteEstatica"
+  registro:
+    retryDelayMs: 10000
 
 fileserver:
   tipo: local  # o "remoto" o "drive"

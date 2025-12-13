@@ -1,18 +1,21 @@
 package org.example.metamapa.service.implementacion;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.models.dtos.FuenteDTO;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @Slf4j
 public class RegistroFuenteService {
 
     private final WebClient webClient;
+    private final AtomicBoolean registrado = new AtomicBoolean(false);
 
     public RegistroFuenteService(WebClient.Builder builder) {
         this.webClient = builder.build();
@@ -31,11 +34,22 @@ public class RegistroFuenteService {
     private String urlAgregador;
 
     @PostConstruct
-    public void anunciarFuenteAlAgregador() {
+    public void anunciarEnArranque() {
+        intentarRegistro("arranque");
+    }
+
+    @Scheduled(fixedDelayString = "${loader.registro.retryDelayMs:10000}")
+    public void retryRegistro() {
+        if (!registrado.get()) {
+            intentarRegistro("retry");
+        }
+    }
+
+    private void intentarRegistro(String origen) {
         FuenteDTO dto = new FuenteDTO(nombreFuente, tipoFuente, baseUrl);
         String endpoint = urlAgregador + "/fuentes/registrar";
 
-        log.info("Anunciando fuente '{}' al Agregador en {}", nombreFuente, endpoint);
+        log.info("[{}] Intentando registrar loader '{}' en {}", origen, nombreFuente, endpoint);
 
         try {
             webClient.post()
@@ -45,12 +59,12 @@ public class RegistroFuenteService {
                     .toBodilessEntity()
                     .block();
 
+            registrado.set(true);
             log.info("Loader '{}' registrado exitosamente en el Agregador", nombreFuente);
+
         } catch (Exception e) {
-            log.error("Error al registrar el loader en el Agregador", e);
-            throw new IllegalStateException("Fallo al anunciarse al Agregador, abortando arranque");
+            log.warn("No se pudo registrar loader '{}' (se reintentará). Causa: {}",
+                    nombreFuente, e.getMessage());
         }
     }
 }
-
-

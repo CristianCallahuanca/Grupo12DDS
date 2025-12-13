@@ -10,6 +10,8 @@ loader:
     nombreFuente: "Fuente-MetaMapa"
     tipo: "PROXY"
     baseUrl: "http://localhost:8103/fuenteMetamapa"
+  registro:
+    retryDelayMs: 10000
 
 agregador:
   baseUrl: "http://localhost:8200"
