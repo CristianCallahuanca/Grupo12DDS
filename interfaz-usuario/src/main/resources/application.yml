@@ -1,8 +1,0 @@
-server:
-  port: 8090
-spring:
-  application:
-    name: interfaz-usuario
-logging:
-  level:
-    root: INFO

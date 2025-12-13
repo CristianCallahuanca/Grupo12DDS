@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.5</version>
+        <version>3.3.5</version>
         <relativePath/>
     </parent>
 
@@ -25,7 +25,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
-        <spring-boot.version>3.5.5</spring-boot.version>
+        <spring-boot.version>3.3.5</spring-boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -38,7 +38,7 @@
         <module>agregador</module>
         <module>gestor-datos</module>
         <module>estadisticas</module>
-        <module>interfaz-usuario</module>
+        <module>getaway</module>
     </modules>
 
     <dependencyManagement>
