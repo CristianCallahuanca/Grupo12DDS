@@ -49,8 +49,11 @@ public class GatewayController {
 
         String path = request.getRequestURI().substring(("/" + modulo).length());
 
+
         String targetUrl = baseUrl + "/" + modulo + path +
                 (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+
+        System.out.println("Path: " + targetUrl);
 
         HttpUriRequest proxyRequest;
 
@@ -99,9 +102,11 @@ public class GatewayController {
                 }
             }
 
-            proxyResponse.getEntity()
-                    .getContent()
-                    .transferTo(response.getOutputStream());
+            if (proxyResponse.getEntity() != null) {
+                proxyResponse.getEntity()
+                        .getContent()
+                        .transferTo(response.getOutputStream());
+            }
         }
     }
 }
