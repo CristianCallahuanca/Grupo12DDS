@@ -15,6 +15,7 @@ public class HechoOutputDTO {
     private String latitud;
     private String longitud;
     private String fechaAcontecimiento;
+    private String fechaCarga;
     private String etiqueta;
     private List<String> archivosMultimedia;
     private String nombre_contribuyente;

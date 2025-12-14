@@ -217,6 +217,12 @@ public class HechoService implements IHechoService {
                         ? hecho.getFechaAcontecimiento().toString()
                         : null
         ); //TODO: CURAR ESTO
+
+        dto.setFechaCarga(
+                hecho.getFechaCarga() != null
+                        ? hecho.getFechaCarga().toString()
+                        : null
+        );
         dto.setEtiqueta(hecho.getEtiqueta());
         dto.setArchivosMultimedia(hecho.getArchivosMultimedia());
         dto.setSugerencia_cambio(hecho.getSugerenciaCambio());
