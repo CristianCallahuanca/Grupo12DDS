@@ -147,16 +147,26 @@ public class NormalizacionService implements INormalizacionService {
             try {
                 long contribuyenteId = Long.parseLong(dto.getContribuyenteID());
 
-                // ✅ SOLUCIÓN EFICIENTE: Solo referencia al ID
-                ContribuyenteRegistrado contribuyente = new ContribuyenteRegistrado();
-                contribuyente.setUserId(contribuyenteId);
-                // NO llamar a entityManager.merge() - Hibernate lo maneja automáticamente
+                if (contribuyenteId != -1) {
+                    // Hecho con contribuyente registrado
+                    ContribuyenteRegistrado contribuyente = new ContribuyenteRegistrado();
+                    contribuyente.setUserId(contribuyenteId);
+                    h.setContribuyente(contribuyente);
+                } else {
+                    // Hecho anónimo
+                    h.setContribuyente(null);
+                }
 
-                h.setContribuyente(contribuyente);
+                h.setEstadoHecho(EstadoHecho.EN_REVISION);
 
             } catch (NumberFormatException e) {
                 log.warn("ContribuyenteID inválido: {}", dto.getContribuyenteID());
+                h.setContribuyente(null);
+                h.setEstadoHecho(EstadoHecho.EN_REVISION);
             }
+
+        } else {
+            h.setEstadoHecho(EstadoHecho.VISIBLE);
         }
 
         // Origen real

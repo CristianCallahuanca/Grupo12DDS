@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.PorTipoFuente;
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
+import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
 import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,7 @@ public class FiltradorService {
         log.debug("Filtrador Resultado total: {} hechos (de {} en total).",
                 resultado.size(), hechosRepository.count());
 
+        //AHORA SOLO DEVUELVO LOS VISIBLES
         return resultado;
     }
 

@@ -2,6 +2,6 @@ package org.example.metamapa.gestordatos.models.entidades.enums;
 
 public enum EstadoHecho {
     EN_REVISION,
-    REVISADO,
+    VISIBLE,
     NO_VISIBLE
 }

@@ -123,10 +123,6 @@ public class Hecho {
         if (cambios.getUbicacion() != null) this.ubicacion = cambios.getUbicacion();
         if (cambios.getEtiqueta() != null) this.etiqueta = cambios.getEtiqueta();
 
-        if (cambios.getArchivosMultimedia() != null) {
-            this.archivosMultimedia = new ArrayList<>(cambios.getArchivosMultimedia());
-        }
-
         if (cambios.getFechaAcontecimiento() != null) {
             this.fechaAcontecimiento = cambios.getFechaAcontecimiento();
         }

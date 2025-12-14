@@ -134,12 +134,6 @@ public class HechoService implements IHechoService {
                     if (valor instanceof String fechaStr)
                         cambiosHecho.setFechaAcontecimiento(LocalDateTime.parse(fechaStr));
                 }
-                case "archivosMultimedia" -> {
-                    if (valor instanceof List<?> lista)
-                        cambiosHecho.setArchivosMultimedia(
-                                lista.stream().map(Object::toString).toList()
-                        );
-                }
             }
         });
 
