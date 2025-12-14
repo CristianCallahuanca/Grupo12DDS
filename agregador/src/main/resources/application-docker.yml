@@ -3,9 +3,9 @@ spring:
     name: agregador
 
   datasource:
-    url: jdbc:mysql://db-central:3306/central?useSSL=false&serverTimezone=America/Argentina/Buenos_Aires
-    username: root
-    password: root
+    url: jdbc:mysql://db-central:3306/metamapa_central?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Argentina/Buenos_Aires
+    username: metamapa
+    password: metamapa_pass
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -24,16 +24,8 @@ agregador:
   timeout:
     segundos: 30
 
-logging:
-  level:
-    root: INFO
-    org.example.metamapa: DEBUG
-
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always

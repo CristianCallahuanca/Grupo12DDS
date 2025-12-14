@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: jdbc:mysql://db-central:3306/loader_estatico?useSSL=false&serverTimezone=America/Argentina/Buenos_Aires&allowPublicKeyRetrieval=true
-    username: root
-    password: root
+    username: metamapa
+    password: metamapa_pass
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
