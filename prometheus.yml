@@ -1,51 +1,47 @@
 global:
-  scrape_interval: 15s  # Cada 15 segundos recolecta métricas
-  evaluation_interval: 15s
+  scrape_interval: 15s
 
 scrape_configs:
-  # 1. Monitorea Prometheus mismo
-  - job_name: 'prometheus'
+  - job_name: "prometheus"
     static_configs:
-      - targets: ['prometheus:9090']
+      - targets: ["prometheus:9090"]
 
-  # 2. Monitorea cAdvisor (contenedores Docker)
-  - job_name: 'cadvisor'
+  - job_name: "agregador"
+    metrics_path: "/actuator/prometheus"
     static_configs:
-      - targets: ['cadvisor:8080']
+      - targets: ["agregador:8200"]
 
-  # 3. MONITOREO DE LOS SERVICIOS METAMAPA CON ACTUATOR
-  - job_name: 'metamapa-gestor'
-    metrics_path: '/actuator/prometheus'  # Ruta donde Spring expone métricas
+  - job_name: 'gestor'
+    metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['gestor:8500']
-    scrape_interval: 10s  # Puedes ajustar intervalos por servicio
 
-  - job_name: 'metamapa-dinamica'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: ['dinamica:8102']
-
-  - job_name: 'metamapa-agregador'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: ['agregador:8200']
-
-  - job_name: 'metamapa-estadisticas'
+  - job_name: 'estadisticas'
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['estadisticas:8600']
 
-  - job_name: 'metamapa-demo'
+  - job_name: 'demo'
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['demo:8700']
 
-  - job_name: 'metamapa-estatico'
-    metrics_path: '/actuator/prometheus'
+  - job_name: "dinamico"
+    metrics_path: "/actuator/prometheus"
     static_configs:
-      - targets: ['estatico:8101']
+      - targets: ["dinamico:8102"]
 
-  - job_name: 'metamapa-metamapa'
-    metrics_path: '/actuator/prometheus'
+  - job_name: "estatico"
+    metrics_path: "/actuator/prometheus"
     static_configs:
-      - targets: ['metamapa:8103']
+      - targets: ["estatico:8101"]
+
+  - job_name: "metamapa"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["metamapa:8103"]
+
+  - job_name: "getaway"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["getaway:8080"]

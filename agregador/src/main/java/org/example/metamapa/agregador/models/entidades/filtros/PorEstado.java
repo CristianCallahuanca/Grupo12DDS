@@ -1,6 +1,6 @@
 package org.example.metamapa.agregador.models.entidades.filtros;
 
-import dinamico.models.entidades.hecho.EstadoHecho;
+import org.example.metamapa.agregador.models.entidades.EstadoHecho;
 import org.example.metamapa.agregador.models.entidades.Hecho;
 
 public class PorEstado extends CondicionDeFiltrado{

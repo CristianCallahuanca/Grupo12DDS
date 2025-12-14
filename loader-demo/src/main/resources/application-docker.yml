@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: loader-demo
+
+  datasource:
+    url: jdbc:mysql://db-central:3306/loader_demo?useSSL=false&serverTimezone=America/Argentina/Buenos_Aires&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+server:
+  port: 8700
+
+loader:
+  id: loader-demo-oficial
+  self:
+    nombreFuente: "Fuente-Demo"
+    tipo: "PROXY"
+    # clave: dentro de docker NO es localhost
+    baseUrl: "http://demo:8700/fuenteDemo"
+  registro:
+    retryDelayMs: 10000
+
+# clave: dentro de docker NO es localhost
+agregador:
+  baseUrl: "http://agregador:8200"
+
+logging:
+  level:
+    root: INFO
+    org.example.metamapa: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always

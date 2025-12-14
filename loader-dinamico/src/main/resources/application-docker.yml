@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: loader-dinamico
+
+  datasource:
+    url: jdbc:mysql://db-central:3306/loader_dinamico?useSSL=false&serverTimezone=America/Argentina/Buenos_Aires&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+
+server:
+  port: 8102
+
+# OJO: dentro de Docker, "localhost" es el contenedor, NO tu PC.
+loader:
+  self:
+    nombreFuente: "Fuente-Dinamica"
+    tipo: "DINAMICA"
+    baseUrl: "http://dinamico:8102/fuenteDinamica"
+  registro:
+    retryDelayMs: 10000
+
+agregador:
+  baseUrl: "http://agregador:8200"
+
+app:
+  upload:
+    dir: /app/uploads-fuente-dinamica
+
+cloudinary:
+  cloud-name: dikwt4s3v
+  api-key: 532288541159436
+  api-secret: n-VZzSsyqy-eOu1CYyXUki9cjDc
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    dinamico: DEBUG
