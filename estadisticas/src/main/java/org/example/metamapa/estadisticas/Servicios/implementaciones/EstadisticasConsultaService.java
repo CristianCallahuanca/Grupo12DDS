@@ -38,16 +38,17 @@ public class EstadisticasConsultaService implements IEstadisticasConsultaService
     @Override
     public List<EstadMayorHechosPorProvinciaColeccionDTO> obtenerMayorHechosProvinciaColeccion() {
 
-            // solo última corrida
-            EstHechosPorProvinciaColeccion e = repoMayorHechos.findTopByOrderByFechaCalculoDesc();
-            if (e == null) return List.of();
-            return List.of(new EstadMayorHechosPorProvinciaColeccionDTO(
-                    e.getFechaCalculo(),
-                    e.getColeccionTitulo(),
-                    e.getProvincia(),
-                    e.getCantidadHechos()
-            ));
+        LocalDateTime maxFecha = repoMayorHechos.findMaxFechaCalculo();
+        if (maxFecha == null) return List.of();
 
+        return repoMayorHechos.findByFechaCalculo(maxFecha).stream()
+                .map(e -> new EstadMayorHechosPorProvinciaColeccionDTO(
+                        e.getFechaCalculo(),
+                        e.getColeccionTitulo(),
+                        e.getProvincia(),
+                        e.getCantidadHechos()
+                ))
+                .toList();
     }
 
     // ─────────────────────────────
