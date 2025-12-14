@@ -26,6 +26,45 @@ public class ProcesadorCsvService implements IProcesadorCsvService {
     @Value("${loader.self.id}")
     private String loaderId;
 
+    public void procesarFuenteDesdeBytes(
+            FuenteEstatica fuente,
+            byte[] contenido,
+            String nombreArchivo
+    ) throws IOException {
+
+        log.info("Procesando fuente '{}' desde archivo en memoria",
+                fuente.getNombreFuente());
+
+        String hashNuevo = HashUtil.calcularSHA256(contenido);
+        String hashAnterior = fuente.getHashUltimoProcesado();
+
+        if (hashAnterior != null && hashAnterior.equals(hashNuevo)) {
+            log.info("Fuente '{}' sin cambios. Se omite.", fuente.getNombreFuente());
+            fuente.setPendienteProcesar(false);
+            fuenteRepo.save(fuente);
+            return;
+        }
+
+        List<HechoCrudo> hechos =
+                adapter.parsearArchivo(nombreArchivo, contenido);
+
+        for (HechoCrudo hecho : hechos) {
+            hecho.setLoaderId(loaderId);
+            hecho.setFuenteOrigen(fuente.getNombreFuente());
+        }
+
+        repoHechos.saveAll(hechos);
+
+        fuente.setHashUltimoProcesado(hashNuevo);
+        fuente.setFechaUltimoProcesamiento(LocalDateTime.now());
+        fuente.setPendienteProcesar(false);
+
+        fuenteRepo.save(fuente);
+
+        log.info("Procesamiento completo de '{}' ({} hechos)",
+                fuente.getNombreFuente(), hechos.size());
+    }
+
     public ProcesadorCsvService(
             IAdapterFileServer adapter,
             IFuenteEstaticaRepositorio fuenteRepo,
@@ -59,9 +98,9 @@ public class ProcesadorCsvService implements IProcesadorCsvService {
         }
     }
 
-    private void procesarFuente(FuenteEstatica fuente) throws IOException {
+    public void procesarFuente(FuenteEstatica fuente) throws IOException {
 
-        Path ruta = Path.of(fuente.getRutaArchivoCsv());
+        /*Path ruta = Path.of(fuente.getRutaArchivoCsv());
         log.info("Procesando fuente '{}' desde archivo {}",
                 fuente.getNombreFuente(), ruta);
 
@@ -97,7 +136,7 @@ public class ProcesadorCsvService implements IProcesadorCsvService {
         fuenteRepo.save(fuente);
 
         log.info("Procesamiento completo de '{}' ({} hechos)",
-                fuente.getNombreFuente(), hechos.size());
+                fuente.getNombreFuente(), hechos.size());*/
     }
 }
 

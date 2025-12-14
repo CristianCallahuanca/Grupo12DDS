@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,20 +21,14 @@ public class FuentesEstaticasAdminController {
     @PostMapping("/csv")
     public ResponseEntity<FuenteEstaticaDTO> registrarFuenteCsv(
             @RequestParam String nombreFuente,
-            @RequestParam("archivo") MultipartFile archivoCsv) {
+            @RequestParam("archivo") MultipartFile archivoCsv) throws IOException {
+
+        System.out.println("euuuuuuuu subieron un CSV XD");
 
         FuenteEstaticaDTO fuente = fuentesService.registrarFuenteDesdeCsv(nombreFuente, archivoCsv);
         return ResponseEntity.status(HttpStatus.CREATED).body(fuente);
     }
 
-    @PutMapping("/{id}/csv")
-    public ResponseEntity<FuenteEstaticaDTO> actualizarCsvFuente(
-            @PathVariable Long id,
-            @RequestParam("archivo") MultipartFile archivoCsv) {
-
-        FuenteEstaticaDTO fuente = fuentesService.actualizarFuenteCsv(id, archivoCsv);
-        return ResponseEntity.ok(fuente);
-    }
 
     @GetMapping
     public ResponseEntity<List<FuenteEstaticaDTO>> listarFuentes() {

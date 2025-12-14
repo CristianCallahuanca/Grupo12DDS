@@ -6,6 +6,7 @@ import org.example.metamapa.estatico.models.dtos.FuenteEstaticaDTO;
 import org.example.metamapa.estatico.models.entidades.FuenteEstatica;
 import org.example.metamapa.estatico.models.repositorios.IFuenteEstaticaRepositorio;
 import org.example.metamapa.estatico.service.IFuentesEstaticasService;
+import org.example.metamapa.estatico.service.IProcesadorCsvService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,13 +23,18 @@ import java.util.List;
 public class FuentesEstaticasService implements IFuentesEstaticasService {
 
     private final IFuenteEstaticaRepositorio fuenteRepo;
+    private final IProcesadorCsvService procesadorCsvService;
 
     @Value("${fileserver.basePath}")
     private String baseDir; // o podemos agregar esta base dentro del proyecto "./data/csv"
 
     @Override
-    public FuenteEstaticaDTO registrarFuenteDesdeCsv(String nombreFuente, MultipartFile archivoCsv) {
-        // 1) Creamos la entidad sin ruta aún
+    public FuenteEstaticaDTO registrarFuenteDesdeCsv(
+            String nombreFuente,
+            MultipartFile archivoCsv
+    ) throws IOException {
+
+        // 1️⃣ Persistís la fuente
         FuenteEstatica fuente = FuenteEstatica.builder()
                 .nombreFuente(nombreFuente)
                 .nombreArchivoOriginal(archivoCsv.getOriginalFilename())
@@ -37,12 +43,19 @@ public class FuentesEstaticasService implements IFuentesEstaticasService {
                 .fechaRegistro(LocalDateTime.now())
                 .build();
 
-        fuente = fuenteRepo.save(fuente); // obtengo el id
+        fuente = fuenteRepo.save(fuente);
 
+        // 2️⃣ Procesás directamente desde el archivo recibido
+        procesadorCsvService.procesarFuenteDesdeBytes(
+                fuente,
+                archivoCsv.getBytes(),
+                archivoCsv.getOriginalFilename()
+        );
 
         return mapearADTO(fuente);
     }
 
+    /*
     @Override
     public FuenteEstaticaDTO actualizarFuenteCsv(Long fuenteId, MultipartFile archivoCsv) {
         FuenteEstatica fuente = fuenteRepo.findById(fuenteId)
@@ -67,7 +80,7 @@ public class FuentesEstaticasService implements IFuentesEstaticasService {
         fuenteRepo.save(fuente);
 
         return mapearADTO(fuente);
-    }
+    }*/
 
     @Override
     public List<FuenteEstaticaDTO> listarFuentes() {

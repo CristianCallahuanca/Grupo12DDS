@@ -22,8 +22,6 @@ public class FuenteEstatica {
 
     private String nombreFuente;
 
-    private String rutaArchivoCsv;
-
     private String nombreArchivoOriginal;
 
     private String hashUltimoProcesado;

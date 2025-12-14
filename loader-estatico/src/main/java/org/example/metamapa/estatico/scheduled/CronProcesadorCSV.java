@@ -19,7 +19,7 @@ public class CronProcesadorCSV {
         procesador.procesarFuentesPendientes();
     }
 
-    @Scheduled(cron = "0 0 * * * *") // cada 1h
+    //@Scheduled(cron = "0 0 * * * *") // cada 1h
     public void ejecucionPeriodica() {
         procesador.procesarFuentesPendientes();
     }
