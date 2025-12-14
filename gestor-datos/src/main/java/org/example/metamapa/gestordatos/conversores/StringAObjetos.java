@@ -98,7 +98,6 @@ public class StringAObjetos {
             CriterioRequest criterio = new CriterioRequest();
 
             switch (clave) {
-
                 // === FILTROS BÁSICOS ===
                 case "coleccionId" -> {
                     criterio.setTipo("porColeccion");

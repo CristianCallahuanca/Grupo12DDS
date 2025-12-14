@@ -44,7 +44,6 @@ public class HechosService implements IHechosService {
         }
     }
 
-
     public void cargarHecho(HechoCrudoDTO_IN hecho,List<MultipartFile> files){
 
         repositorioHechosCrudos.save(dtoInAHechoCrudo(hecho,files));

@@ -39,30 +39,6 @@ public class FuentesEstaticasService implements IFuentesEstaticasService {
 
         fuente = fuenteRepo.save(fuente); // obtengo el id
 
-        // 2) Construyo una ruta de archivo estable a partir del id
-        Path dir = Path.of(baseDir);
-        try {
-            Files.createDirectories(dir);
-        } catch (IOException e) {
-            log.error("No se pudo crear el directorio de CSVs {}: {}", baseDir, e.getMessage());
-            throw new RuntimeException("Error inicializando directorio de CSV", e);
-        }
-
-        String nombreFs = "fuente_" + fuente.getId() + ".csv";
-        Path ruta = dir.resolve(nombreFs);
-
-        // 3) Guardo físicamente el archivo
-        try {
-            archivoCsv.transferTo(ruta.toFile());
-        } catch (IOException e) {
-            log.error("Error guardando archivo CSV {} para la fuente {}: {}",
-                    ruta, nombreFuente, e.getMessage());
-            throw new RuntimeException("Error guardando archivo CSV", e);
-        }
-
-        // 4) Actualizo la ruta en la entidad
-        fuente.setRutaArchivoCsv(ruta.toString());
-        fuenteRepo.save(fuente);
 
         return mapearADTO(fuente);
     }
