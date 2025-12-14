@@ -7,7 +7,7 @@ spring:
 
 loader:
   self:
-    id: "loader-estaticosssss"
+    id: "loader-estaticosssssss"
     nombreFuente: "Fuente-CSV"
     tipo: "ESTATICA"
     baseUrl: "http://localhost:8101/fuenteEstatica"

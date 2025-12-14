@@ -34,5 +34,4 @@ public class HechosAdminController {
         return ResponseEntity.status(200).body(hechosService.denegarSolicitud(id));
     }
 
-
 }
