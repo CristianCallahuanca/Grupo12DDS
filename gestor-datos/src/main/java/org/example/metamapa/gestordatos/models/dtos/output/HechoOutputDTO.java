@@ -19,5 +19,6 @@ public class HechoOutputDTO {
     private List<String> archivosMultimedia;
     private String nombre_contribuyente;
     private String apellido_contribuyente;
+    private String sugerencia_cambio;
 }
 

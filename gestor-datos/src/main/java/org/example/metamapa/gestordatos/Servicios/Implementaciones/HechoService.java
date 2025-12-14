@@ -219,6 +219,7 @@ public class HechoService implements IHechoService {
         ); //TODO: CURAR ESTO
         dto.setEtiqueta(hecho.getEtiqueta());
         dto.setArchivosMultimedia(hecho.getArchivosMultimedia());
+        dto.setSugerencia_cambio(hecho.getSugerenciaCambio());
 
         if (hecho.getContribuyente() != null) {
             ContribuyenteRegistrado c = hecho.getContribuyente();
