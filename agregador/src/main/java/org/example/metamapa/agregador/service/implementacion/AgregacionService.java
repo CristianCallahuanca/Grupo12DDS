@@ -3,6 +3,7 @@ package org.example.metamapa.agregador.service.implementacion;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.example.metamapa.agregador.models.dtos.DTO_IN.HechoDTO_IN;
+import org.example.metamapa.agregador.models.entidades.EstadoHecho;
 import org.example.metamapa.agregador.models.entidades.Fuente;
 import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.example.metamapa.agregador.models.repositorios.IFuenteRepository;
@@ -17,6 +18,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -47,16 +50,11 @@ public class AgregacionService implements IAgregacionService{
         this.webClient = WebClient.create();
     }
 
-    @Transactional
     public void integrarHechosFuentes() {
         log.info("=== Iniciando proceso de integración de hechos ===");
         long inicio = System.currentTimeMillis();
 
         List<HechoDTO_IN> hechosDTO = obtenerHechosDeFuentesParalelo();
-
-        if(hechosDTO.size() > 0){
-            System.out.println("el id del wachin: " + hechosDTO.get(0).getContribuyenteID());
-        }
 
         int total = hechosDTO.size();
         log.info("Se recibieron {} hechos desde las fuentes registradas.", total);
@@ -78,21 +76,73 @@ public class AgregacionService implements IAgregacionService{
         int eliminados = hechosNormalizados.size() - hechosFiltrados.size();
         log.info("Filtrados {} hechos duplicados entre fuentes.", eliminados);
 
-        try {
-            hechosRepository.saveAll(hechosFiltrados);
-            log.info("Guardados {} hechos nuevos.", hechosFiltrados.size());
-        } catch (Exception e) {
-            log.error("Error al guardar hechos: {}", e.getMessage());
-        }
+        // limitar fecha hechos estatica
+        hechosFiltrados.forEach(this::validarVisibilidadPorCategoria);
+
+        // 🔥 LA CLAVE: persistencia separada
+        guardarHechosSeguro(hechosFiltrados);
 
         long fin = System.currentTimeMillis();
-        log.info("Integración completada: {} hechos almacenados en {} ms (~{} min).",
-                hechosNormalizados.size(),
+        log.info("Integración completada: {} hechos procesados en {} ms (~{} min).",
+                hechosFiltrados.size(),
                 (fin - inicio),
                 String.format("%.2f", (fin - inicio) / 60000.0));
     }
 
+    @Transactional
+    public void guardarHechosSeguro(List<Hecho> hechos) {
+        try {
+            hechosRepository.saveAll(hechos);
+            log.info("Guardados {} hechos nuevos.", hechos.size());
+        } catch (Exception e) {
+            log.error("❌ Error persistiendo hechos. Se revierte solo esta operación.", e);
+            throw e; // IMPORTANTE: que Spring haga rollback de ESTE método
+        }
+    }
 
+    public void validarVisibilidadPorCategoria(Hecho hecho) {
+
+        // Si no hay categoría o fecha → visible por defecto
+        if (hecho.getCategoria() == null || hecho.getFechaAcontecimiento() == null) {
+            hecho.setEstadoHecho(EstadoHecho.NO_VISIBLE);
+            return;
+        }
+
+        String categoria = hecho.getCategoria().getNombre().toLowerCase();
+        LocalDate fechaHecho = hecho.getFechaAcontecimiento().toLocalDate();
+        LocalDate hoy = LocalDate.now();
+
+        long mesesTranscurridos = ChronoUnit.MONTHS.between(fechaHecho, hoy);
+
+        boolean fueraDeRango = switch (categoria) {
+
+            case "vientos fuertes" -> mesesTranscurridos > 2;
+            case "granizo" -> mesesTranscurridos > 2;
+            case "nevadas" -> mesesTranscurridos > 3;
+
+            case "inundaciones" -> mesesTranscurridos > 24;
+            case "derrumbes" -> mesesTranscurridos > 36;
+            case "incendios" -> mesesTranscurridos > 12;
+
+            case "calor extremo" -> mesesTranscurridos > 24;
+            case "sequía" -> mesesTranscurridos > 12;
+
+            case "actividad volcánica" -> mesesTranscurridos > 120;
+            case "contaminación" -> mesesTranscurridos > 24; //
+            case "derrame" -> mesesTranscurridos > 24;
+
+            case "evento sanitario" -> mesesTranscurridos > 24;
+            case "intoxicación masiva" -> mesesTranscurridos > 36;
+
+            default -> false; // Categoría desconocida → visible
+        };
+
+        if (fueraDeRango) {
+            hecho.setEstadoHecho(EstadoHecho.NO_VISIBLE);
+        } else {
+            hecho.setEstadoHecho(EstadoHecho.VISIBLE);
+        }
+    }
 
     public List<HechoDTO_IN> obtenerHechosDeFuentesParalelo() {
         List<Fuente> fuentes = fuenteRepository.findAll();
