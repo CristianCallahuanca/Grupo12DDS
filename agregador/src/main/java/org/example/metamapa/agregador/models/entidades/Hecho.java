@@ -36,6 +36,8 @@ public class Hecho {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
+    @Column(name = "sugerencia_cambio")
+    private String sugerenciaCambio;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ubicacion_id")

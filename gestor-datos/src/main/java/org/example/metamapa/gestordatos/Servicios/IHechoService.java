@@ -20,5 +20,13 @@ public interface IHechoService {
     public List<Hecho> filtrarHechos(List<CondicionDeFiltrado> condiciones);
 
     boolean editarHechoContribuyente(Long id, Map<String, Object> cambios);
+
     long contarTodos();
+
+    HechoOutputDTO aprobarSolicitud(Long id);
+
+    HechoOutputDTO aprobarSugerenciaSolicitud(Long id, String sujerencia);
+
+    HechoOutputDTO denegarSolicitud(Long id);
+
 }

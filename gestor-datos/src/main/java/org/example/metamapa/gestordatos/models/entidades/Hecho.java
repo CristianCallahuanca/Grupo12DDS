@@ -46,6 +46,9 @@ public class Hecho {
     @Column(name = "fecha_carga", nullable = false)
     private LocalDateTime fechaCarga;
 
+    @Column(name = "sugerencia_cambio")
+    private String sugerenciaCambio;
+
     @Enumerated(EnumType.STRING)
     private EstadoHecho estadoHecho;
 

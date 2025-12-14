@@ -6,11 +6,9 @@ import org.example.metamapa.gestordatos.Servicios.IHechoService;
 import org.example.metamapa.gestordatos.conversores.StringAObjetos;
 import org.example.metamapa.gestordatos.models.dtos.input.CriterioRequest;
 import org.example.metamapa.gestordatos.models.dtos.output.HechoOutputDTO;
-import org.example.metamapa.gestordatos.models.entidades.Categoria;
-import org.example.metamapa.gestordatos.models.entidades.ContribuyenteRegistrado;
+import org.example.metamapa.gestordatos.models.entidades.*;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
-import org.example.metamapa.gestordatos.models.entidades.Hecho;
-import org.example.metamapa.gestordatos.models.entidades.Ubicacion;
+import org.example.metamapa.gestordatos.models.entidades.enums.EstadoEliminar;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
 import org.example.metamapa.gestordatos.models.entidades.enums.TipoFuente;
 import org.example.metamapa.gestordatos.models.repositorios.ICategoriaRepository;
@@ -37,6 +35,43 @@ public class HechoService implements IHechoService {
     /*
        ================ BÚSQUEDA Y FILTRADO ======================
     */
+
+    @Override
+    public HechoOutputDTO aprobarSolicitud(Long id){
+        Hecho hecho =  repositorioHechos.findById(id).orElse(null);
+
+        if(hecho == null) return null;
+
+        hecho.setEstadoHecho(EstadoHecho.VISIBLE);
+        repositorioHechos.save(hecho);
+
+        return hechoADTOOut(hecho);
+    }
+
+    @Override
+    public HechoOutputDTO aprobarSugerenciaSolicitud(Long id, String sugerencia){
+        Hecho hecho =  repositorioHechos.findById(id).orElse(null);
+
+        if(hecho == null) return null;
+
+        hecho.setEstadoHecho(EstadoHecho.VISIBLE);
+        hecho.setSugerenciaCambio(sugerencia);
+        repositorioHechos.save(hecho);
+
+        return hechoADTOOut(hecho);
+    }
+
+    @Override
+    public HechoOutputDTO denegarSolicitud(Long id){
+        Hecho hecho =  repositorioHechos.findById(id).orElse(null);
+
+        if(hecho == null) return null;
+
+        hecho.setEstadoHecho(EstadoHecho.NO_VISIBLE);
+        repositorioHechos.save(hecho);
+
+        return hechoADTOOut(hecho);
+    }
 
     @Override
     @Transactional(readOnly = true)
