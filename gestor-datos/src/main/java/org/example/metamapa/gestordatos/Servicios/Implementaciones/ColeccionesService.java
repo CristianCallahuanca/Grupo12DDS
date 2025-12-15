@@ -78,18 +78,20 @@ public class ColeccionesService implements IColeccionesService {
 
         return coleccionesRepository.findById(handle).map(c -> {
 
-            // 1️⃣ Actualizar metadata
+            // 1️⃣ Metadata
             c.setTitulo(cambios.getTitulo());
             c.setDescripcion(cambios.getDescripcion());
             c.setAlgoritmo(
-                    StringAObjetos.algoritmoConsensoFactory(cambios.getAlgoritmoConsenso())
+                    StringAObjetos.algoritmoConsensoFactory(
+                            cambios.getAlgoritmoConsenso()
+                    )
             );
 
-            // 2️⃣ Orígenes
+            // 2️⃣ Orígenes reales
             c.getOrigenesReales().clear();
             c.getOrigenesReales().addAll(cambios.getOrigenesReales());
 
-            // 3️⃣ Criterios (reemplazo simple, SIN orphan)
+            // 3️⃣ Criterios (REEMPLAZO TOTAL)
             c.getCriterios().clear();
             List<CondicionDeFiltrado> nuevosCriterios =
                     cambios.getCriterios().stream()
@@ -99,28 +101,35 @@ public class ColeccionesService implements IColeccionesService {
 
             inyectarCriteriosDeOrigen(c);
 
-            // 4️⃣ Recalcular hechos
+            // 4️⃣ Recalcular hechos que cumplen
             List<Hecho> hechosQueCumplen = obtenerHechosIniciales(c);
 
-            // 🔥 CLAVE: borrar asociaciones viejas
+            // 🔥 5️⃣ BORRAR TODAS LAS ASOCIACIONES VIEJAS
+            // orphanRemoval=true → Hibernate hace DELETE
             c.getHechosColeccion().clear();
 
-            // 🔥 y crear nuevas asociaciones
+            // 🔥 6️⃣ CREAR NUEVAS ASOCIACIONES
             for (Hecho h : hechosQueCumplen) {
-                HechoDeColeccion hc = new HechoDeColeccion(h, false);
+                HechoDeColeccion hc = new HechoDeColeccion();
                 hc.setColeccion(c);
+                hc.setHecho(h);
+                hc.setConsensuado(false);
                 c.getHechosColeccion().add(hc);
             }
 
+            // 7️⃣ Guardar solo la colección
             coleccionesRepository.save(c);
 
-            log.info("Colección {} actualizada con {} hechos",
-                    handle, hechosQueCumplen.size());
+            log.info(
+                    "Colección {} actualizada. Hechos asociados: {}",
+                    handle,
+                    hechosQueCumplen.size()
+            );
 
             return true;
+
         }).orElse(false);
     }
-
 
 
     @Override

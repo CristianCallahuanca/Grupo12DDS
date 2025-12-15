@@ -42,7 +42,7 @@ public class Coleccion {
     @JoinColumn(name = "coleccion_id")
     private List<CondicionDeFiltrado> criterios = new ArrayList<>();
 
-    @OneToMany(mappedBy = "coleccion", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "coleccion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HechoDeColeccion> hechosColeccion = new ArrayList<>();
 
     @Convert(converter = AlgoritmoConsensoAttributeConverter.class)
