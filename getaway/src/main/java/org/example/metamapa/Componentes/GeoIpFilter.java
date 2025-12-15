@@ -5,10 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.metamapa.Servicios.GeoIpService;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 
 import java.io.IOException;
 
@@ -28,18 +26,20 @@ public class GeoIpFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String clientIp = getClientIp(request);
-        String countryCode = geoIpService.getCountryCode(clientIp);
 
-        // Permitir localhost (dev)
-        if ("127.0.0.1".equals(clientIp) || "0:0:0:0:0:0:0:1".equals(clientIp)) {
+        // Permitir localhost y redes privadas (DEV)
+        if (esIpLocal(clientIp)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        System.out.println("Se esta queriendo conectar de: " + countryCode);
+        String countryCode = geoIpService.getCountryCode(clientIp);
 
-        if (!"AR".equals(countryCode)) {
+        System.out.println("Conexión desde IP: " + clientIp + " | País: " + countryCode);
+
+        if (!"AR".equalsIgnoreCase(countryCode)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("Acceso permitido solo desde Argentina");
             return;
         }
 
@@ -55,5 +55,12 @@ public class GeoIpFilter extends OncePerRequestFilter {
 
         return request.getRemoteAddr();
     }
-}
 
+    private boolean esIpLocal(String ip) {
+        return ip.equals("127.0.0.1")
+                || ip.equals("0:0:0:0:0:0:0:1")
+                || ip.startsWith("192.168.")
+                || ip.startsWith("10.")
+                || ip.startsWith("172.");
+    }
+}

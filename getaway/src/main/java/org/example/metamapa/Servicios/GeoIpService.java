@@ -1,36 +1,58 @@
 package org.example.metamapa.Servicios;
 
-import com.maxmind.geoip2.DatabaseReader;
-import com.maxmind.geoip2.model.CountryResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
+import java.time.Instant;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GeoIpService {
 
-    private final DatabaseReader databaseReader;
+    private static final long CACHE_TTL_SECONDS = 1800; // 30 min
 
-    public GeoIpService() throws IOException {
-        InputStream dbStream =
-                getClass().getResourceAsStream("/geoip/GeoLite2-Country.mmdb");
+    private final RestTemplate restTemplate = new RestTemplate();
 
-        if (dbStream == null) {
-            throw new IllegalStateException("GeoLite2 database not found");
-        }
-
-        this.databaseReader = new DatabaseReader.Builder(dbStream).build();
-    }
+    private final Map<String, CacheEntry> cache = new ConcurrentHashMap<>();
 
     public String getCountryCode(String ip) {
+
+        CacheEntry entry = cache.get(ip);
+
+        if (entry != null && !entry.isExpired()) {
+            return entry.countryCode;
+        }
+
         try {
-            InetAddress address = InetAddress.getByName(ip);
-            CountryResponse response = databaseReader.country(address);
-            return response.getCountry().getIsoCode(); // ej: "AR"
+            String url = "https://ipapi.co/" + ip + "/country/";
+            String countryCode = restTemplate.getForObject(url, String.class);
+
+            if (countryCode == null || countryCode.isBlank()) {
+                countryCode = "UNKNOWN";
+            }
+
+            cache.put(ip, new CacheEntry(countryCode.trim()));
+            return countryCode.trim();
+
         } catch (Exception e) {
-            return null;
+            return "UNKNOWN";
+        }
+    }
+
+    /* ========================= */
+
+    private static class CacheEntry {
+        String countryCode;
+        long timestamp;
+
+        CacheEntry(String countryCode) {
+            this.countryCode = countryCode;
+            this.timestamp = Instant.now().getEpochSecond();
+        }
+
+        boolean isExpired() {
+            return Instant.now().getEpochSecond() - timestamp > CACHE_TTL_SECONDS;
         }
     }
 }

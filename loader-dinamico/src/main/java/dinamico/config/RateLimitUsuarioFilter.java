@@ -30,8 +30,8 @@ public class RateLimitUsuarioFilter implements Filter {
         return Bucket4j.builder()
                 .addLimit(
                         Bandwidth.classic(
-                                2,
-                                Refill.intervally(2, Duration.ofHours(1))
+                                10,
+                                Refill.intervally(10, Duration.ofHours(1))
                         )
                 )
                 .build();
@@ -41,8 +41,8 @@ public class RateLimitUsuarioFilter implements Filter {
         return Bucket4j.builder()
                 .addLimit(
                         Bandwidth.classic(
-                                2,
-                                Refill.intervally(2, Duration.ofHours(1))
+                                10,
+                                Refill.intervally(10, Duration.ofHours(1))
                         )
                 )
                 .build();
