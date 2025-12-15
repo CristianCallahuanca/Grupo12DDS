@@ -142,6 +142,8 @@ public class NormalizacionService implements INormalizacionService {
 
         // Contribuyente
 
+        System.out.println("TIPO DE FUENTE:" + tipoFuente);
+
         if (tipoFuente == TipoFuente.DINAMICA) {
 
             try {
@@ -156,6 +158,7 @@ public class NormalizacionService implements INormalizacionService {
                     // Hecho anónimo
                     h.setContribuyente(null);
                 }
+                System.out.println("LO PUSE EN REVISION");
 
                 h.setEstadoHecho(EstadoHecho.EN_REVISION);
 

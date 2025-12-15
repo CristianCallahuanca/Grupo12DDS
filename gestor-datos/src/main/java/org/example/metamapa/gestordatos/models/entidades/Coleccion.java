@@ -38,11 +38,11 @@ public class Coleccion {
     @Column(name = "descripcion")
     private String descripcion;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "coleccion_id")
     private List<CondicionDeFiltrado> criterios = new ArrayList<>();
 
-    @OneToMany(mappedBy = "coleccion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "coleccion", cascade = CascadeType.ALL)
     private List<HechoDeColeccion> hechosColeccion = new ArrayList<>();
 
     @Convert(converter = AlgoritmoConsensoAttributeConverter.class)

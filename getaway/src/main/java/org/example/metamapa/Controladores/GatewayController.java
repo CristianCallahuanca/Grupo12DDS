@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -49,11 +50,10 @@ public class GatewayController {
 
         String path = request.getRequestURI().substring(("/" + modulo).length());
 
-
         String targetUrl = baseUrl + "/" + modulo + path +
                 (request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
-        System.out.println("Path: " + targetUrl);
+        System.out.println("Metodo " + request.getMethod() + " con Path: " + targetUrl);
 
         HttpUriRequest proxyRequest;
 
@@ -77,6 +77,9 @@ public class GatewayController {
                         )
                 );
                 proxyRequest = put;
+            }
+            case "DELETE" -> {
+                proxyRequest = new HttpDelete(targetUrl);
             }
             default -> proxyRequest = new HttpGet(targetUrl);
         }

@@ -73,25 +73,55 @@ public class ColeccionesService implements IColeccionesService {
     }
 
     @Override
+    @Transactional
     public boolean actualizarColeccion(String handle, ColeccionInputDTO cambios) {
+
         return coleccionesRepository.findById(handle).map(c -> {
-            // Actualizar todos los campos (asume que el DTO trae todos los valores)
+
+            // 1️⃣ Actualizar metadata
             c.setTitulo(cambios.getTitulo());
             c.setDescripcion(cambios.getDescripcion());
-            c.setAlgoritmo(StringAObjetos.algoritmoConsensoFactory(cambios.getAlgoritmoConsenso()));
+            c.setAlgoritmo(
+                    StringAObjetos.algoritmoConsensoFactory(cambios.getAlgoritmoConsenso())
+            );
 
+            // 2️⃣ Orígenes
             c.getOrigenesReales().clear();
             c.getOrigenesReales().addAll(cambios.getOrigenesReales());
 
+            // 3️⃣ Criterios (reemplazo simple, SIN orphan)
             c.getCriterios().clear();
-            var criterios = cambios.getCriterios().stream().map(StringAObjetos::criterioFactory).toList();
-            c.getCriterios().addAll(criterios);
+            List<CondicionDeFiltrado> nuevosCriterios =
+                    cambios.getCriterios().stream()
+                            .map(StringAObjetos::criterioFactory)
+                            .toList();
+            c.getCriterios().addAll(nuevosCriterios);
+
+            inyectarCriteriosDeOrigen(c);
+
+            // 4️⃣ Recalcular hechos
+            List<Hecho> hechosQueCumplen = obtenerHechosIniciales(c);
+
+            // 🔥 CLAVE: borrar asociaciones viejas
+            c.getHechosColeccion().clear();
+
+            // 🔥 y crear nuevas asociaciones
+            for (Hecho h : hechosQueCumplen) {
+                HechoDeColeccion hc = new HechoDeColeccion(h, false);
+                hc.setColeccion(c);
+                c.getHechosColeccion().add(hc);
+            }
 
             coleccionesRepository.save(c);
-            log.info("Colección {} actualizada", handle);
+
+            log.info("Colección {} actualizada con {} hechos",
+                    handle, hechosQueCumplen.size());
+
             return true;
         }).orElse(false);
     }
+
+
 
     @Override
     public boolean eliminarColeccion(String handle) {

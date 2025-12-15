@@ -6,6 +6,7 @@ import org.example.metamapa.agregador.models.dtos.DTO_IN.HechoDTO_IN;
 import org.example.metamapa.agregador.models.entidades.EstadoHecho;
 import org.example.metamapa.agregador.models.entidades.Fuente;
 import org.example.metamapa.agregador.models.entidades.Hecho;
+import org.example.metamapa.agregador.models.entidades.TipoFuente;
 import org.example.metamapa.agregador.models.repositorios.IFuenteRepository;
 import org.example.metamapa.agregador.models.repositorios.IRepositorioHechos;
 import org.example.metamapa.agregador.service.IAgregacionService;
@@ -80,6 +81,7 @@ public class AgregacionService implements IAgregacionService{
         hechosFiltrados.forEach(this::validarVisibilidadPorCategoria);
 
         // 🔥 LA CLAVE: persistencia separada
+
         guardarHechosSeguro(hechosFiltrados);
 
         long fin = System.currentTimeMillis();
@@ -137,10 +139,12 @@ public class AgregacionService implements IAgregacionService{
             default -> false; // Categoría desconocida → visible
         };
 
-        if (fueraDeRango) {
+        if (fueraDeRango && hecho.getTipoFuente() != TipoFuente.DINAMICA) { // si es de dinamica no quiero que entre a esto
             hecho.setEstadoHecho(EstadoHecho.NO_VISIBLE);
         } else {
-            hecho.setEstadoHecho(EstadoHecho.VISIBLE);
+            if(hecho.getTipoFuente() != TipoFuente.DINAMICA){
+                hecho.setEstadoHecho(EstadoHecho.VISIBLE);
+            }
         }
     }
 
