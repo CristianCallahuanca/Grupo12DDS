@@ -1,0 +1,54 @@
+"""
+Representa un hecho del sistema
+"""
+type Hecho {
+  id: ID
+  titulo: String
+  descripcion: String
+  categoria: String
+  contieneMultimedia: Boolean
+  fechaCarga: String
+  fechaAcontecimiento: String
+}
+
+"""
+Filtros disponibles para buscar hechos
+(reflejan los query params del endpoint REST)
+"""
+input HechoFiltroInput {
+
+  # Coordenadas (bounding box)
+  sur: Float
+  oeste: Float
+  norte: Float
+  este: Float
+
+  # Texto
+  titulo: String
+  descripcion: String
+
+  # Clasificación
+  categoria: String
+  estadoDeseado: String
+  coleccionId: String
+  modo: String
+
+  # Multimedia
+  contieneMultimedia: Boolean
+
+  # Fechas (ISO-8601 LocalDateTime)
+  desdeAcontecimiento: String
+  hastaAcontecimiento: String
+  desdeCarga: String
+  hastaCarga: String
+}
+
+type Query {
+
+  """
+  Obtiene hechos aplicando filtros dinámicos
+  """
+  obtenerHechosFiltrados(
+    filtro: HechoFiltroInput
+  ): [Hecho]
+}
