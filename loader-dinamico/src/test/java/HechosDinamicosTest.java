@@ -47,7 +47,7 @@ public class HechosDinamicosTest {
         dto.setCategoria("Inundacion");
         dto.setContribuyenteID("1234");
         dto.setEtiqueta("Inundacion");
-        dto.setArchivosMultimedia(Collections.emptyList());
+        //dto.setArchivosMultimedia(Collections.emptyList());
         return dto;
     }
 
