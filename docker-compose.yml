@@ -111,7 +111,7 @@ services:
       dockerfile: loader-estatico/Dockerfile
     container_name: metamapa-estatico
     ports:
-      - "8101:8101"
+      - "8102:8101"
     environment:
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
@@ -131,7 +131,7 @@ services:
       dockerfile: loader-metamapa/Dockerfile
     container_name: metamapa-metamapa
     ports:
-      - "8103:8103"
+      - "8104:8103"
     environment:
       SPRING_PROFILES_ACTIVE: docker
     depends_on:
@@ -187,6 +187,38 @@ services:
       - prometheus
     networks: [metamapa-net]
     restart: unless-stopped
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    restart: unless-stopped
+    ports:
+      - 9100:9100
+    ###### linux
+    # command:
+    # - '--path.rootfs=/host'
+    # pid: host
+    # volumes:
+    # - '/:/host:ro,rslave'
+    ###### windows
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+
+  cadvisor:
+      image: gcr.io/cadvisor/cadvisor:latest
+      container_name: cadvisor
+      restart: unless-stopped
+      expose:
+        - 8080
+      volumes:
+        - /:/rootfs:ro
+        - /var/run:/var/run:rw
 
 networks:
   metamapa-net:
