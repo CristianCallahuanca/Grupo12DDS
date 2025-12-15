@@ -1,0 +1,35 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: application_logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: metamapa-logs
+          __path__: /var/log/aplicaciones/*/*.log
+
+    pipeline_stages:
+      - regex:
+          expression: /var/log/aplicaciones/(?P<app_name>[^/]+)/.*\.log
+      - labels:
+          app: app_name
+
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+        filters:
+          - name: label
+            values: ["com.docker.compose.project=grupo12dds"]
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/metamapa-(.*)'
+        target_label: service
+      - source_labels: ['__meta_docker_container_name']
+        target_label: container
