@@ -25,6 +25,7 @@ public class GatewayController {
 
     private final Map<String, String> servicios = new HashMap<>();
 
+    /*
     public GatewayController() {
         servicios.put("gestordatos", "http://localhost:8500");
         servicios.put("fuenteDinamica", "http://localhost:8102");
@@ -33,6 +34,15 @@ public class GatewayController {
         servicios.put("fuenteDemo", "http://localhost:8700");
         servicios.put("fuenteEstatica", "http://localhost:8101");
         servicios.put("fuenteMetamapa", "http://localhost:8103");
+    }*/
+    public GatewayController() {
+        servicios.put("gestordatos", "http://gestordatos:8500");
+        servicios.put("fuenteDinamica", "http://dinamico:8102");
+        servicios.put("agregador", "http://agregador:8200");
+        servicios.put("estadisticas", "http://estadisticas:8600");
+        servicios.put("fuenteDemo", "http://demo:8700/fuenteDemo");
+        servicios.put("fuenteEstatica", "http://estatico:8101");
+        servicios.put("fuenteMetamapa", "http://metamapa:8103");
     }
 
     @RequestMapping("/{modulo}/**")
