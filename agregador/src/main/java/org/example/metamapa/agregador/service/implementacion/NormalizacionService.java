@@ -158,9 +158,15 @@ public class NormalizacionService implements INormalizacionService {
                     // Hecho anónimo
                     h.setContribuyente(null);
                 }
-                System.out.println("LO PUSE EN REVISION");
+
+                Categoria categoriaReal = obtenerCategoriaExacta(dto.getCategoria());
+                if (categoriaReal != null) {
+                    h.setCategoria(categoriaReal);
+                    log.debug("   • Categoría dinámica asignada: {}", categoriaReal.getNombre());
+                }
 
                 h.setEstadoHecho(EstadoHecho.EN_REVISION);
+                //h.setCategoria();
 
             } catch (NumberFormatException e) {
                 log.warn("ContribuyenteID inválido: {}", dto.getContribuyenteID());
@@ -193,6 +199,12 @@ public class NormalizacionService implements INormalizacionService {
         }
 
         return h;
+    }
+
+    private Categoria obtenerCategoriaExacta(String nombreCategoria) {
+        if (nombreCategoria == null || nombreCategoria.isBlank()) return null;
+
+        return catalogoCategoriasService.obtenerCategoriaPorNombre(nombreCategoria.trim());
     }
 
     public List<Hecho> normalizarHechos(List<HechoDTO_IN> hechos) {
