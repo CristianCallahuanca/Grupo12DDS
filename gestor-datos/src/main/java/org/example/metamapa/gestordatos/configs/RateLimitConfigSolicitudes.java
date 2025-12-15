@@ -9,14 +9,18 @@ public class RateLimitConfigSolicitudes {
 
     @Bean
     public FilterRegistrationBean<RateLimitSolicitudesFilter> rateLimitSolicitudesRegistration() {
-        FilterRegistrationBean<RateLimitSolicitudesFilter> registration = new FilterRegistrationBean<>();
+
+        FilterRegistrationBean<RateLimitSolicitudesFilter> registration =
+                new FilterRegistrationBean<>();
 
         registration.setFilter(new RateLimitSolicitudesFilter());
 
         // Aplicar SOLO al endpoint de solicitudes
         registration.addUrlPatterns("/gestordatos/publica/solicitudes");
 
-        registration.setOrder(0); // ejecutarse antes que el controller
+        // Ejecutarse antes que el controller
+        registration.setOrder(0);
+
         return registration;
     }
 }

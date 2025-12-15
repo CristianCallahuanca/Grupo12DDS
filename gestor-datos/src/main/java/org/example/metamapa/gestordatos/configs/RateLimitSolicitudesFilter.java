@@ -1,12 +1,18 @@
 package org.example.metamapa.gestordatos.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.bucket4j.*;
-import jakarta.servlet.*;
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Bucket4j;
+import io.github.bucket4j.Refill;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
@@ -16,69 +22,98 @@ public class RateLimitSolicitudesFilter implements Filter {
 
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
-    private Bucket crearBucket() {
+    /* =========================
+       CREACIÓN DE BUCKETS
+       ========================= */
+
+    private Bucket crearBucketUsuario() {
         return Bucket4j.builder()
-                .addLimit(Bandwidth.classic(
-                        3,
-                        Refill.intervally(3, Duration.ofHours(1))
-                ))
+                .addLimit(
+                        Bandwidth.classic(
+                                2,
+                                Refill.intervally(2, Duration.ofHours(1))
+                        )
+                )
                 .build();
     }
 
-    private Bucket bucketPorUsuario(String usuario) {
-        return buckets.computeIfAbsent(usuario, k -> crearBucket());
+    private Bucket crearBucketIp() {
+        return Bucket4j.builder()
+                .addLimit(
+                        Bandwidth.classic(
+                                2,
+                                Refill.intervally(2, Duration.ofHours(1))
+                        )
+                )
+                .build();
     }
 
-    private String leerBody(HttpServletRequest request) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line;
+    private Bucket bucketPorClave(String clave) {
+        return buckets.computeIfAbsent(clave, k -> {
+            if (k.startsWith("USER:")) {
+                return crearBucketUsuario();
+            }
+            return crearBucketIp();
+        });
+    }
 
-        while ((line = reader.readLine()) != null) {
-            sb.append(line);
+    /* =========================
+       UTILIDADES
+       ========================= */
+
+    private String obtenerIp(HttpServletRequest req) {
+        String ip = req.getHeader("X-Forwarded-For");
+        if (ip != null && !ip.isBlank()) {
+            return ip.split(",")[0];
         }
-
-        return sb.toString();
+        return req.getRemoteAddr();
     }
+
+    /* =========================
+       FILTRO
+       ========================= */
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(
+            ServletRequest request,
+            ServletResponse response,
+            FilterChain chain
+    ) throws IOException, ServletException {
 
-        MultiReadHttpServletRequest wrapped = new MultiReadHttpServletRequest((HttpServletRequest) request);
+        MultiReadHttpServletRequest wrapped =
+                new MultiReadHttpServletRequest((HttpServletRequest) request);
+
         HttpServletResponse res = (HttpServletResponse) response;
 
-        System.out.println("ENTRO AL FILTER");
-        System.out.println("getRequestURI(): " + wrapped.getRequestURI());
-
-        if (wrapped.getMethod().equals("POST") &&
-                wrapped.getRequestURI().endsWith("/gestordatos/publica/solicitudes")) {
-
-            System.out.println("ENTRO AL IF");
+        if ("POST".equalsIgnoreCase(wrapped.getMethod())
+                && wrapped.getRequestURI().endsWith("/gestordatos/publica/solicitudes")) {
 
             String body = wrapped.getBodyString();
-            System.out.println("BODY EN FILTER: " + body);
 
-            if (body == null || body.isBlank()) {
-                System.out.println("BODY VACÍO — se continúa igual");
-                chain.doFilter(wrapped, response);
-                return;
+            if (body != null && !body.isBlank()) {
+
+                ObjectMapper mapper = new ObjectMapper();
+                Map<String, Object> json = mapper.readValue(body, Map.class);
+
+                String claveRateLimit;
+
+                if (json.containsKey("usuarioId") && json.get("usuarioId") != null) {
+                    // Usuario registrado
+                    claveRateLimit = "USER:" + json.get("usuarioId").toString();
+                } else {
+                    // Usuario no registrado → IP
+                    String ip = obtenerIp(wrapped);
+                    claveRateLimit = "IP:" + ip;
+                }
+
+                Bucket bucket = bucketPorClave(claveRateLimit);
+
+                if (!bucket.tryConsume(1)) {
+                    res.setStatus(429);
+                    res.getWriter().write("Has superado el limite permitido de solicitudes.");
+                    return;
+                }
             }
-
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> json = mapper.readValue(body, Map.class);
-
-            String usuarioId = json.get("usuarioId").toString();
-
-            Bucket bucket = bucketPorUsuario(usuarioId);
-
-            if (!bucket.tryConsume(1)) {
-                res.setStatus(429);
-                res.getWriter().write("Has superado el limite permitido de solicitudes.");
-                return;
-            }
-
-            System.out.println("Tokens restantes: " + bucket.getAvailableTokens());
         }
 
         chain.doFilter(wrapped, response);
