@@ -1,4 +1,4 @@
-package org.example.metamapa.gestordatos.config;
+package org.example.metamapa.gestordatos.configs;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
