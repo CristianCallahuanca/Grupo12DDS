@@ -11,3 +11,13 @@ spring:
   servlet:
     multipart:
       enabled: false
+
+gateway:
+  servicios:
+    gestordatos: "http://localhost:8500"
+    agregador: "http://localhost:8200"
+    estadisticas: "http://localhost:8600"
+    fuenteDinamica: "http://localhost:8102"
+    fuenteDemo: "http://localhost:8700"
+    fuenteEstatica: "http://localhost:8101"
+    fuenteMetamapa: "http://localhost:8103"
