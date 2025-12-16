@@ -20,16 +20,22 @@ public class HechosPublicosController {
     private final IHechoService hechosService;
 
     @GetMapping
-    public ResponseEntity<?> obtenerHechosFiltrados(@RequestParam Map<String, String> queryParams) {
-        List<CriterioRequest> criterios = StringAObjetos.convertirQueryParamsACriterios(queryParams);
-        List<HechoOutputDTO> hechos = hechosService.buscarTodosLosHechos(criterios);
-        return ResponseEntity.ok(Map.of(
-                "estado", "ok",
-                "filtros_aplicados", criterios.size(),
-                "hechos_encontrados", hechos.size(),
-                "hechos", hechos
-        ));
+    public ResponseEntity<List<HechoOutputDTO>> obtenerHechosFiltrados(
+            @RequestParam Map<String, String> queryParams) {
+
+        List<CriterioRequest> criterios =
+                StringAObjetos.convertirQueryParamsACriterios(queryParams);
+
+        List<HechoOutputDTO> hechos =
+                hechosService.buscarTodosLosHechos(criterios);
+
+        if (hechos.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204
+        }
+
+        return ResponseEntity.ok(hechos); // 200 + JSON array
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editarHecho(@PathVariable Long id, @RequestBody Map<String, Object> cambios) {
