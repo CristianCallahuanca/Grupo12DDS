@@ -20,13 +20,3 @@ management:
   endpoint:
     health:
       show-details: always
-
-gateway:
-  servicios:
-    gestordatos: "http://gestor:8500"
-    agregador: "http://agregador:8200"
-    estadisticas: "http://estadisticas:8600"
-    fuenteDinamica: "http://dinamico:8102"
-    fuenteEstatica: "http://estatico:8101"
-    fuenteDemo: "http://demo:8700"
-    fuenteMetamapa: "http://metamapa:8103"
