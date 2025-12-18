@@ -90,7 +90,12 @@ public class Coleccion {
     }
 
     public void aplicarConsenso() {
-        if (algoritmo != null) algoritmo.consensuarHechos(this.hechosColeccion);
+        if (algoritmo != null) {
+            algoritmo.consensuarHechos(this.hechosColeccion);
+        }
+        else {
+            getHechosColeccion().forEach( hc -> hc.setConsensuado(true));
+        };
     }
 
 
