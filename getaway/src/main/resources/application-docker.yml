@@ -13,6 +13,8 @@ logging:
     root: INFO
 
 management:
+  server:
+    port: 9091
   endpoints:
     web:
       exposure:
@@ -20,6 +22,7 @@ management:
   endpoint:
     health:
       show-details: always
+
 
 gateway:
   servicios:

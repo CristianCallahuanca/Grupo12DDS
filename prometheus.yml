@@ -44,4 +44,4 @@ scrape_configs:
   - job_name: "getaway"
     metrics_path: "/actuator/prometheus"
     static_configs:
-      - targets: ["metamapa-getaway:8080"]
+      - targets: ["metamapa-getaway:9091"]
