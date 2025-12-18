@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.metamapa.gestordatos.conversores.AlgoritmoConsensoAttributeConverter;
+import org.example.metamapa.gestordatos.models.Consenso.SinAlgoritmo;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.CondicionDeFiltrado;
 import org.example.metamapa.gestordatos.models.Consenso.AlgoritmoConsenso;
 import org.example.metamapa.gestordatos.models.ModosNavegacion.ModoNavegacion;
@@ -47,7 +48,7 @@ public class Coleccion {
 
     @Convert(converter = AlgoritmoConsensoAttributeConverter.class)
     @Column(name = "algoritmoConsenso")
-    private AlgoritmoConsenso algoritmo;
+    private AlgoritmoConsenso algoritmo = new SinAlgoritmo();
 
     public Coleccion(String handle,
                      TipoFuente tipoFuente,
@@ -88,12 +89,7 @@ public class Coleccion {
     }
 
     public void aplicarConsenso() {
-        if (algoritmo != null) {
-            algoritmo.consensuarHechos(this.hechosColeccion);
-        }
-        else {
-            this.hechosColeccion.forEach( hc -> hc.setConsensuado(true));
-        };
+        algoritmo.consensuarHechos(this.hechosColeccion);
     }
 
 

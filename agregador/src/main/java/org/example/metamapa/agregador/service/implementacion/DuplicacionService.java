@@ -15,6 +15,37 @@ public class DuplicacionService implements IDuplicacionService {
 
     private static final double RADIO_CERCANO_METROS = 30.0;
     private static final double RADIO_RAZONABLE_METROS = 100.0;
+/*
+    @Override
+    public List<Hecho> eliminarHechosRepetidos(List<Hecho> hechos) {
+            List<Hecho> consolidados = new ArrayList<>();
+            Set<Hecho> absorbidos = new HashSet<>();
+
+            for (int i = 0; i < hechos.size(); i++) {
+                Hecho base = hechos.get(i);
+                if (absorbidos.contains(base)) continue;
+
+                // El hecho base se avala a sí mismo inicialmente si la lista está vacía
+                if(base.getOrigenesQueAvalan().isEmpty()) {
+                    base.agregarAval(base.getOrigenReal());
+                }
+
+                for (int j = i + 1; j < hechos.size(); j++) {
+                    Hecho candidato = hechos.get(j);
+                    if (absorbidos.contains(candidato)) continue;
+
+                    if (sonPosiblesDuplicados(base, candidato)) {
+                        // FUSION: El base absorbe el origen del duplicado
+                        base.agregarAval(candidato.getOrigenReal());
+                        // Marcamos candidato para no procesarlo ni devolverlo (equivale a borrarlo)
+                        absorbidos.add(candidato);
+                    }
+                }
+                consolidados.add(base);
+            }
+            return consolidados;
+        }
+    }*/
 
     @Override
     public List<Hecho> eliminarHechosRepetidos(List<Hecho> hechos) {
