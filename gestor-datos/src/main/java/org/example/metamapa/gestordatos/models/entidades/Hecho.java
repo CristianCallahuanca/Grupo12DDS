@@ -103,6 +103,9 @@ public class Hecho {
 
     public void marcarComoNoVisible() { this.estadoHecho = EstadoHecho.NO_VISIBLE; }
 
+    public boolean esVisible(){
+        return this.estadoHecho.equals(EstadoHecho.VISIBLE);
+    }
 
     public boolean puedeSerEditadoPor(ContribuyenteRegistrado autor) {
         if (autor == null || this.contribuyente == null) return false;

@@ -76,13 +76,11 @@ public class Coleccion {
     }
 
     public List<Hecho> obtenerHechosConsensuados() {
-        if (algoritmo != null) {
             return hechosColeccion.stream()
-                    .filter(HechoDeColeccion::isConsensuado)
+                    //.filter(HechoDeColeccion::isConsensuado)
+                    .filter(hc -> hc.isConsensuado() && hc.getHecho().esVisible())
                     .map(HechoDeColeccion::getHecho)
                     .toList();
-        }
-        return obtenerHechosVisibles();
     }
 
     public List<Hecho> obtenerHechosPorModo(ModoNavegacion modo) {
@@ -94,7 +92,7 @@ public class Coleccion {
             algoritmo.consensuarHechos(this.hechosColeccion);
         }
         else {
-            getHechosColeccion().forEach( hc -> hc.setConsensuado(true));
+            this.hechosColeccion.forEach( hc -> hc.setConsensuado(true));
         };
     }
 
