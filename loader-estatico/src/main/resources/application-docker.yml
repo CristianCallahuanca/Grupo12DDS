@@ -3,10 +3,9 @@ spring:
     name: loader-estatico
 
   datasource:
-    url: jdbc:mysql://db-central:3306/loader_estatico?useSSL=false&serverTimezone=America/Argentina/Buenos_Aires&allowPublicKeyRetrieval=true
-    username: metamapa
-    password: metamapa_pass
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Argentina/Buenos_Aires
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -24,17 +23,14 @@ loader:
     id: "loader-estatico"
     nombreFuente: "Fuente-CSV"
     tipo: "ESTATICA"
-    # dentro de docker no es localhost
     baseUrl: "http://estatico:8101/fuenteEstatica"
   registro:
     retryDelayMs: 10000
 
-# IMPORTANTE: el "fileserver local" en docker no puede usar D:/...
-# O lo montás como volumen (recomendado) o cambiás a remoto/drive.
 fileserver:
   tipo: local
-  basePath: "/data"        # <- esta carpeta la vamos a mapear con volumes en compose
-  baseUrl: "http://gestor:8500/"  # si alguna parte usa remoto, que sea por nombre docker
+  basePath: "/data"
+  baseUrl: "http://gestor:8500/"
 
 agregador:
   baseUrl: "http://agregador:8200"
@@ -49,6 +45,3 @@ management:
     web:
       exposure:
         include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always

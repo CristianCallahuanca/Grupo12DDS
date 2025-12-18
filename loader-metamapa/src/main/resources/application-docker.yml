@@ -3,10 +3,9 @@ spring:
     name: loader-metamapa
 
   datasource:
-    url: jdbc:mysql://db-central:3306/loader_metamapa?useSSL=false&serverTimezone=America/Argentina/Buenos_Aires&allowPublicKeyRetrieval=true
-    username: metamapa
-    password: metamapa_pass
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Argentina/Buenos_Aires
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -24,12 +23,10 @@ loader:
   self:
     nombreFuente: "Fuente-MetaMapa"
     tipo: "PROXY"
-    # dentro de docker NO es localhost
     baseUrl: "http://metamapa:8103/fuenteMetamapa"
   registro:
     retryDelayMs: 10000
 
-# dentro de docker NO es localhost
 agregador:
   baseUrl: "http://agregador:8200"
 
@@ -43,6 +40,3 @@ management:
     web:
       exposure:
         include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      show-details: always

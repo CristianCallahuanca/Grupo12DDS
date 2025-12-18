@@ -3,10 +3,9 @@ spring:
     name: agregador
 
   datasource:
-    url: jdbc:mysql://db-central:3306/metamapa_central?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Argentina/Buenos_Aires
-    username: metamapa
-    password: metamapa_pass
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
