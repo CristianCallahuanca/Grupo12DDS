@@ -12,7 +12,7 @@ import java.util.List;
 public class ColeccionInputDTO {
     private String titulo;
     private String descripcion;
-    private String algoritmoConsenso; // Ej: "mayoriaSimple", "mayoriaAbsoluta", etc.
+    private String algoritmoConsenso; // Ej: "mayoriaSimple", "Absoluta", etc.
     private List<String> origenesReales = new ArrayList<>();
     private List<CriterioRequest> criterios = new ArrayList<>();
 }

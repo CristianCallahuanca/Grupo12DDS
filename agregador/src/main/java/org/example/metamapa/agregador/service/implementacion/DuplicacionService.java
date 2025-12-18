@@ -40,6 +40,10 @@ public class DuplicacionService implements IDuplicacionService {
     }
 
     private boolean sonPosiblesDuplicados(Hecho h1, Hecho h2) {
+        if(h1.getOrigenReal().getTipoFuente() != h2.getOrigenReal().getTipoFuente()){
+            return false;
+        }
+
         //No deduplicar si son de distintos contribuyentes registrados
         if (h1.getContribuyente() != null && h2.getContribuyente() != null) {
             if (h1.getContribuyente().getUserId() != h2.getContribuyente().getUserId()) {

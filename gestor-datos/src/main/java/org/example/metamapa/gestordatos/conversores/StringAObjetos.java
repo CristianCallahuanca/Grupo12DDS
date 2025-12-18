@@ -2,12 +2,9 @@ package org.example.metamapa.gestordatos.conversores;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.metamapa.gestordatos.models.Consenso.*;
 import org.example.metamapa.gestordatos.models.dtos.input.CriterioRequest;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.*;
-import org.example.metamapa.gestordatos.models.Consenso.Absoluto;
-import org.example.metamapa.gestordatos.models.Consenso.AlgoritmoConsenso;
-import org.example.metamapa.gestordatos.models.Consenso.MayoriaSimple;
-import org.example.metamapa.gestordatos.models.Consenso.MultiplesMenciones;
 import org.example.metamapa.gestordatos.models.ModosNavegacion.Curada;
 import org.example.metamapa.gestordatos.models.ModosNavegacion.Irrestricta;
 import org.example.metamapa.gestordatos.models.ModosNavegacion.ModoNavegacion;
@@ -79,6 +76,7 @@ public class StringAObjetos {
             case "mayoriasimple" -> new MayoriaSimple();
             case "absoluto" -> new Absoluto();
             case "multiplesmenciones" -> new MultiplesMenciones();
+            case "sinalgoritmo" -> new SinAlgoritmo();
             default -> throw new IllegalArgumentException("Algoritmo no válido: " + algoritmo +
                     "Valores válidos: mayoriasimple, absoluto, multiplesmenciones.");
         };
