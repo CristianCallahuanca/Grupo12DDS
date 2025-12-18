@@ -7,7 +7,7 @@ import java.util.Objects;
 
 
 public class MultiplesMenciones extends AlgoritmoConsenso {
-
+    private int minimoFuentesRequeridas = 2;
     @Override
     public String getNombre() {
         return "Múltiples Menciones";
@@ -16,26 +16,31 @@ public class MultiplesMenciones extends AlgoritmoConsenso {
     public boolean esConsensuado(Hecho hecho, List<Hecho> hechosDeColeccion) {
         // Agrupamos por título
         var grupo = hechosDeColeccion.stream()
-                .filter(h -> h.getTitulo().equalsIgnoreCase(hecho.getTitulo()))
+                .filter(h -> sonCercanosEntreSi(hecho, h)) //Obtengo hechos con ubicacion aproximada, pero que pueden tener distinto contenido
                 .toList();
 
+        if(grupo.size() <= 1) return false;
+
         long fuentesDistintas = grupo.stream()
-                .map(Hecho::getOrigenReal)
+                .map(h -> h.getOrigenReal().getTipoFuente())
                 .distinct()
                 .count();
 
         // Si hay al menos 2 fuentes distintas, y no hay conflictos entre atributos
-        boolean variasFuentes = fuentesDistintas > 1;
+        if(fuentesDistintas < minimoFuentesRequeridas) return false;
+
         boolean hayConflictos = grupo.stream().anyMatch(h1 ->
                 grupo.stream().anyMatch(h2 ->
-                        !h1.equals(h2) &&
-                                (!Objects.equals(h1.getDescripcion(), h2.getDescripcion()) ||
-                                        !Objects.equals(h1.getCategoria(), h2.getCategoria()) ||
-                                        !Objects.equals(h1.getFechaAcontecimiento(), h2.getFechaAcontecimiento()))
+                        !Objects.equals(h1.getHecho_id(), h2.getHecho_id()) &&
+                                !tienenElMismoContenido(h1, h2)
                 )
         );
 
-        return variasFuentes && !hayConflictos;
+        return !hayConflictos;
+    }
+
+    private boolean sonCercanosEntreSi(Hecho h1, Hecho h2){
+        return this.distanciaMetros(h1, h2) <= RADIO_RAZONABLE_METROS;
     }
 
 }

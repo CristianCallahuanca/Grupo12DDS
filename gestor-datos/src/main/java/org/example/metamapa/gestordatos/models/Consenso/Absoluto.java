@@ -14,7 +14,7 @@ public class Absoluto extends AlgoritmoConsenso{
     @Override
     public boolean esConsensuado(Hecho hecho, List<Hecho> hechosDeColeccion) {
         var grupo = hechosDeColeccion.stream()
-                .filter(h -> this.sonPosiblesDuplicados(h, hecho))
+                .filter(h -> this.tienenElMismoContenido(h, hecho))
                 .toList();
 
         long fuentesDistintas = grupo.stream()
