@@ -231,15 +231,16 @@ services:
       context: ../Front_Metamapa
       dockerfile: Dockerfile
       args:
-        VITE_URL_INICIAL_GESTOR: "http://${PUBLIC_IP}:8080/gestordatos"
-        VITE_URL_INICIAL_DINAMICA: "http://${PUBLIC_IP}:8080/fuenteDinamica"
-        VITE_URL_INICIAL_ESTADISTICAS: "http://${PUBLIC_IP}:8080/estadisticas"
-        VITE_URL_INICIAL_DEMO: "http://${PUBLIC_IP}:8080/fuenteDemo"
-        VITE_URL_INICIAL_ESTATICA: "http://${PUBLIC_IP}:8080/fuenteEstatica"
-        VITE_URL_INICIAL_METAMAPA: "http://${PUBLIC_IP}:8080/fuenteMetamapa"
-        VITE_URL_INICIAL_GETAWAY: "http://${PUBLIC_IP}:8080/getaway"
-        VITE_URL_GOOGLE_AUTH: "http://${PUBLIC_IP}:8080/gestordatos"
-        VITE_URL_GRAPHQL: "http://${PUBLIC_IP}:8080"
+        VITE_URL_INICIAL_GESTOR: "https://${PUBLIC_DOMAIN}/gestordatos"
+        VITE_URL_INICIAL_DINAMICA: "https://${PUBLIC_DOMAIN}/fuenteDinamica"
+        VITE_URL_INICIAL_ESTADISTICAS: "https://${PUBLIC_DOMAIN}/estadisticas"
+        VITE_URL_INICIAL_DEMO: "https://${PUBLIC_DOMAIN}/fuenteDemo"
+        VITE_URL_INICIAL_ESTATICA: "https://${PUBLIC_DOMAIN}/fuenteEstatica"
+        VITE_URL_INICIAL_METAMAPA: "https://${PUBLIC_DOMAIN}/fuenteMetamapa"
+        VITE_URL_INICIAL_GETAWAY: "https://${PUBLIC_DOMAIN}/getaway"
+        VITE_URL_GOOGLE_AUTH: "https://${PUBLIC_DOMAIN}/gestordatos"
+        VITE_URL_GRAPHQL: "https://${PUBLIC_DOMAIN}/graphql"
+
 
     container_name: metamapa-frontend
     ports:
