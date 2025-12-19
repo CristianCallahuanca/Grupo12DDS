@@ -17,6 +17,7 @@ spring:
 
 server:
   port: 8500
+  forward-headers-strategy: framework
 
 management:
   endpoints:
