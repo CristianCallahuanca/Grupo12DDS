@@ -231,7 +231,16 @@ services:
       context: ../Front_Metamapa
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: "http://${PUBLIC_IP}:8080"
+        VITE_URL_INICIAL_GESTOR: "http://${PUBLIC_IP}:8080/gestordatos"
+        VITE_URL_INICIAL_DINAMICA: "http://${PUBLIC_IP}:8080/fuenteDinamica"
+        VITE_URL_INICIAL_ESTADISTICAS: "http://${PUBLIC_IP}:8080/estadisticas"
+        VITE_URL_INICIAL_DEMO: "http://${PUBLIC_IP}:8080/fuenteDemo"
+        VITE_URL_INICIAL_ESTATICA: "http://${PUBLIC_IP}:8080/fuenteEstatica"
+        VITE_URL_INICIAL_METAMAPA: "http://${PUBLIC_IP}:8080/fuenteMetamapa"
+        VITE_URL_INICIAL_GETAWAY: "http://${PUBLIC_IP}:8080/getaway"
+        VITE_URL_GOOGLE_AUTH: "http://${PUBLIC_IP}:8080/gestordatos"
+        VITE_URL_GRAPHQL: "http://${PUBLIC_IP}:8080"
+
     container_name: metamapa-frontend
     ports:
       - "80:80"
