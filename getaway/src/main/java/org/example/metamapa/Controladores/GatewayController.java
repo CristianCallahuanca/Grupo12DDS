@@ -38,6 +38,46 @@ public class GatewayController {
             return;
         }
 
+        String fullPath = request.getRequestURI(); // ej: /gestordatos/contribuyentes/google
+
+        if (fullPath.startsWith("/gestordatos/contribuyentes/google")) {
+            log.info("OAUTH passthrough hit for {}", fullPath);
+
+            String method = request.getMethod();
+            if (!method.equals("GET") && !method.equals("HEAD")) {
+                response.sendError(405, "Method not allowed");
+                return;
+            }
+
+            String gestorBase = servicios.get("gestordatos");
+            if (gestorBase == null) {
+                response.sendError(500, "No está configurado gestordatos en gateway.servicios");
+                return;
+            }
+
+            String target = gestorBase + fullPath
+                    + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+
+            try (CloseableHttpClient client = HttpClients.custom()
+                    .disableRedirectHandling() // 🔥 clave: NO seguir redirects
+                    .build();
+                 CloseableHttpResponse proxyResp = client.execute(new HttpGet(target))) {
+
+                response.setStatus(proxyResp.getCode());
+
+                // Copiar headers (Location + Set-Cookie son claves)
+                for (Header h : proxyResp.getHeaders()) {
+                    if (!h.getName().equalsIgnoreCase("transfer-encoding")) {
+                        response.addHeader(h.getName(), h.getValue());
+                    }
+                }
+
+                response.flushBuffer();
+                return;
+            }
+        }
+
+        // --- Proxy normal ---
         String path = request.getRequestURI().substring(("/" + modulo).length());
 
         String targetUrl = baseUrl + "/" + modulo + path
@@ -45,49 +85,6 @@ public class GatewayController {
 
         log.info("Proxy {} {} -> {}", request.getMethod(), request.getRequestURI(), targetUrl);
 
-        // ====== CASO ESPECIAL: OAuth Google (NO proxyear HTML) ======
-        String fullPath = request.getRequestURI(); // ej: /gestordatos/contribuyentes/google
-        if ("/gestordatos/contribuyentes/google".equals(fullPath)) {
-
-            // Solo GET permitido
-            if (!"GET".equalsIgnoreCase(request.getMethod())) {
-                response.sendError(405, "Method not allowed");
-                return;
-            }
-
-            // Forzamos llamar al gestor directamente para obtener el 302 Location
-            String redirectBaseUrl = servicios.get("gestordatos");
-            if (redirectBaseUrl == null) {
-                response.sendError(500, "Servicio 'gestordatos' no configurado en gateway.servicios");
-                return;
-            }
-
-            String redirectTargetUrl = redirectBaseUrl + fullPath;
-
-            try (CloseableHttpClient client = HttpClients.createDefault();
-                 CloseableHttpResponse proxyResp = client.execute(new HttpGet(redirectTargetUrl))) {
-
-                int code = proxyResp.getCode();
-                response.setStatus(code);
-
-                // Copiar Location si existe (clave para que el browser siga el redirect a Google)
-                Header loc = proxyResp.getFirstHeader("Location");
-                if (loc != null) {
-                    response.setHeader("Location", loc.getValue());
-                }
-
-                // (Opcional) Copiar cache headers por prolijidad
-                Header cacheControl = proxyResp.getFirstHeader("Cache-Control");
-                if (cacheControl != null) response.setHeader("Cache-Control", cacheControl.getValue());
-
-                Header pragma = proxyResp.getFirstHeader("Pragma");
-                if (pragma != null) response.setHeader("Pragma", pragma.getValue());
-
-                return;
-            }
-        }
-
-        // ====== PROXY NORMAL ======
         HttpUriRequest proxyRequest;
 
         switch (request.getMethod()) {
@@ -95,13 +92,12 @@ public class GatewayController {
             case "PUT" -> proxyRequest = withBody(new HttpPut(targetUrl), request);
             case "PATCH" -> proxyRequest = withBody(new HttpPatch(targetUrl), request);
             case "DELETE" -> proxyRequest = new HttpDelete(targetUrl);
+            case "HEAD" -> proxyRequest = new HttpHead(targetUrl);
             case "GET" -> proxyRequest = new HttpGet(targetUrl);
-
             case "OPTIONS" -> {
                 response.setStatus(204);
                 return;
             }
-
             default -> {
                 response.sendError(405, "Método no soportado: " + request.getMethod());
                 return;
