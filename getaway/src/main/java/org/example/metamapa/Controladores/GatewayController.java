@@ -2,6 +2,7 @@ package org.example.metamapa.Controladores;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.*;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@Slf4j
 public class GatewayController {
 
     private final Map<String, String> servicios;
@@ -37,10 +39,13 @@ public class GatewayController {
             return;
         }
 
+
         String path = request.getRequestURI().substring(("/" + modulo).length());
 
         String targetUrl = baseUrl + "/" + modulo + path
                 + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+
+        log.info("Proxy {} {} -> {}", request.getMethod(), request.getRequestURI(), targetUrl);
 
         HttpUriRequest proxyRequest;
 
