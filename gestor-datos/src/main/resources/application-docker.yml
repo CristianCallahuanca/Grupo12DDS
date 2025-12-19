@@ -23,3 +23,10 @@ management:
     web:
       exposure:
         include: health,info,metrics,prometheus
+
+google:
+  client:
+    id: 310074938010-li1227rain2v0ub3f8cmdhbrh953j2qe.apps.googleusercontent.com
+    secret: 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
+  redirect:
+    uri: https://metamapadds.org/gestordatos/contribuyentes/google/callback
