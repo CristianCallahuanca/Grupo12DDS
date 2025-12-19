@@ -27,6 +27,66 @@ public class GatewayController {
         this.servicios = props.getServicios();
     }
 
+
+    @RequestMapping(value = "/graphql", method = {RequestMethod.POST, RequestMethod.GET})
+    public void proxyGraphQL(HttpServletRequest request,
+                             HttpServletResponse response) throws IOException {
+
+        String gestorBase = servicios.get("gestordatos");
+        if (gestorBase == null) {
+            response.sendError(500, "No está configurado gestordatos para GraphQL");
+            return;
+        }
+
+        String targetUrl = gestorBase + "/graphql";
+
+        log.info("Proxy GRAPHQL {} -> {}", request.getMethod(), targetUrl);
+
+        HttpUriRequest proxyRequest;
+
+        if ("GET".equals(request.getMethod())) {
+            proxyRequest = new HttpGet(targetUrl +
+                    (request.getQueryString() != null ? "?" + request.getQueryString() : ""));
+        } else {
+            HttpPost post = new HttpPost(targetUrl);
+            ContentType ct = request.getContentType() != null
+                    ? ContentType.parse(request.getContentType())
+                    : ContentType.APPLICATION_JSON;
+            post.setEntity(new InputStreamEntity(request.getInputStream(), ct));
+            proxyRequest = post;
+        }
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            if (!headerName.equalsIgnoreCase("host")
+                    && !headerName.equalsIgnoreCase("content-length")) {
+                proxyRequest.addHeader(headerName, request.getHeader(headerName));
+            }
+        }
+
+        try (CloseableHttpClient client = HttpClients.custom()
+                .disableRedirectHandling()
+                .build();
+             CloseableHttpResponse proxyResponse = client.execute(proxyRequest)) {
+
+            response.setStatus(proxyResponse.getCode());
+
+            for (Header header : proxyResponse.getHeaders()) {
+                if (!header.getName().equalsIgnoreCase("transfer-encoding")) {
+                    response.setHeader(header.getName(), header.getValue());
+                }
+            }
+
+            if (proxyResponse.getEntity() != null) {
+                proxyResponse.getEntity().getContent().transferTo(response.getOutputStream());
+            }
+        }
+    }
+
+
+
+
     @RequestMapping("/{modulo}/**")
     public void proxy(HttpServletRequest request,
                       HttpServletResponse response,
@@ -112,14 +172,24 @@ public class GatewayController {
             }
         }
 
-        try (CloseableHttpClient client = HttpClients.createDefault();
+        try (CloseableHttpClient client = HttpClients.custom()
+                .disableRedirectHandling()
+                .build();
              CloseableHttpResponse proxyResponse = client.execute(proxyRequest)) {
 
             response.setStatus(proxyResponse.getCode());
 
             for (Header header : proxyResponse.getHeaders()) {
-                if (!header.getName().equalsIgnoreCase("transfer-encoding")) {
-                    response.setHeader(header.getName(), header.getValue());
+                String name = header.getName();
+                if (!name.equalsIgnoreCase("transfer-encoding")
+                        && !name.equalsIgnoreCase("connection")
+                        && !name.equalsIgnoreCase("keep-alive")
+                        && !name.equalsIgnoreCase("proxy-authenticate")
+                        && !name.equalsIgnoreCase("proxy-authorization")
+                        && !name.equalsIgnoreCase("te")
+                        && !name.equalsIgnoreCase("trailer")
+                        && !name.equalsIgnoreCase("upgrade")) {
+                    response.setHeader(name, header.getValue());
                 }
             }
 
@@ -127,6 +197,7 @@ public class GatewayController {
                 proxyResponse.getEntity().getContent().transferTo(response.getOutputStream());
             }
         }
+
     }
 
     private HttpUriRequest withBody(HttpUriRequestBase req, HttpServletRequest request) throws IOException {
