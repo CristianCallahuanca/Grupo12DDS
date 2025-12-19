@@ -40,7 +40,7 @@ public class ContribuyenteService implements IContribuyenteService {
 
         ContribuyenteRegistrado usuario  = new ContribuyenteRegistrado(constribuyenteInputDTO.getNombre(),
                 constribuyenteInputDTO.getApellido(),
-                constribuyenteInputDTO.getEmail(),passwordEncoder.encode(constribuyenteInputDTO.getPassword()),"",Provider.LOCAL);
+                constribuyenteInputDTO.getEmail(),passwordEncoder.encode(constribuyenteInputDTO.getPassword()),null,Provider.LOCAL);
 
 
         contribuyenteRepository.save(usuario);

@@ -115,6 +115,10 @@ services:
       - gestor
       - agregador
       - estadisticas
+      - demo
+      - dinamico
+      - estatico
+      - metamapa
     networks: [metamapa-net]
     restart: unless-stopped
 
