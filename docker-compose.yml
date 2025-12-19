@@ -239,7 +239,7 @@ services:
         VITE_URL_INICIAL_METAMAPA: "https://${PUBLIC_DOMAIN}/fuenteMetamapa"
         VITE_URL_INICIAL_GETAWAY: "https://${PUBLIC_DOMAIN}/getaway"
         VITE_URL_GOOGLE_AUTH: "https://${PUBLIC_DOMAIN}/gestordatos"
-        VITE_URL_GRAPHQL: "https://${PUBLIC_DOMAIN}/graphql"
+        VITE_URL_GRAPHQL: "https://${PUBLIC_DOMAIN}"
 
 
     container_name: metamapa-frontend
