@@ -39,9 +39,8 @@ public class GatewayController {
 
         String path = request.getRequestURI().substring(("/" + modulo).length());
 
-        String targetUrl = baseUrl + path
+        String targetUrl = baseUrl + "/" + modulo + path
                 + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
-
 
         HttpUriRequest proxyRequest;
 

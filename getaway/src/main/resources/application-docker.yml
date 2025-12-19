@@ -26,11 +26,10 @@ management:
 
 gateway:
   servicios:
-    gestordatos: "http://gestor:8500/gestordatos"
-    agregador: "http://agregador:8200/agregador"
-    estadisticas: "http://estadisticas:8600/estadisticas"
-    fuenteDinamica: "http://dinamico:8102/fuenteDinamica"
-    fuenteEstatica: "http://estatico:8101/fuenteEstatica"
-    fuenteDemo: "http://demo:8700/fuenteDemo"
-    fuenteMetamapa: "http://metamapa:8103/fuenteMetamapa"
-
+    gestordatos: "http://gestor:8500"
+    agregador: "http://agregador:8200"
+    estadisticas: "http://estadisticas:8600"
+    fuenteDinamica: "http://dinamico:8102"
+    fuenteEstatica: "http://estatico:8101"
+    fuenteDemo: "http://demo:8700"
+    fuenteMetamapa: "http://metamapa:8103"
