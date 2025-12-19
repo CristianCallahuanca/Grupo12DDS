@@ -7,36 +7,37 @@ import java.util.Objects;
 
 
 public class MultiplesMenciones extends AlgoritmoConsenso {
-    private int minimoFuentesRequeridas = 2;
+    private static final int minimoFuentesRequeridas = 2;
     @Override
     public String getNombre() {
         return "Múltiples Menciones";
     }
     @Override
     public boolean esConsensuado(Hecho hecho, List<Hecho> hechosDeColeccion) {
-        // Agrupamos por título
-        var grupo = hechosDeColeccion.stream()
+
+        var grupoCercano = hechosDeColeccion.stream()
                 .filter(h -> sonCercanosEntreSi(hecho, h)) //Obtengo hechos con ubicacion aproximada, pero que pueden tener distinto contenido
                 .toList();
 
-        if(grupo.size() <= 1) return false;
+        if(grupoCercano.size() <= 1) return false;
 
-        long fuentesDistintas = grupo.stream()
+        boolean hayConflicto = grupoCercano.stream()
+                .anyMatch(h ->
+                        h.getTitulo().equalsIgnoreCase(hecho.getTitulo()) &&
+                                !tienenElMismoContenido(hecho, h)
+                );
+
+        if(hayConflicto){
+            return false;
+        }
+
+        long fuentesQueAvalan = grupoCercano.stream()
+                .filter(h -> tienenElMismoContenido(hecho, h))
                 .map(h -> h.getOrigenReal().getTipoFuente())
                 .distinct()
                 .count();
 
-        // Si hay al menos 2 fuentes distintas, y no hay conflictos entre atributos
-        if(fuentesDistintas < minimoFuentesRequeridas) return false;
-
-        boolean hayConflictos = grupo.stream().anyMatch(h1 ->
-                grupo.stream().anyMatch(h2 ->
-                        !Objects.equals(h1.getHecho_id(), h2.getHecho_id()) &&
-                                !tienenElMismoContenido(h1, h2)
-                )
-        );
-
-        return !hayConflictos;
+        return fuentesQueAvalan >= minimoFuentesRequeridas;
     }
 
     private boolean sonCercanosEntreSi(Hecho h1, Hecho h2){

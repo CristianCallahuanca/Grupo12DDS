@@ -19,6 +19,7 @@ public class AlgoritmoConsensoAttributeConverter implements AttributeConverter<A
             case "Absoluto" -> "ABSOLUTO";
             case "MayoriaSimple" -> "MAYORIA_SIMPLE";
             case "MultiplesMenciones" -> "MULTIPLES_MENCIONES";
+            case "SinAlgoritmo" -> "SIN_ALGORITMO";
             default -> throw new IllegalArgumentException(
                     "Tipo de algoritmo desconocido: " + algoritmo.getClass().getSimpleName());
         };
