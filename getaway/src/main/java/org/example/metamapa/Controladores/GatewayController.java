@@ -60,9 +60,17 @@ public class GatewayController {
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
             if (!headerName.equalsIgnoreCase("host")
-                    && !headerName.equalsIgnoreCase("content-length")) {
+                    && !headerName.equalsIgnoreCase("content-length")
+                    && !headerName.equalsIgnoreCase("connection")
+                    && !headerName.equalsIgnoreCase("keep-alive")
+                    && !headerName.equalsIgnoreCase("proxy-authenticate")
+                    && !headerName.equalsIgnoreCase("proxy-authorization")
+                    && !headerName.equalsIgnoreCase("te")
+                    && !headerName.equalsIgnoreCase("trailer")
+                    && !headerName.equalsIgnoreCase("upgrade")) {
                 proxyRequest.addHeader(headerName, request.getHeader(headerName));
             }
+
         }
 
         try (CloseableHttpClient client = HttpClients.custom()
@@ -118,24 +126,58 @@ public class GatewayController {
             String target = gestorBase + fullPath
                     + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
+            HttpUriRequest proxyRequest = method.equals("HEAD")
+                    ? new HttpHead(target)
+                    : new HttpGet(target);
+
+            // Copiar headers del request (salvo los hop-by-hop)
+            Enumeration<String> headerNames = request.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                String headerName = headerNames.nextElement();
+                if (!headerName.equalsIgnoreCase("host")
+                        && !headerName.equalsIgnoreCase("content-length")
+                        && !headerName.equalsIgnoreCase("connection")
+                        && !headerName.equalsIgnoreCase("keep-alive")
+                        && !headerName.equalsIgnoreCase("proxy-authenticate")
+                        && !headerName.equalsIgnoreCase("proxy-authorization")
+                        && !headerName.equalsIgnoreCase("te")
+                        && !headerName.equalsIgnoreCase("trailer")
+                        && !headerName.equalsIgnoreCase("upgrade")) {
+                    proxyRequest.addHeader(headerName, request.getHeader(headerName));
+                }
+            }
+
             try (CloseableHttpClient client = HttpClients.custom()
-                    .disableRedirectHandling() // 🔥 clave: NO seguir redirects
+                    .disableRedirectHandling()
                     .build();
-                 CloseableHttpResponse proxyResp = client.execute(new HttpGet(target))) {
+                 CloseableHttpResponse proxyResp = client.execute(proxyRequest)) {
 
                 response.setStatus(proxyResp.getCode());
 
-                // Copiar headers (Location + Set-Cookie son claves)
+                // Copiar headers de respuesta (Location + Set-Cookie son claves)
                 for (Header h : proxyResp.getHeaders()) {
-                    if (!h.getName().equalsIgnoreCase("transfer-encoding")) {
-                        response.addHeader(h.getName(), h.getValue());
+                    String name = h.getName();
+                    if (!name.equalsIgnoreCase("transfer-encoding")
+                            && !name.equalsIgnoreCase("connection")
+                            && !name.equalsIgnoreCase("keep-alive")
+                            && !name.equalsIgnoreCase("proxy-authenticate")
+                            && !name.equalsIgnoreCase("proxy-authorization")
+                            && !name.equalsIgnoreCase("te")
+                            && !name.equalsIgnoreCase("trailer")
+                            && !name.equalsIgnoreCase("upgrade")) {
+                        response.addHeader(name, h.getValue());
                     }
                 }
 
-                response.flushBuffer();
+                // Copiar body si existe (MUY importante)
+                if (proxyResp.getEntity() != null && !method.equals("HEAD")) {
+                    proxyResp.getEntity().getContent().transferTo(response.getOutputStream());
+                }
+                // No flushBuffer acá: el contenedor lo maneja
                 return;
             }
         }
+
 
         // --- Proxy normal ---
         String path = request.getRequestURI().substring(("/" + modulo).length());
@@ -167,9 +209,18 @@ public class GatewayController {
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
-            if (!headerName.equalsIgnoreCase("host") && !headerName.equalsIgnoreCase("content-length")) {
+            if (!headerName.equalsIgnoreCase("host")
+                    && !headerName.equalsIgnoreCase("content-length")
+                    && !headerName.equalsIgnoreCase("connection")
+                    && !headerName.equalsIgnoreCase("keep-alive")
+                    && !headerName.equalsIgnoreCase("proxy-authenticate")
+                    && !headerName.equalsIgnoreCase("proxy-authorization")
+                    && !headerName.equalsIgnoreCase("te")
+                    && !headerName.equalsIgnoreCase("trailer")
+                    && !headerName.equalsIgnoreCase("upgrade")) {
                 proxyRequest.addHeader(headerName, request.getHeader(headerName));
             }
+
         }
 
         try (CloseableHttpClient client = HttpClients.custom()
