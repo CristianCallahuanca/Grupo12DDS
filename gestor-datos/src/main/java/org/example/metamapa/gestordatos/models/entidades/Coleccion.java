@@ -12,6 +12,7 @@ import org.example.metamapa.gestordatos.models.Consenso.AlgoritmoConsenso;
 import org.example.metamapa.gestordatos.models.ModosNavegacion.ModoNavegacion;
 import org.example.metamapa.gestordatos.models.entidades.enums.EstadoHecho;
 import org.example.metamapa.gestordatos.models.entidades.enums.TipoFuente;
+import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,8 +89,8 @@ public class Coleccion {
         return modo.aplicarModoDeNavegacion(this);
     }
 
-    public void aplicarConsenso() {
-        algoritmo.consensuarHechos(this.hechosColeccion);
+    public void aplicarConsenso(IHechosRepository repoHechos) {
+        algoritmo.consensuarHechos(this.hechosColeccion, repoHechos);
     }
 
 

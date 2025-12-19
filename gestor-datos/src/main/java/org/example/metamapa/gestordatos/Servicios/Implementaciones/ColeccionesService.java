@@ -17,6 +17,7 @@ import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.Por
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.PorTipoFuente;
 import org.example.metamapa.gestordatos.models.entidades.enums.TipoFuente;
 import org.example.metamapa.gestordatos.models.repositorios.IColeccionesRepository;
+import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.metamapa.gestordatos.models.entidades.CondicionDeFiltrado.PorOrigenReal;
@@ -34,6 +35,7 @@ public class ColeccionesService implements IColeccionesService {
     private final IHechoService hechoService;
     private final FiltradorService filtradorService;
     private final IHechoColeccionService hechoColeccionService; // (por si lo usás luego)
+    private final IHechosRepository repoHechos;
 
     /*
        ===============   ADMINISTRATIVOS   ==================
@@ -195,7 +197,7 @@ public class ColeccionesService implements IColeccionesService {
     public void aplicarConsensoATodas() {
         coleccionesRepository.findAll().forEach(c -> {try {
             if (c.getAlgoritmo() != null) {
-                c.aplicarConsenso();
+                c.aplicarConsenso(repoHechos);
                 coleccionesRepository.save(c);
                 hechoColeccionService.actualizarHechosDeColeccion(c.getHechosColeccion());
                 log.debug("Consenso aplicado en colección {}", c.getHandle());

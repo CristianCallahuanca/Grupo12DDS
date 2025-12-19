@@ -2,21 +2,34 @@ package org.example.metamapa.gestordatos.models.Consenso;
 
 import org.example.metamapa.gestordatos.models.entidades.Hecho;
 import org.example.metamapa.gestordatos.models.entidades.HechoDeColeccion;
+import org.example.metamapa.gestordatos.models.repositorios.IHechosRepository;
+
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public abstract class AlgoritmoConsenso {
 
     public abstract boolean esConsensuado(Hecho hecho, List<Hecho> hechosDeColeccion);
     public abstract String getNombre();
-    public void consensuarHechos(List<HechoDeColeccion> hechosDeColeccion) {
-        List<Hecho> hechos = hechosDeColeccion.stream()
-                .map(HechoDeColeccion::getHecho)
-                .toList();
+
+    public void consensuarHechos(List<HechoDeColeccion> hechosDeColeccion, IHechosRepository repo) {
 
         for (HechoDeColeccion hechoColeccion : hechosDeColeccion) {
             Hecho hecho = hechoColeccion.getHecho();
+
+            LocalDateTime inicio = hecho.getFechaAcontecimiento().toLocalDate().atStartOfDay();
+            LocalDateTime fin = hecho.getFechaAcontecimiento().toLocalDate().atTime(LocalTime.MAX);
+
+            List<Hecho> hechos = repo.findByCategoriaAndOrigenRealNotAndFechaAcontecimientoBetween(
+                    hecho.getCategoria(),
+                    hecho.getOrigenReal(),
+                    inicio,
+                    fin
+            );
+
             boolean consensuado = esConsensuado(hecho, hechos);
             hechoColeccion.setConsensuado(consensuado);
         }

@@ -13,9 +13,9 @@ public class MultiplesMenciones extends AlgoritmoConsenso {
         return "Múltiples Menciones";
     }
     @Override
-    public boolean esConsensuado(Hecho hecho, List<Hecho> hechosDeColeccion) {
+    public boolean esConsensuado(Hecho hecho, List<Hecho> hechosSimilares) {
 
-        var grupoCercano = hechosDeColeccion.stream()
+        var grupoCercano = hechosSimilares.stream()
                 .filter(h -> sonCercanosEntreSi(hecho, h)) //Obtengo hechos con ubicacion aproximada, pero que pueden tener distinto contenido
                 .toList();
 
@@ -35,7 +35,7 @@ public class MultiplesMenciones extends AlgoritmoConsenso {
                 .filter(h -> tienenElMismoContenido(hecho, h))
                 .map(h -> h.getOrigenReal().getTipoFuente())
                 .distinct()
-                .count();
+                .count() + 1;
 
         return fuentesQueAvalan >= minimoFuentesRequeridas;
     }
