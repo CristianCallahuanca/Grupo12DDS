@@ -1,5 +1,6 @@
 package org.example.metamapa.agregador.models.repositorios;
 
+import org.example.metamapa.agregador.models.dtos.DTO_IN.HechoDTO_IN;
 import org.example.metamapa.agregador.models.entidades.Hecho;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

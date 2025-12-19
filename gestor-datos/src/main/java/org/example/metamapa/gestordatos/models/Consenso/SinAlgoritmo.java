@@ -10,7 +10,7 @@ public class SinAlgoritmo extends AlgoritmoConsenso{
         return "Sin Algoritmo";
     }
     @Override
-    public boolean esConsensuado(Hecho hecho, List<Hecho> hechosDeColeccion) {
+    public boolean esConsensuado(Hecho hecho, List<Hecho> hechosSimilares) {
         return true;
     }
 

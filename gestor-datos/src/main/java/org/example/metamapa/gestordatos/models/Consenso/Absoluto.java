@@ -12,15 +12,15 @@ public class Absoluto extends AlgoritmoConsenso{
         return "Absoluto";
     }
     @Override
-    public boolean esConsensuado(Hecho hecho, List<Hecho> hechosDeColeccion) {
-        var grupo = hechosDeColeccion.stream()
+    public boolean esConsensuado(Hecho hecho, List<Hecho> hechosSimilares) {
+        var grupo = hechosSimilares.stream()
                 .filter(h -> this.tienenElMismoContenido(h, hecho))
                 .toList();
 
         long fuentesDistintas = grupo.stream()
                 .map(h -> h.getOrigenReal().getTipoFuente())
                 .distinct()
-                .count();
+                .count() + 1; // sumo uno porque en el grupo ya no hay hechos de la misma fuente que el hecho a consensuar
 
         return fuentesDistintas == TipoFuente.values().length;
     }
