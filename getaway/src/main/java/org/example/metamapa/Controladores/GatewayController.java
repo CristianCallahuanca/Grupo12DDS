@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -39,7 +38,6 @@ public class GatewayController {
             return;
         }
 
-
         String path = request.getRequestURI().substring(("/" + modulo).length());
 
         String targetUrl = baseUrl + "/" + modulo + path
@@ -47,6 +45,49 @@ public class GatewayController {
 
         log.info("Proxy {} {} -> {}", request.getMethod(), request.getRequestURI(), targetUrl);
 
+        // ====== CASO ESPECIAL: OAuth Google (NO proxyear HTML) ======
+        String fullPath = request.getRequestURI(); // ej: /gestordatos/contribuyentes/google
+        if ("/gestordatos/contribuyentes/google".equals(fullPath)) {
+
+            // Solo GET permitido
+            if (!"GET".equalsIgnoreCase(request.getMethod())) {
+                response.sendError(405, "Method not allowed");
+                return;
+            }
+
+            // Forzamos llamar al gestor directamente para obtener el 302 Location
+            String redirectBaseUrl = servicios.get("gestordatos");
+            if (redirectBaseUrl == null) {
+                response.sendError(500, "Servicio 'gestordatos' no configurado en gateway.servicios");
+                return;
+            }
+
+            String redirectTargetUrl = redirectBaseUrl + fullPath;
+
+            try (CloseableHttpClient client = HttpClients.createDefault();
+                 CloseableHttpResponse proxyResp = client.execute(new HttpGet(redirectTargetUrl))) {
+
+                int code = proxyResp.getCode();
+                response.setStatus(code);
+
+                // Copiar Location si existe (clave para que el browser siga el redirect a Google)
+                Header loc = proxyResp.getFirstHeader("Location");
+                if (loc != null) {
+                    response.setHeader("Location", loc.getValue());
+                }
+
+                // (Opcional) Copiar cache headers por prolijidad
+                Header cacheControl = proxyResp.getFirstHeader("Cache-Control");
+                if (cacheControl != null) response.setHeader("Cache-Control", cacheControl.getValue());
+
+                Header pragma = proxyResp.getFirstHeader("Pragma");
+                if (pragma != null) response.setHeader("Pragma", pragma.getValue());
+
+                return;
+            }
+        }
+
+        // ====== PROXY NORMAL ======
         HttpUriRequest proxyRequest;
 
         switch (request.getMethod()) {
@@ -101,4 +142,3 @@ public class GatewayController {
         return req;
     }
 }
-
