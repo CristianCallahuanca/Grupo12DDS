@@ -19,7 +19,7 @@ server:
   port: 8200
 
 agregador:
-  cron: "*/20 * * * * *"
+  cron: "0 0 */6 * * *"
   timeout:
     segundos: 30
 

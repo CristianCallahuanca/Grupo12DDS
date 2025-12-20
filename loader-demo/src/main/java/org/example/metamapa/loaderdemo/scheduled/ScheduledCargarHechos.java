@@ -13,7 +13,7 @@ public class ScheduledCargarHechos {
 
     private final ICargadorHechosService cargadorHechosService;
 
-    @Scheduled(cron = "*/30 * * * * *")
+    @Scheduled(cron = "0 0 */6 * * *")
     public void ejecutarCargaProgramada() {
         log.info("[Scheduler] Ejecutando carga de hechos desde todas las fuentes demo...");
         cargadorHechosService.cargarHechosDeTodasLasFuentes();
