@@ -17,7 +17,7 @@ public class GeneracionEstadisticasScheduled {
         this.estadisticaService = estadisticaService;
     }
 
-    @Scheduled(initialDelay = 0, fixedRate = 1, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(cron = "0 0 2 * * *")
     public void crearEstadisticas() {
         log.info("Iniciando generación automática de estadísticas...");
         try {
