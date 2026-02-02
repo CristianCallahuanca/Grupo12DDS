@@ -4,6 +4,8 @@ MetaMapa es una plataforma de mapeo colaborativo y visualización de eventos geo
 
 El sistema permite visualizar, crear y gestionar eventos geolocalizados a partir de datasets, aportes de usuarios e integración con APIs externas, exponiendo su funcionalidad mediante una API REST.
 
+## 🎥 Video mostrando el proyecto: https://www.youtube.com/watch?v=ElFh03BLnB8
+
 ---
 
 ## 📌 Contexto del Proyecto
